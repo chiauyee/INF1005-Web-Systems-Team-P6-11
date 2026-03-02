@@ -1,0 +1,32 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+.navbar-brand {
+    font-weight: bold;
+    color: #343a40 !important;
+}
+.background {
+    background: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 120px 0;
+    min-height: 400px;
+    text-align: center;
+}
+.background h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+.background p {
+    font-size: 1.25rem;
+}
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+}
+footer a {
+    color: #adb5bd;
+    text-decoration: none;
+}

@@ -69,10 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/main.css">
 </head>
 
-<body class="bg-light">
+<body>
+  <?php include __DIR__ . '/includes/navigation.php'; ?>
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
