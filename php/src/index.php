@@ -1,5 +1,17 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['cart_count']))
+{
+  $_SESSION['cart_count'] = 0;
+}
+
+if (isset($_POST['add_to_cart']))
+{
+  $_SESSION['cart_count'] += 1;
+  header("Location: " . $_SERVER['PHP_SELF']);
+  exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,123 +44,174 @@ session_start();
     <section class="container mt-3 mb-3">
       <div class="container">
         <h2 class="mb-4 text-center">Featured Albums</h2>
-        <div class="row g-4">
+        <div class="row g-3">
           <div class="col-md-3">
             <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 1</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 1</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
           <div class="col-md-3">
             <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 2</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 2</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
           <div class="col-md-3">
             <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 3</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 3</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
           <div class="col-md-3">
             <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 4</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 4</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
 
-      <div class="container mt-5">
-        <div class="row g-4">
-          <div class="col-md-3">
-            <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 5</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
           <div class="col-md-3">
             <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 6</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 5</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
           <div class="col-md-3">
             <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 7</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 6</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
           <div class="col-md-3">
             <div class="card shadow-sm">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
-              <div class="card-body">
-                <h5 class="card-title">Album Name 8</h5>
-                <p class="card-text">Artist Name</p>
-                <a class="btn btn-outline-dark" href="#">Click for more info</a>
-                <a class="btn btn-outline-dark" href="#" >
-                  <i class="bi bi-cart"></i>
-                </a>
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 7</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
-        </div>
+          
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <a href="product.php?id=1" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
+                <div class="card-body">
+                  <h5 class="card-title">Album Name 8</h5>
+                  <p class="card-text">Artist Name</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart 
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
       </div>
     </section>
 

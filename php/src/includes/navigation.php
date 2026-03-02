@@ -23,7 +23,12 @@ if (session_status() === PHP_SESSION_NONE) {
             
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item me-3">
-                    <a class="nav-link" href="#"><i class="bi bi-cart fs-5"></i></a>
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-cart fs-5"></i>
+                        <?php if (!empty($_SESSION['cart_count'])): ?>
+                            <?= $_SESSION['cart_count'] ?>
+                        <?php endif; ?>
+                    </a>
                 </li>
                 
                 <?php if (isset($_SESSION['user_id'])): ?>
