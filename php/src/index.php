@@ -38,7 +38,7 @@ session_start();
       footer {
         background-color: #343a40;
         color: white;
-        padding: 40px 0;
+        padding: 20px 0;
       }
       footer a {
         color: #adb5bd;
@@ -52,16 +52,22 @@ session_start();
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
       <div class="container">
         <a class="navbar-brand" href="#">BRANDNAME</a>
-      </div>
-      
-      <div class="container">
+
+        <!-- Toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+
         <div class="collapse navbar-collapse" id="navbar">
-          <ul class="navbar-nav ms-auto">
+          <ul class="navbar-nav mx-auto justify-content-center">
             <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
             <li class="nav-item"><a class="nav-link active" href="#">Shop Music</a></li>
             <li class="nav-item"><a class="nav-link active" href="#">Sell Music</a></li>
             <li class="nav-item"><a class="nav-link active" href="#">About Us</a></li>
-            
+          </ul>
+
+          <ul class="navbar-nav">  
             <?php if (isset($_SESSION['user_id'])): ?>
               <li class="nav-item">
                 <span class="nav-link disabled">Logged in as <strong><?= htmlspecialchars($_SESSION['username']) ?></strong></span>
@@ -73,10 +79,10 @@ session_start();
                 <a class="btn btn-outline-dark ms-2" href="logout.php">Logout</a>
               </li>
             <?php else: ?>
-              <li class="nav-item">
+              <li class="nav-item mb-2">
                 <a class="btn btn-outline-dark ms-2" href="login.php">Login</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item mb-2">
                 <a class="btn btn-dark ms-2" href="register.php">Register</a>
               </li>
             <?php endif; ?>
@@ -98,7 +104,7 @@ session_start();
     </section>
 
     <!-- Featured Albums -->
-    <section class="featured_albums mt-5 mb-5">
+    <section class="container mt-3 mb-3">
       <div class="container">
         <h2 class="mb-4 text-center">Featured Albums</h2>
         <div class="row g-4">
@@ -159,7 +165,77 @@ session_start();
           </div>
         </div>
       </div>
+
+      <div class="container mt-5">
+        <div class="row g-4">
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
+              <div class="card-body">
+                <h5 class="card-title">Album Name 5</h5>
+                <p class="card-text">Artist Name</p>
+                <a class="btn btn-outline-dark" href="#">Click for more info</a>
+                <a class="btn btn-outline-dark" href="#" >
+                  <i class="bi bi-cart"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
+              <div class="card-body">
+                <h5 class="card-title">Album Name 6</h5>
+                <p class="card-text">Artist Name</p>
+                <a class="btn btn-outline-dark" href="#">Click for more info</a>
+                <a class="btn btn-outline-dark" href="#" >
+                  <i class="bi bi-cart"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
+              <div class="card-body">
+                <h5 class="card-title">Album Name 7</h5>
+                <p class="card-text">Artist Name</p>
+                <a class="btn btn-outline-dark" href="#">Click for more info</a>
+                <a class="btn btn-outline-dark" href="#" >
+                  <i class="bi bi-cart"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="featured_album_img" alt="Album 1">
+              <div class="card-body">
+                <h5 class="card-title">Album Name 8</h5>
+                <p class="card-text">Artist Name</p>
+                <a class="btn btn-outline-dark" href="#">Click for more info</a>
+                <a class="btn btn-outline-dark" href="#" >
+                  <i class="bi bi-cart"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
+
+    <footer>
+      <div class="container text-center">
+        <p><em>Copyright &copy; 2026 BRANDNAME. All Rights Reserved.</em></p>
+        <p>Cookie Policy | Terms of Service | Privacy Policy</p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
 </body>
 </html>
