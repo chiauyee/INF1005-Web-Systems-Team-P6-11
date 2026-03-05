@@ -1,6 +1,6 @@
 <?php
 session_start();
-//require 'db.php';
+require 'db.php';
 
 $error = '';
 
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
   $captcha_answer = $_SESSION['captcha_num1'] + $_SESSION['captcha_num2'];
 
   // wait for the database
-  /*$stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+  $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
   $stmt->execute([$username]);
   $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
   else 
   {
     $error = 'Invalid username or password.';
-  }*/
+  }
 }
 ?>
 

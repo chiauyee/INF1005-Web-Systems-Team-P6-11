@@ -1,6 +1,6 @@
 <?php
 session_start();
-//require 'db.php';
+require 'db.php';
 
 $error = '';
 
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Invalid email address.';
     } elseif (strlen($password) < 6) {
         $error = 'Password must be at least 6 characters.';
-    } /*else {
+    } else {
         $hash = password_hash($password, PASSWORD_DEFAULT);
         try {
             $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (PDOException $e) {
             $error = 'Username or email already taken.';
         }
-    }*/
+    }
 }
 ?>
 
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="password" name="password" id="password" class="form-control" required>
                             </div>
 
-                            <button type="submit" class="btn btn-dark w-100">Login</button>
+                            <button type="submit" class="btn btn-dark w-100">Register</button>
                         </form>
 
                         <p class="mt-3 text-center">Already have an account? <a href="login.php">Login here</a>
