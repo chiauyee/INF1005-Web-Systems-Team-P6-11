@@ -1,22 +1,22 @@
+:root {
+    --bg: #f8f8f6;
+    --white: #ffffff;
+    --border: #e2e2de;
+    --text: #1a1a1a;
+    --text-muted: #666;
+}
+
+* { box-sizing: border-box; }
+
 body {
     font-family: 'DM Sans', sans-serif;
-    background-color: #f8f9fa;
-}
-
-.navbar-brand {
-    font-weight: 700 !important;
-    color: #343a40 !important;
-    font-family: 'DM Sans', sans-serif;
-}
-
-.navbar .nav-link,
-.navbar .btn {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
 }
 
 .background {
-    background: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80') no-repeat center center;
+    background: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4') no-repeat center center;
     background-size: cover;
     color: white;
     padding: 120px 0;
@@ -34,12 +34,12 @@ body {
 }
 
 footer {
-    background-color: #343a40;
+    background-color: #1a1a1a;
     color: white;
     padding: 20px 0;
 }
 
 footer a {
-    color: #adb5bd;
+    color: #fff;
     text-decoration: none;
 }

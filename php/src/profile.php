@@ -14,9 +14,21 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html>
-<head><title>Profile</title></head>
+<head>
+    <title>Profile</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/navigation.css"> 
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+
 <body>
-  <h1>Your Profile</h1>
+  <?php include __DIR__ . '/includes/navigation.php'; ?>
+  
   <p><strong>ID:</strong> <?= htmlspecialchars($user['id']) ?></p>
   <p><strong>Username:</strong> <?= htmlspecialchars($user['username']) ?></p>
   <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>

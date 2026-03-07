@@ -25,7 +25,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </ul>
             
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3">
+                <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-cart fs-5"></i>
                         <?php if (!empty($_SESSION['cart_count'])): ?>

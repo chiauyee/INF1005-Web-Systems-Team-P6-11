@@ -1,0 +1,72 @@
+:root {
+    --nav-bg: #f8f8f6;
+    -nav-white: #ffffff;
+    --nav-border: #e2e2de;
+    --nav-text: #1a1a1a;
+    --nav-text-muted: #666;
+    --nav-input-focus: rgba(26, 26, 26, 0.08);
+}
+
+.navbar {
+    background-color: var(--nav-bg) !important;
+    padding: 1rem 2rem !important;
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 1.3rem !important;
+    color: var(--nav-brand) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+}
+
+.navbar .nav-link {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+    color: var(--nav-text) !important;
+    padding: 0.5rem 1rem !important;
+    transition: color 0.2s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: var(--nav-text-hover) !important;
+}
+
+.navbar .btn {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.9rem !important;
+    padding: 0.4rem 1rem !important;
+    border-radius: 6px !important;
+}
+
+.navbar .btn-outline-light {
+    border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+    color: #fff !important;
+}
+
+.navbar .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #fff !important;
+}
+
+.navbar .bi-cart {
+    color: #1a1a1a !important;
+    font-size: 1.1rem;
+}
+
+.navbar .badge {
+    background-color: #fff !important;
+    color: #1a1a1a !important;
+    font-size: 0.7rem !important;
+    margin-left: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.75rem 1rem !important;
+    }
+}
