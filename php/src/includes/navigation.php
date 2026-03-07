@@ -4,9 +4,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="#">BRANDNAME</a>
+        <a class="navbar-brand" href="#">MusicMarket</a>
         
         <!-- Toggler for mobile -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">

@@ -37,50 +37,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/register.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <?php include __DIR__ . '/includes/navigation.php'; ?>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title mb-4 text-center">Create Your Account</h2>
 
-                        <?php if ($error): ?>
-                            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-                        <?php endif; ?>
+  <main>
+    <div class="register-wrapper">
+        <div class="register-left">
+            <h2 class="panel-heading">Your next<br>favourite record<br>is <em>waiting.</em></h2>
+            <p class="panel-desc">Join thousands of collectors buying, selling and discovering vinyl records, CDs and more.</p>
 
-                        <form method="POST" action="">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username:</label>
-                                <input type="text" name="username" id="username" class="form-control" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email:</label>
-                                <input type="email" name="email" id="email" class="form-control" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password:</label>
-                                <input type="password" name="password" id="password" class="form-control" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-dark w-100">Register</button>
-                        </form>
-
-                        <p class="mt-3 text-center">Already have an account? <a href="login.php">Login here</a>
-                    </div>
+            <div class="panel-stats">
+                <div class="stat-item">
+                    <div class="stat-number">12k+</div>
+                    <div class="stat-label">Listings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4k+</div>
+                    <div class="stat-label">Sellers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">80+</div>
+                    <div class="stat-label">Genres</div>
                 </div>
             </div>
         </div>
+
+        <div class="register-right">
+            <div class="form-area">
+                <p class="form-eyebrow">Get started</p>
+                <h1 class="form-heading">Create your account</h1>
+                <p class="form-sub">It's free and takes less than a minute.</p>
+
+                <?php if ($error): ?>
+                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                <?php endif; ?>
+
+                <form method="POST" action="">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-person"></i>
+                            <input type="text" name="username" id="username" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-envelope"></i>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+                    </div>
+                            
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-lock"></i>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-register">Create Account
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </form>
+
+                <p class="login-prompt">Already have an account? <a href="login.php">Sign in</a></p>
+            </div>
+        </div>
     </div>
-
+  </main>
+  
     <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
-</html>
+</html>                 

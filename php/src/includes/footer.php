@@ -4,5 +4,3 @@
         <p>Cookie Policy | Terms of Service | Privacy Policy</p>
     </div>
 </footer>
-
-    
