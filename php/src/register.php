@@ -48,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <main>
     <div class="register-wrapper">
         <div class="register-left">
-            <h2 class="panel-heading">Your next<br>favourite record<br>is <em>waiting.</em></h2>
-            <p class="panel-desc">Join thousands of collectors buying, selling and discovering vinyl records, CDs and more.</p>
+            <h2 class="panel-heading">This is<br><em>for the record.</em></h2>
+            <p class="panel-desc">Join thousands of collectors buying, selling and discovering vinyls, CDs and more.</p>
 
             <div class="panel-stats">
                 <div class="stat-item">

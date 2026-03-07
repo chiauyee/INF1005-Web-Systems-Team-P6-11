@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-wrapper">
         <div class="login-left">
             <h2 class="panel-heading">Good to have<br>you <em>back.</em></h2>
-            <p class="panel-desc">Sign in to browse your collection, track orders and discover new records waiting for you.</p>
+            <p class="panel-desc">Sign in to browse your collection, track orders and discover new records.</p>
             
             <div class="panel-stats">
                 <div class="stat-item">
