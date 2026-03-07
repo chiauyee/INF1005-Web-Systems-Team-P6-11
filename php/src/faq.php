@@ -1,0 +1,827 @@
+<?php
+session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ – MusicMarket</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:          #f8f8f6;
+      --white:       #ffffff;
+      --border:      #e2e2de;
+      --text:        #1a1a1a;
+      --text-muted:  #666;
+      --input-focus: rgba(26, 26, 26, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .navbar-brand {
+      font-weight: 700 !important;
+      color: var(--text) !important;
+    }
+    .navbar .nav-link, .navbar .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      color: var(--text);
+    }
+    .btn, .btn-primary, .navbar .btn {
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .btn:hover, .btn-primary:hover {
+      background-color: #333;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    .btn:active, .btn-primary:active { transform: translateY(0); }
+
+    .faq-hero {
+      background-color: #1a1a1a;
+      position: relative;
+      overflow: hidden;
+      padding: 5.5rem 0 4.5rem;
+      color: #fff;
+    }
+    .faq-hero::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      right: -150px; bottom: -150px;
+      border: 60px solid rgba(255,255,255,0.03);
+      box-shadow:
+        0 0 0 60px  rgba(255,255,255,0.03),
+        0 0 0 120px rgba(255,255,255,0.02),
+        0 0 0 180px rgba(255,255,255,0.015);
+      pointer-events: none;
+    }
+    .faq-hero::after {
+      content: '';
+      position: absolute;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      left: -60px; top: -60px;
+      border: 40px solid rgba(255,255,255,0.025);
+      box-shadow: 0 0 0 40px rgba(255,255,255,0.015);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 1.25rem;
+    }
+    .hero-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      line-height: 1.2;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .hero-heading em {
+      font-style: italic;
+      color: rgba(255,255,255,0.45);
+    }
+    .hero-desc {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.9;
+      max-width: 420px;
+      margin-bottom: 2rem;
+    }
+
+    .faq-search-wrap {
+      position: relative;
+      max-width: 460px;
+    }
+    .faq-search-wrap .bi-search {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.35);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    #faq-search {
+      width: 100%;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 0.92rem;
+      padding: 0.7rem 1rem 0.7rem 2.6rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    #faq-search::placeholder { color: rgba(255,255,255,0.3); }
+    #faq-search:focus {
+      outline: none;
+      border-color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.11);
+    }
+
+    .faq-body {
+      padding: 5rem 0 6rem;
+    }
+
+    .cat-nav {
+      position: sticky;
+      top: 90px;
+    }
+
+    .cat-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .cat-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      width: 100%;
+      background: none;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 0.2rem;
+    }
+    .cat-btn:hover { background: var(--white); color: var(--text); }
+    .cat-btn.active { background: #1a1a1a; color: #fff; font-weight: 500; }
+
+    .cat-btn .cat-icon {
+      width: 28px; height: 28px;
+      border-radius: 5px;
+      background: rgba(0,0,0,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .cat-btn.active .cat-icon { background: rgba(255,255,255,0.15); }
+
+    /* FAQ section */
+    .faq-section { display: none; }
+    .faq-section.active { display: block; }
+
+    .section-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      line-height: 1.25;
+      color: var(--text);
+      margin-bottom: 2rem;
+    }
+    .section-heading em {
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    /* Accordion */
+    .faq-item {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.6rem;
+      overflow: hidden;
+      background: var(--white);
+      transition: box-shadow 0.2s;
+    }
+    .faq-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.05); }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem 1.4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .faq-question:hover { background: #fafaf8; }
+    .faq-question[aria-expanded="true"] { background: #fafaf8; }
+
+    .faq-chevron {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+    }
+    .faq-question[aria-expanded="true"] .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .faq-answer.open {
+      max-height: 600px;
+    }
+
+    .faq-answer-inner {
+      padding: 0 1.4rem 1.2rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      border-top: 1.5px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .faq-answer-inner a {
+      color: var(--text);
+      font-weight: 500;
+      text-underline-offset: 2px;
+    }
+
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+    .no-results .bi {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 0.75rem;
+      opacity: 0.3;
+    }
+
+    .help-banner {
+      margin-top: 3rem;
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 2.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+    .help-banner::before {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      right: -80px; bottom: -80px;
+      border: 50px solid rgba(255,255,255,0.03);
+      box-shadow: 0 0 0 50px rgba(255,255,255,0.02);
+      pointer-events: none;
+    }
+    .help-banner-text { position: relative; z-index: 1; }
+    .help-banner-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .help-banner-sub {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+    }
+    .btn-white {
+      background: #fff;
+      color: #1a1a1a;
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.88rem;
+      padding: 0.65rem 1.4rem;
+      text-decoration: none;
+      display: inline-block;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.15s;
+      position: relative; z-index: 1;
+      flex-shrink: 0;
+    }
+    .btn-white:hover {
+      background: #f0f0f0;
+      transform: translateY(-1px);
+      color: #1a1a1a;
+    }
+
+    footer {
+      background-color: #1a1a1a;
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
+    }
+    footer a { color: #fff; text-decoration: none; }
+
+    /* Responsive */
+    @media (max-width: 991px) {
+      .cat-nav { position: static; margin-bottom: 2rem; }
+      .cat-btn { display: inline-flex; width: auto; margin-right: 0.4rem; margin-bottom: 0.4rem; }
+    }
+    @media (max-width: 576px) {
+      .faq-hero { padding: 4rem 0 3rem; }
+      .help-banner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <?php include __DIR__ . '/includes/navigation.php'; ?>
+
+  <main>
+
+    <section class="faq-hero" aria-label="Frequently Asked Questions">
+      <div class="container" style="position:relative;z-index:1;">
+        <p class="hero-eyebrow">Help Centre</p>
+        <h1 class="hero-heading">
+          Frequently asked<br><em>questions.</em>
+        </h1>
+        <p class="hero-desc">
+          Everything you need to know about buying, selling and managing your 
+          account on MusicMarket.
+        </p>
+        <div class="faq-search-wrap" role="search">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input
+            type="search"
+            id="faq-search"
+            placeholder="Search questions…"
+            aria-label="Search frequently asked questions"
+            autocomplete="off"
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-body">
+      <div class="container">
+        <div class="row g-5">
+
+          <div class="col-lg-3">
+            <nav class="cat-nav" aria-label="FAQ categories">
+              <p class="cat-label">Categories</p>
+
+              <button class="cat-btn active" data-cat="buying" aria-pressed="true">
+                <span class="cat-icon" aria-hidden="true"><i class="bi bi-bag"></i></span>
+                Buying
+              </button>
+              <button class="cat-btn" data-cat="selling" aria-pressed="false">
+                <span class="cat-icon" aria-hidden="true"><i class="bi bi-tag"></i></span>
+                Selling
+              </button>
+              <button class="cat-btn" data-cat="shipping" aria-pressed="false">
+                <span class="cat-icon" aria-hidden="true"><i class="bi bi-box-seam"></i></span>
+                Shipping
+              </button>
+              <button class="cat-btn" data-cat="account" aria-pressed="false">
+                <span class="cat-icon" aria-hidden="true"><i class="bi bi-person"></i></span>
+                Account
+              </button>
+              <button class="cat-btn" data-cat="payments" aria-pressed="false">
+                <span class="cat-icon" aria-hidden="true"><i class="bi bi-credit-card"></i></span>
+                Payments
+              </button>
+              <button class="cat-btn" data-cat="grading" aria-pressed="false">
+                <span class="cat-icon" aria-hidden="true"><i class="bi bi-vinyl"></i></span>
+                Grading &amp; Condition
+              </button>
+            </nav>
+          </div>
+
+          <!-- FAQ content  -->
+          <div class="col-lg-9">
+
+            <!-- Search: no results -->
+            <div class="no-results" id="no-results" aria-live="polite">
+              <i class="bi bi-search"></i>
+              No questions matched your search. Try different keywords or
+              <a href="contact.php">contact us</a> directly.
+            </div>
+
+            <!-- BUYING -->
+            <div class="faq-section active" id="cat-buying">
+              <p class="section-eyebrow">Buying</p>
+              <h2 class="section-heading">Shopping on <em>MusicMarket.</em></h2>
+
+              <?php
+              $buying_faqs = [
+                [
+                  "How do I search for a specific album or artist?",
+                  "Use the search bar at the top of any page. You can search by album title, artist name, catalogue number or format. Use the filters on the results page to narrow by genre, format, condition or price range."
+                ],
+                [
+                  "Can I buy from sellers in other countries?",
+                  "Yes — MusicMarket is a global marketplace. Each listing shows the seller's location and the available shipping destinations. International shipping rates and estimated delivery times are shown at checkout before you confirm your purchase."
+                ],
+                [
+                  "What does the buyer protection policy cover?",
+                  "If an item arrives significantly not as described, is damaged in transit, or doesn't arrive at all, you're covered under our Buyer Protection policy. Open a dispute within 7 days of the expected delivery date and our team will step in to help resolve it."
+                ],
+                [
+                  "Can I make an offer below the listed price?",
+                  "Yes, if the seller has enabled the Make an Offer option on their listing. You'll see an \"Offer\" button alongside the standard Buy button. The seller has 48 hours to accept, decline or counter your offer."
+                ],
+                [
+                  "How do I add items to a wishlist?",
+                  "Click the bookmark icon on any listing to save it to your Wishlist. You can view and manage your saved items from your profile dashboard. You'll also receive a notification if a wishlisted item drops in price."
+                ],
+              ];
+              foreach ($buying_faqs as $i => $faq): ?>
+                <div class="faq-item">
+                  <button
+                    class="faq-question"
+                    aria-expanded="false"
+                    aria-controls="buying-ans-<?= $i ?>"
+                    id="buying-q-<?= $i ?>"
+                  >
+                    <?= htmlspecialchars($faq[0]) ?>
+                    <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
+                  </button>
+                  <div class="faq-answer" id="buying-ans-<?= $i ?>" role="region" aria-labelledby="buying-q-<?= $i ?>">
+                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+
+            <!-- SELLING -->
+            <div class="faq-section" id="cat-selling">
+              <p class="section-eyebrow">Selling</p>
+              <h2 class="section-heading">List &amp; sell your <em>collection.</em></h2>
+
+              <?php
+              $selling_faqs = [
+                [
+                  "How do I create my first listing?",
+                  "Go to your seller dashboard and click \"New Listing\". Search for the release in our database — if it exists, most details will auto-fill. You'll then need to set the condition, price and your shipping options. Listings go live immediately after submission."
+                ],
+                [
+                  "What seller fees does MusicMarket charge?",
+                  "MusicMarket charges a flat 8% commission on the final sale price (excluding shipping). There are no listing fees and no monthly subscription required. Fees are deducted automatically before funds are released to your account."
+                ],
+                [
+                  "How quickly do I need to ship after a sale?",
+                  "Orders should be dispatched within 3 business days of payment confirmation. If you need more time, message the buyer before the dispatch deadline. Repeated late shipments may affect your seller rating."
+                ],
+                [
+                  "Can I sell outside my home country?",
+                  "Yes. When creating a listing, you can specify which countries or regions you're willing to ship to and set individual shipping rates per destination. You can also choose to offer free worldwide shipping to attract more buyers."
+                ],
+                [
+                  "What happens if a buyer opens a dispute?",
+                  "You'll receive a notification and have 48 hours to respond with your account of the situation. Provide any relevant evidence such as tracking information or photos. Our support team will review both sides and issue a resolution within 5 business days."
+                ],
+              ];
+              foreach ($selling_faqs as $i => $faq): ?>
+                <div class="faq-item">
+                  <button
+                    class="faq-question"
+                    aria-expanded="false"
+                    aria-controls="selling-ans-<?= $i ?>"
+                    id="selling-q-<?= $i ?>"
+                  >
+                    <?= htmlspecialchars($faq[0]) ?>
+                    <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
+                  </button>
+                  <div class="faq-answer" id="selling-ans-<?= $i ?>" role="region" aria-labelledby="selling-q-<?= $i ?>">
+                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+
+            <!-- SHIPPING -->
+            <div class="faq-section" id="cat-shipping">
+              <p class="section-eyebrow">Shipping</p>
+              <h2 class="section-heading">Getting records <em>to you.</em></h2>
+
+              <?php
+              $shipping_faqs = [
+                [
+                  "How do I track my order?",
+                  "Once the seller marks your order as shipped, you'll receive an email with tracking details (if the seller provided a tracking number). You can also view the status of all active orders from your account dashboard under \"Purchases\"."
+                ],
+                [
+                  "My order hasn't arrived — what should I do?",
+                  "First, check the tracking information in your order details. If the estimated delivery window has passed and tracking shows no movement, contact the seller via the order messaging system. If you don't receive a satisfactory response within 48 hours, open a Buyer Protection case."
+                ],
+                [
+                  "Are there any import duties or taxes I should know about?",
+                  "International orders may be subject to import duties, customs fees or local taxes depending on your country's regulations. These charges are the buyer's responsibility and are not included in the listing or shipping price. We recommend checking your local customs rules before purchasing internationally."
+                ],
+                [
+                  "What packaging do sellers use for vinyl?",
+                  "MusicMarket strongly encourages sellers to use rigid mailers with inner sleeve protection for 12\" vinyl. Our seller guidelines recommend at minimum a stiffener board and a padded outer envelope. You can find our full packaging recommendations in the Seller Help Centre."
+                ],
+              ];
+              foreach ($shipping_faqs as $i => $faq): ?>
+                <div class="faq-item">
+                  <button
+                    class="faq-question"
+                    aria-expanded="false"
+                    aria-controls="shipping-ans-<?= $i ?>"
+                    id="shipping-q-<?= $i ?>"
+                  >
+                    <?= htmlspecialchars($faq[0]) ?>
+                    <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
+                  </button>
+                  <div class="faq-answer" id="shipping-ans-<?= $i ?>" role="region" aria-labelledby="shipping-q-<?= $i ?>">
+                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+
+            <!-- ACCOUNT -->
+            <div class="faq-section" id="cat-account">
+              <p class="section-eyebrow">Account</p>
+              <h2 class="section-heading">Managing your <em>account.</em></h2>
+
+              <?php
+              $account_faqs = [
+                [
+                  "How do I create an account?",
+                  "Click \"Register\" in the top navigation bar. You'll need a valid email address and a username. After submitting the form, you can log in immediately — no email verification step is required to get started."
+                ],
+                [
+                  "How do I reset my password?",
+                  "On the login page, click \"Forgot password?\". Enter the email address associated with your account and we'll send you a reset link valid for 30 minutes. If you don't see the email, check your spam folder."
+                ],
+                [
+                  "Can I have both a buyer and a seller account?",
+                  "Every MusicMarket account can buy and sell. There's no separate seller account — simply head to your dashboard and click \"Start Selling\" to activate your seller profile. You can switch between buyer and seller views from the same account."
+                ],
+                [
+                  "How do I delete my account?",
+                  "Go to Account Settings → Privacy → Delete Account. Please note that deleting your account is permanent and irreversible. Any open orders must be completed or cancelled before deletion can proceed. Your public listing history will be removed within 30 days."
+                ],
+              ];
+              foreach ($account_faqs as $i => $faq): ?>
+                <div class="faq-item">
+                  <button
+                    class="faq-question"
+                    aria-expanded="false"
+                    aria-controls="account-ans-<?= $i ?>"
+                    id="account-q-<?= $i ?>"
+                  >
+                    <?= htmlspecialchars($faq[0]) ?>
+                    <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
+                  </button>
+                  <div class="faq-answer" id="account-ans-<?= $i ?>" role="region" aria-labelledby="account-q-<?= $i ?>">
+                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+
+            <!-- PAYMENTS -->
+            <div class="faq-section" id="cat-payments">
+              <p class="section-eyebrow">Payments</p>
+              <h2 class="section-heading">Payments &amp; <em>billing.</em></h2>
+
+              <?php
+              $payments_faqs = [
+                [
+                  "What payment methods are accepted?",
+                  "MusicMarket accepts Visa, Mastercard, and American Express credit and debit cards. PayPal is also supported at checkout. All transactions are processed securely — card details are never stored on our servers."
+                ],
+                [
+                  "When does a seller get paid?",
+                  "Funds are held for 3 business days after the buyer confirms receipt (or after the delivery window closes, whichever is sooner). Once released, the amount minus the 8% commission is transferred to the seller's registered payout account."
+                ],
+                [
+                  "Can I get a refund?",
+                  "If your item arrives not as described or doesn't arrive at all, open a Buyer Protection case and a refund will be processed if the claim is upheld. Change-of-mind returns are at the seller's discretion — check the individual listing's return policy before purchasing."
+                ],
+                [
+                  "Is my payment information secure?",
+                  "Yes. All payment processing is handled by a PCI-DSS-compliant payment gateway. MusicMarket never stores your full card number or CVV. Transactions are encrypted end-to-end using TLS."
+                ],
+              ];
+              foreach ($payments_faqs as $i => $faq): ?>
+                <div class="faq-item">
+                  <button
+                    class="faq-question"
+                    aria-expanded="false"
+                    aria-controls="payments-ans-<?= $i ?>"
+                    id="payments-q-<?= $i ?>"
+                  >
+                    <?= htmlspecialchars($faq[0]) ?>
+                    <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
+                  </button>
+                  <div class="faq-answer" id="payments-ans-<?= $i ?>" role="region" aria-labelledby="payments-q-<?= $i ?>">
+                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+
+            <!-- GRADING -->
+            <div class="faq-section" id="cat-grading">
+              <p class="section-eyebrow">Grading &amp; Condition</p>
+              <h2 class="section-heading">Understanding <em>condition grades.</em></h2>
+
+              <?php
+              $grading_faqs = [
+                [
+                  "What grading scale does MusicMarket use?",
+                  "We use the industry-standard Goldmine grading scale: Mint (M), Near Mint (NM or M-), Very Good Plus (VG+), Very Good (VG), Good Plus (G+), Good (G), Fair (F) and Poor (P). Sellers are required to grade both the media and the sleeve/jacket separately."
+                ],
+                [
+                  "What does VG+ actually mean?",
+                  "Very Good Plus (VG+) is the most commonly listed condition for second-hand records. It indicates a record that has been played carefully and shows only light signs of wear. There may be slight scuffs visible under direct light, but these should not affect playback. Think of it as a well-cared-for used copy."
+                ],
+                [
+                  "Can I trust that a seller's grade is accurate?",
+                  "Sellers are expected to grade honestly — inflating condition grades is a violation of our seller policy and can result in account suspension. If you receive an item that is clearly worse than described, you can report it through the dispute system. Consistently accurate graders earn a \"Trusted Grader\" badge on their profile."
+                ],
+                [
+                  "What's the difference between the media grade and the sleeve grade?",
+                  "The media grade refers to the condition of the vinyl or disc itself, while the sleeve grade covers the outer jacket and any inner sleeves or inserts. It's common for the two to differ — for example, a VG+ record in a VG sleeve. Both grades are shown on every listing."
+                ],
+              ];
+              foreach ($grading_faqs as $i => $faq): ?>
+                <div class="faq-item">
+                  <button
+                    class="faq-question"
+                    aria-expanded="false"
+                    aria-controls="grading-ans-<?= $i ?>"
+                    id="grading-q-<?= $i ?>"
+                  >
+                    <?= htmlspecialchars($faq[0]) ?>
+                    <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
+                  </button>
+                  <div class="faq-answer" id="grading-ans-<?= $i ?>" role="region" aria-labelledby="grading-q-<?= $i ?>">
+                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+
+            <!-- Still need help -->
+            <div class="help-banner" aria-label="Still need help">
+              <div class="help-banner-text">
+                <p class="help-banner-title">Still have a question?</p>
+                <p class="help-banner-sub">Our support team typically responds within 2 business days.</p>
+              </div>
+              <a href="contact.php" class="btn-white">
+                Contact us <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <?php include __DIR__ . '/includes/footer.php'; ?>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+  <script>
+    // Category switching 
+    const catBtns    = document.querySelectorAll('.cat-btn');
+    const catPanels  = document.querySelectorAll('.faq-section');
+
+    catBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.cat;
+
+        catBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+        catPanels.forEach(p => p.classList.remove('active'));
+
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        document.getElementById('cat-' + target).classList.add('active');
+
+        // Clear search when switching categories
+        document.getElementById('faq-search').value = '';
+        document.getElementById('no-results').style.display = 'none';
+        document.querySelectorAll('.faq-item').forEach(item => item.style.display = '');
+      });
+    });
+
+    // Accordion
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer   = document.getElementById(btn.getAttribute('aria-controls'));
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+        // Collapse all in the same section first
+        const section = btn.closest('.faq-section');
+        section.querySelectorAll('.faq-question').forEach(q => {
+          q.setAttribute('aria-expanded', 'false');
+          document.getElementById(q.getAttribute('aria-controls')).classList.remove('open');
+        });
+
+        // Toggle clicked item
+        if (!expanded) {
+          btn.setAttribute('aria-expanded', 'true');
+          answer.classList.add('open');
+        }
+      });
+    });
+
+    // Live search across all questions
+    const searchInput = document.getElementById('faq-search');
+    const noResults   = document.getElementById('no-results');
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+
+      if (!query) {
+        // Restore category view
+        noResults.style.display = 'none';
+        catPanels.forEach(p => {
+          const isActive = p.id === 'cat-' + document.querySelector('.cat-btn.active').dataset.cat;
+          p.classList.toggle('active', isActive);
+        });
+        document.querySelectorAll('.faq-item').forEach(item => item.style.display = '');
+        return;
+      }
+
+      // Show all sections during search
+      catPanels.forEach(p => p.classList.add('active'));
+
+      let anyVisible = false;
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const questionText = item.querySelector('.faq-question').textContent.toLowerCase();
+        const answerText   = item.querySelector('.faq-answer-inner').textContent.toLowerCase();
+        const matches      = questionText.includes(query) || answerText.includes(query);
+
+        item.style.display = matches ? '' : 'none';
+        if (matches) anyVisible = true;
+
+        // Auto-open matching items
+        if (matches) {
+          const btn    = item.querySelector('.faq-question');
+          const answer = document.getElementById(btn.getAttribute('aria-controls'));
+          btn.setAttribute('aria-expanded', 'true');
+          answer.classList.add('open');
+        }
+      });
+
+      noResults.style.display = anyVisible ? 'none' : 'block';
+
+      // Hide empty section headings
+      catPanels.forEach(panel => {
+        const visibleItems = [...panel.querySelectorAll('.faq-item')].filter(i => i.style.display !== 'none');
+        panel.classList.toggle('active', visibleItems.length > 0);
+      });
+    });
+  </script>
+
+</body>
+</html>
