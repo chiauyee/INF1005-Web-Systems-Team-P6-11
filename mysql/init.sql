@@ -8,18 +8,19 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS artists (
     artist_mbid VARCHAR(200) PRIMARY KEY,
-    artist_name VARCHAR(100)
+    artist_name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS albums (
     album_mbid VARCHAR(200) PRIMARY KEY,
-    artist_mbid VARCHAR(200),
-    album_name VARCHAR(100)
+    artist_mbid VARCHAR(200) NOT NULL,
+    album_name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS listings (
-    listing_id INT PRIMARY KEY,
+    listing_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT
     album_mbid VARCHAR(200),
     seller_id INT,
+    price FLOAT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
