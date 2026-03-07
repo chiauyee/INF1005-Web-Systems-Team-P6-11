@@ -17,14 +17,12 @@ body {
     min-height: 100vh;
 }
 
-/* ── Two-column layout ── */
 .login-wrapper {
     min-height: calc(100vh - 60px);
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-/* ── Left decorative panel ── */
 .login-left {
     background-color: #1a1a1a;
     display: flex;
@@ -36,7 +34,6 @@ body {
     overflow: hidden;
 }
 
-/* Concentric circle decoration */
 .login-left::before {
     content: '';
     position: absolute;
@@ -102,7 +99,6 @@ body {
     margin-top: 0.2rem;
 }
 
-/* ── Right form panel ── */
 .login-right {
     background: var(--white);
     display: flex;
@@ -139,7 +135,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* ── Form inputs ── */
 .form-label {
     font-size: 0.78rem;
     font-weight: 500;
@@ -189,7 +184,6 @@ body {
 
 .form-control::placeholder { color: #bbb; }
 
-/* ── CAPTCHA box ── */
 .captcha-box {
     background: var(--bg);
     border: 1.5px solid var(--border);
@@ -225,7 +219,6 @@ body {
     border-left-color: var(--text);
 }
 
-/* ── Submit button — matches site's btn-dark ── */
 .btn-login {
     background: #1a1a1a;
     color: #fff;
@@ -253,7 +246,6 @@ body {
 
 .btn-login:active { transform: translateY(0); }
 
-/* ── Error alert ── */
 .alert-danger {
     background: #fff5f5;
     border: 1.5px solid #fecaca;
@@ -264,7 +256,6 @@ body {
     margin-bottom: 1.25rem;
 }
 
-/* ── Register link ── */
 .register-prompt {
     font-size: 0.85rem;
     color: var(--text-muted);
@@ -279,7 +270,6 @@ body {
     text-underline-offset: 2px;
 }
 
-/* ── Mobile: hide left panel ── */
 @media (max-width: 768px) {
     .login-wrapper { grid-template-columns: 1fr; }
     .login-left { display: none; }

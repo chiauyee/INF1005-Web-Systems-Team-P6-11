@@ -3,6 +3,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
@@ -44,11 +46,16 @@ if (session_status() === PHP_SESSION_NONE) {
                         </ul>
                     </li>
                 <?php else: ?>
+                    <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
                     <li class="nav-item me-2">
-                        <a class="btn btn-outline-dark" href="login.php">Login</a>
+                        <a class="btn <?= $current_page == 'login.php' ? 'btn-outline-dark' : 'btn-dark' ?>" href="login.php">
+                            Login
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-dark" href="register.php">Register</a>
+                        <a class="btn <?= $current_page == 'register.php' ? 'btn-outline-dark' : 'btn-dark' ?>" href="register.php">
+                            Register
+                        </a>
                     </li>
                 <?php endif; ?>
             </ul>
