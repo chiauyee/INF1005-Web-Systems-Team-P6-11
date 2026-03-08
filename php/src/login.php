@@ -4,6 +4,9 @@ require 'db.php';
 
 $error = '';
 
+// i want to get rid of this because it is worse than useless
+// we can probably integrate an actual captcha, it's not hard
+
 // Generate simple math CAPTCHA
 if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
     $_SESSION['captcha_num1'] = rand(1, 10);
@@ -65,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-wrapper">
         <div class="login-left">
             <h2 class="panel-heading">Good to have<br>you <em>back.</em></h2>
-            <p class="panel-desc">Sign in to browse your collection, track orders and discover new records waiting for you.</p>
+            <p class="panel-desc">Sign in to browse your collection, track orders and discover new records.</p>
             
             <div class="panel-stats">
                 <div class="stat-item">
