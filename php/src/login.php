@@ -6,26 +6,13 @@ $error = '';
 
 // i want to get rid of this because it is worse than useless
 // we can probably integrate an actual captcha, it's not hard
-
-// Generate simple math CAPTCHA
-if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
-    $_SESSION['captcha_num1'] = rand(1, 10);
-    $_SESSION['captcha_num2'] = rand(1, 10);
-}
-$captcha_answer = $_SESSION['captcha_num1'] + $_SESSION['captcha_num2'];
+// will be implementing email otp verification
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username      = trim($_POST['username'] ?? '');
     $password      = $_POST['password'] ?? '';
-    $captcha_input = trim($_POST['captcha'] ?? '');
 
-    // Regenerate captcha for next attempt
-    $_SESSION['captcha_num1'] = rand(1, 10);
-    $_SESSION['captcha_num2'] = rand(1, 10);
-
-    if ($captcha_input != $captcha_answer) {
-        $error = "Wrong answer to the math question. Please try again.";
-    } elseif (!$username || !$password) {
+    if (!$username || !$password) {
         $error = "Please fill in both fields.";
     } else {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
@@ -41,8 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Invalid username or password.';
         }
     }
-
-    $captcha_answer = $_SESSION['captcha_num1'] + $_SESSION['captcha_num2'];
 }
 ?>
 
@@ -113,12 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="captcha" class="form-label">Security Check: <?= $_SESSION['captcha_num1'] ?> + <?= $_SESSION['captcha_num2'] ?> = ?</label>
-                        <div class="input-wrap">
-                            <i class="bi bi-shield-lock"></i>
-                            <input type="text" name="captcha" id="captcha" class="form-control" required autocomplete="off">
-                        </div>
+                    <div class="mb-3 text-end">
+                        <a href="forgot_password.php" class="forgot-password">Forgot password?</a>
                     </div>
 
                     <button type="submit" class="btn-login">Sign In 
