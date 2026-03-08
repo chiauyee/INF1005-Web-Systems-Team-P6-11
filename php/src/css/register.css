@@ -241,3 +241,14 @@ body {
     .register-right { padding: 2rem 1.5rem; }
     .form-area { max-width: 100%; }
 }
+
+.password-checklist{
+    list-style: none;
+    padding-left: 0;
+    font-size: 14px;
+    display: none;
+}
+
+.password-checklist li{
+    color: red;
+}

@@ -3,6 +3,8 @@ session_start();
 require 'db.php';
 
 $error = '';
+$password_pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
+$passwordErrors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -13,17 +15,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'All fields are required.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Invalid email address.';
-    } elseif (strlen($password) < 6) {
-        $error = 'Password must be at least 6 characters.';
     } else {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        try {
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            $stmt->execute([$username, $email, $hash]);
-            header('Location: login.php?registered=1');
-            exit;
-        } catch (PDOException $e) {
-            $error = 'Username or email already taken.';
+
+        if (strlen($password) < 8) {
+            $passwordErrors[] = "At least 8 characters";
+        }
+
+        if (!preg_match('/[A-Z]/', $password)) {
+            $passwordErrors[] = "One uppercase letter";
+        }
+
+        if (!preg_match('/[a-z]/', $password)) {
+            $passwordErrors[] = "One lowercase letter";
+        }
+
+        if (!preg_match('/[0-9]/', $password)) {
+            $passwordErrors[] = "One number";
+        }
+
+        if (!preg_match('/[@$!%*?&]/', $password)) {
+            $passwordErrors[] = "One special character";
+        }
+
+        if (!empty($passwordErrors)) {
+            $error = "Password does not meet the requirements.";
+        } else {
+
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+
+            try {
+                $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+                $stmt->execute([$username, $email, $hash]);
+                header('Location: login.php?registered=1');
+                exit;
+            } catch (PDOException $e) {
+                $error = 'Username or email already taken.';
+            }
         }
     }
 }
@@ -100,6 +127,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="bi bi-lock"></i>
                             <input type="password" name="password" id="password" class="form-control" required>
                         </div>
+
+                        <ul class="password-checklist mt-2">
+                            <li id="length">At least 8 characters</li>
+                            <li id="upper">One uppercase letter</li>
+                            <li id="lower">One lowercase letter</li>
+                            <li id="number">One number</li>
+                            <li id="special">One special character</li>
+                        </ul>
                     </div>
 
                     <button type="submit" class="btn-register">Create Account
@@ -115,5 +150,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   
     <!-- Bootstrap JavaScript -->
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+   <script>
+        const password = document.getElementById("password");
+        const checklist = document.querySelector(".password-checklist");
+
+        password.addEventListener("focus", function(){
+            checklist.style.display = "block";
+        });
+
+        password.addEventListener("blur", function(){
+            if(password.value === ""){
+                checklist.style.display = "none";
+            }
+        });
+
+        password.addEventListener("keyup", function(){
+
+            const value = password.value;
+
+            document.getElementById("length").style.color =
+                value.length >= 8 ? "green" : "red";
+
+            document.getElementById("upper").style.color =
+                /[A-Z]/.test(value) ? "green" : "red";
+
+            document.getElementById("lower").style.color =
+                /[a-z]/.test(value) ? "green" : "red";
+
+            document.getElementById("number").style.color =
+                /[0-9]/.test(value) ? "green" : "red";
+
+            document.getElementById("special").style.color =
+                /[@$!%*?&]/.test(value) ? "green" : "red";
+        });
+    </script>
 </body>
 </html>
