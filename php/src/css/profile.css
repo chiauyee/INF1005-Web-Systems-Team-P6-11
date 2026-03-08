@@ -18,14 +18,12 @@ body {
     min-height: 100vh;
 }
 
-/* ── Page wrapper ── */
 .profile-page {
     max-width: 960px;
     margin: 3rem auto;
     padding: 0 1.5rem;
 }
 
-/* ── Profile header card ── */
 .profile-header {
     background: var(--dark-panel);
     border-radius: 8px;
@@ -96,43 +94,6 @@ body {
     margin-top: 0.4rem;
 }
 
-/* ── Info cards row ── */
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.info-card {
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-}
-
-.info-card-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.35rem;
-}
-
-.info-card-value {
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--text);
-}
-
-.info-card .bi {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-/* ── Section cards ── */
 .section-card {
     background: var(--white);
     border: 1.5px solid var(--border);
@@ -150,7 +111,6 @@ body {
     border-bottom: 1.5px solid var(--border);
 }
 
-/* ── Contact details form ── */
 .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -211,7 +171,6 @@ body {
 
 .field-input::placeholder { color: #bbb; }
 
-/* ── Alerts ── */
 .alert-success {
     background: #f0fdf4;
     border: 1.5px solid #bbf7d0;
@@ -232,7 +191,6 @@ body {
     margin-bottom: 1.25rem;
 }
 
-/* ── Empty state ── */
 .empty-state {
     text-align: center;
     padding: 2rem 1rem;
@@ -252,7 +210,6 @@ body {
     font-weight: 500;
 }
 
-/* ── Action buttons ── */
 .profile-actions {
     display: flex;
     gap: 0.75rem;
@@ -305,10 +262,8 @@ body {
     transform: translateY(-1px);
 }
 
-/* ── Responsive ── */
 @media (max-width: 768px) {
     .profile-header { flex-direction: column; text-align: center; }
-    .info-grid { grid-template-columns: 1fr; }
     .field-row { grid-template-columns: 1fr; }
     .profile-actions { flex-direction: column; }
 }
