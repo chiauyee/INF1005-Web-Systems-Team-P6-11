@@ -130,14 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <li id="special">One special character</li>
                         </ul>
 
-              <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <div class="input-wrap">
-                        <i class="bi bi-envelope"></i>
-                        <input type="email" id="email" class="form-control" required>
-                    </div>
-                </div>
-
                 <button type="button" id="btn-register" class="btn-register">
                     Create Account <i class="bi bi-arrow-right"></i>
                 </button>

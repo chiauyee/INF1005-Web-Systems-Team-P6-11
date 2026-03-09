@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Invalid username or password.';
         }
     }
-
+}
 // Initialise captcha numbers if not set
 if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
     $_SESSION['captcha_num1'] = rand(1, 10);
@@ -96,16 +96,6 @@ if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
 
                     <div class="mb-3 text-end">
                         <a href="forgot_password.php" class="forgot-password">Forgot password?</a>
-
-                    <div class="mb-3">
-                        <label for="captcha" class="form-label">
-                            Security Check: <?= $_SESSION['captcha_num1'] ?> + <?= $_SESSION['captcha_num2'] ?> = ?
-                        </label>
-                        <div class="input-wrap">
-                            <i class="bi bi-shield-lock"></i>
-                            <input type="text" name="captcha" id="captcha" class="form-control" required autocomplete="off">
-                        </div>
-                    </div>
 
                     <button type="button" id="btn-login" class="btn-login">
                         Sign In <i class="bi bi-arrow-right"></i>
