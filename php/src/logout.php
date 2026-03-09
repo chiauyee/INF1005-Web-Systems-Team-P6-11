@@ -1,5 +1,4 @@
 <?php
-session_start();
-session_destroy();
-header('Location: index.php');
+// logout.php now just redirects to the API endpoint
+header('Location: /api/logout.php');
 exit;
