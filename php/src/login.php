@@ -28,12 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
 // Initialise captcha numbers if not set
 if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
     $_SESSION['captcha_num1'] = rand(1, 10);
     $_SESSION['captcha_num2'] = rand(1, 10);
 }
 ?>
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -95,10 +97,21 @@ if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
                     </div>
 
                     <div class="mb-3 text-end">
-                        <a href="forgot_password.php" class="forgot-password">Forgot password?</a>
+                        <a href="forgot_password.php" class="register-prompt">Forgot password?</a>
+                    </div>
 
-                    <button type="button" id="btn-login" class="btn-login">
-                        Sign In <i class="bi bi-arrow-right"></i>
+                    <div class="mb-3">
+                        <label for="captcha" class="form-label">
+                            Security Check: <?= $_SESSION['captcha_num1'] ?> + <?= $_SESSION['captcha_num2'] ?> = ?
+                        </label>
+                        <div class="input-wrap">
+                            <i class="bi bi-shield-lock"></i>
+                            <input type="text" name="captcha" id="captcha" class="form-control" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <button type="button" id="btn-login" class="btn-login">Sign In 
+                        <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
 

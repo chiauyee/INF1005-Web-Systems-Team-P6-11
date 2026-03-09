@@ -107,40 +107,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email:</label>
-                        <div class="input-wrap">
-                            <i class="bi bi-envelope"></i>
-                            <input type="email" name="email" id="email" class="form-control" required>
-                        </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <div class="input-wrap">
+                        <i class="bi bi-envelope"></i>
+                        <input type="email" name="email" id="email" class="form-control" required>
                     </div>
+                </div>
                             
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password:</label>
-                        <div class="input-wrap">
-                            <i class="bi bi-lock"></i>
-                            <input type="password" name="password" id="password" class="form-control" required>
-                        </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <div class="input-wrap">
+                        <i class="bi bi-lock"></i>
+                        <input type="password" name="password" id="password" class="form-control" required>
+                    </div>
 
-                        <ul class="password-checklist mt-2">
-                            <li id="length">At least 8 characters</li>
-                            <li id="upper">One uppercase letter</li>
-                            <li id="lower">One lowercase letter</li>
-                            <li id="number">One number</li>
-                            <li id="special">One special character</li>
-                        </ul>
-
-                <button type="button" id="btn-register" class="btn-register">
-                    Create Account <i class="bi bi-arrow-right"></i>
-                </button>
-
-                <p class="login-prompt">Already have an account? <a href="login.php">Sign in</a></p>
+                    <ul class="password-checklist mt-2">
+                        <li id="length">At least 8 characters</li>
+                        <li id="upper">One uppercase letter</li>
+                        <li id="lower">One lowercase letter</li>
+                        <li id="number">One number</li>
+                        <li id="special">One special character</li>
+                    </ul>
+                    
+                    <button type="button" id="btn-register" class="btn-register">Create Account 
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                    
+                    <p class="login-prompt">Already have an account? <a href="login.php">Sign in</a></p>
+                </div>
             </div>
         </div>
     </div>
   </main>
   
-    <!-- Bootstrap JavaScript -->
+  <!-- Bootstrap JavaScript -->
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
    <script>

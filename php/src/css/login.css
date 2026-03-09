@@ -176,10 +176,6 @@ body {
 
 .form-control::placeholder { color: #bbb; }
 
-.forgot-password {
-    text-align: right;
-}
-
 .btn-login {
     background: #1a1a1a;
     color: #fff;

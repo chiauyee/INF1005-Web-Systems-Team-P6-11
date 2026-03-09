@@ -54,7 +54,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mail->addAddress($email);
 
                 $mail->Subject = 'Password Reset';
-                $mail->Body = "Click this link to reset your password:\n\n$reset_link";
+
+                $mail->Body = <<<EOT
+                Dear {$user['username']},
+
+                We received a request to reset the password for your account.
+
+                To reset your password, please click the link below:
+                $reset_link
+
+                If you did not request a password reset, please ignore this email. Your account will remain secure.
+
+                For security reasons, this link will expire shortly.
+
+                Best regards,
+                MusicMarket Support Team
+                EOT;
 
                 $mail->send();
 
