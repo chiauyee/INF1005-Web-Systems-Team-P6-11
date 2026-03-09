@@ -2,6 +2,12 @@
 session_start();
 require 'db.php';
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require __DIR__ . '/PHPMailer-master/src/Exception.php';
+require __DIR__ . '/PHPMailer-master/src/PHPMailer.php';
+require __DIR__ . '/PHPMailer-master/src/SMTP.php';
+
 $success = '';
 $error   = '';
 
@@ -15,8 +21,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Always show success to prevent email enumeration
-        // TODO: If $user exists, generate a token, store it, and send reset email via PHPMailer
+        if ($user) {
+            // Generate secure token
+            $token = bin2hex(random_bytes(32));
+            $token_hash = hash('sha256', $token);
+
+            // Expiry time (30 minutes)
+            $expires = date("Y-m-d H:i:s", time() + 1800);
+
+            // Store token in database
+            $stmt = $pdo->prepare("INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, ?)");
+            $stmt->execute([$user['id'], $token_hash, $expires]);
+
+            // Create reset link
+            $reset_link = "http://localhost:8080/reset_password.php?token=" . $token;
+
+            
+
+            $mail = new PHPMailer(true);
+
+            try {
+
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'wongchiauyee@gmail.com';
+                $mail->Password   = 'ndhi lknz xqkm gcxf';
+                $mail->SMTPSecure = 'tls';
+                $mail->Port       = 587;
+
+                $mail->setFrom('wongchiauyee@gmail.com', 'MusicMarket');
+                $mail->addAddress($email);
+
+                $mail->Subject = 'Password Reset';
+                $mail->Body = "Click this link to reset your password:\n\n$reset_link";
+
+                $mail->send();
+
+            } catch (Exception $e) {
+                echo "Mailer Error: {$mail->ErrorInfo}";
+            }
+        }
+        
         $success = 'If that email is registered, a reset link has been sent.';
     }
 }
