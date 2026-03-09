@@ -3,7 +3,7 @@
     --white: #ffffff;
     --border: #e2e2de;
     --text: #1a1a1a;
-    --text-muted: #666;
+    --text-muted: #291f1f;
     --dark-panel: #1a1a1a;
     --input-focus: rgba(26, 26, 26, 0.08);
 }
@@ -72,7 +72,7 @@ body {
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
+    color: #ffffff;
     margin-bottom: 0.25rem;
 }
 

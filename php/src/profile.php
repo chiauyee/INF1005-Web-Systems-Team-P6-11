@@ -297,7 +297,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 <body>
     <?php include __DIR__ . '/includes/navigation.php'; ?>
 
-    <div class="profile-page">
+    <main class="profile-page">
         <div class="profile-header">
             <div class="avatar">
                 <?= strtoupper(substr(htmlspecialchars($user['username']), 0, 1)) ?>
@@ -398,7 +398,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
             </a>
         </div>
 
-    </div>
+	</main>
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
