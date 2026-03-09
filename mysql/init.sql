@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS albums (
 );
 
 CREATE TABLE IF NOT EXISTS listings (
-    listing_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT
+    listing_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     album_mbid VARCHAR(200),
     seller_id INT,
     price FLOAT,
