@@ -54,11 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <i class="bi bi-envelope-check"></i>
                             </div>
                             <h1 class="success-title">Check your inbox</h1>
-                            <p class="success-desc">
-                                If <strong><?= htmlspecialchars($_POST['email'] ?? 'that email') ?></strong> is registered with us,
-                                you'll receive a password reset link shortly.<br><br>
-                                Don't see it? Check your spam folder.
-                            </p>
+                            <p class="success-desc">If <strong><?= htmlspecialchars($_POST['email'] ?? 'that email') ?></strong> is registered with us, you'll receive a password reset link shortly.<br><br> Don't see it? Check your spam folder.</p>
                             <a href="login.php" class="btn-back">
                                 <i class="bi bi-arrow-left"></i> Back to Sign In
                             </a>
@@ -78,20 +74,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="email" class="form-label">Email address:</label>
                                 <div class="input-wrap">
                                     <i class="bi bi-envelope"></i>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                           placeholder="you@example.com"
-                                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
-                                           required autofocus>
+                                    <input type="email" name="email" id="email" class="form-control" placeholder="you@example.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required autofocus>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn-forgot">
-                                Send Reset Link <i class="bi bi-arrow-right"></i>
+                            <button type="submit" class="btn-forgot">Send Reset Link 
+                                <i class="bi bi-arrow-right"></i>
                             </button>
                         </form>
 
-                        <p class="forgot-prompt">
-                            Remember your password? <a href="login.php">Sign in</a>
+                        <p class="forgot-prompt">Remember your password? 
+                            <a href="login.php">Sign in</a>
                         </p>
                     <?php endif; ?>
 

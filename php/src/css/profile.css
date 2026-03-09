@@ -83,17 +83,6 @@ body {
     margin-bottom: 0.25rem;
 }
 
-.profile-email {
-    font-size: 0.875rem;
-    color: rgba(255,255,255,0.45);
-}
-
-.profile-joined {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.3);
-    margin-top: 0.4rem;
-}
-
 .section-card {
     background: var(--white);
     border: 1.5px solid var(--border);

@@ -50,14 +50,6 @@ body {
     pointer-events: none;
 }
 
-.panel-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 2rem;
-}
-
 .panel-heading {
     font-family: 'Playfair Display', serif;
     font-size: 3rem;
@@ -244,87 +236,4 @@ body {
     .login-left { display: none; }
     .login-right { padding: 2rem 1.5rem; }
     .form-area { max-width: 100%; }
-}
-
-.forgot-panel {
-    display: none;
-    margin-top: 1rem;
-    padding: 1.25rem;
-    background: #f8f8f6;
-    border: 1.5px solid #e2e2de;
-    border-radius: 6px;
-    animation: fadeIn 0.2s ease;
-}
-
-.forgot-panel.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.forgot-panel-title {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: #1a1a1a;
-    margin-bottom: 0.75rem;
-}
-
-.forgot-panel .input-wrap input {
-    padding-left: 2.4rem;
-}
-
-.btn-reset {
-    background: #1a1a1a;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.85rem;
-    padding: 0.55rem 1.1rem;
-    margin-top: 0.75rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-    justify-content: center;
-}
-
-.btn-reset:hover { background: #333; }
-
-.forgot-password {
-    font-size: 0.82rem;
-    color: #1a1a1a;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.forgot-password:hover {
-    text-decoration: underline;
-    text-underline-offset: 2px;
-}
-
-.alert-reset-success {
-    background: #f0fdf4;
-    border: 1.5px solid #bbf7d0;
-    color: #15803d;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    padding: 0.6rem 0.85rem;
-    margin-top: 0.75rem;
-}
-
-.alert-reset-danger {
-    background: #fff5f5;
-    border: 1.5px solid #fecaca;
-    color: #b91c1c;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    padding: 0.6rem 0.85rem;
-    margin-top: 0.75rem;
 }

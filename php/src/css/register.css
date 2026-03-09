@@ -50,14 +50,6 @@ body {
     pointer-events: none;
 }
 
-.panel-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 2rem;
-}
-
 .panel-heading {
     font-family: 'Playfair Display', serif;
     font-size: 3rem;
@@ -235,20 +227,20 @@ body {
     text-underline-offset: 2px;
 }
 
-@media (max-width: 768px) {
-    .register-wrapper { grid-template-columns: 1fr; }
-    .register-left { display: none; }
-    .register-right { padding: 2rem 1.5rem; }
-    .form-area { max-width: 100%; }
-}
-
-.password-checklist{
+.password-checklist {
     list-style: none;
     padding-left: 0;
     font-size: 14px;
     display: none;
 }
 
-.password-checklist li{
+.password-checklist li {
     color: red;
+}
+
+@media (max-width: 768px) {
+    .register-wrapper { grid-template-columns: 1fr; }
+    .register-left { display: none; }
+    .register-right { padding: 2rem 1.5rem; }
+    .form-area { max-width: 100%; }
 }
