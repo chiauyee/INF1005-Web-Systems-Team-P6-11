@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
+    status ENUM('active', 'banned') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -18,9 +20,13 @@ CREATE TABLE IF NOT EXISTS albums (
 );
 
 CREATE TABLE IF NOT EXISTS listings (
-    listing_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT
+    listing_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     album_mbid VARCHAR(200),
     seller_id INT,
     price FLOAT,
+    status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT IGNORE INTO users (username, email, password, role, status) VALUES
+('admin', 'admin@musicmarket.com', '$2y$12$9aPVvCPwYYIaMEF/RSSZe.cAz3JfXEvhoB.hB9RHeH0DYqi3uTH6m', 'admin', 'active');
