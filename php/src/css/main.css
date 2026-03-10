@@ -3,43 +3,214 @@
     --white: #ffffff;
     --border: #e2e2de;
     --text: #1a1a1a;
-    --text-muted: #666;
+    --text-muted: #666666;
+    --dark-panel: #1a1a1a;
 }
 
-* { box-sizing: border-box; }
+html { overflow-y: scroll; }
 
 body {
     font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
     background-color: var(--bg);
     color: var(--text);
-    min-height: 100vh;
 }
 
 .background {
-    background: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4') no-repeat center center;
-    background-size: cover;
-    color: white;
-    padding: 120px 0;
-    min-height: 400px;
+    background: var(--dark-panel);
+    position: relative;
+    overflow: hidden;
+    padding: 100px 0 90px;
     text-align: center;
+    color: #fff;
+}
+
+.background::before {
+    content: '';
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    right: -120px;
+    top: -120px;
+    border: 60px solid rgba(255,255,255,0.025);
+    box-shadow:
+        0 0 0 60px rgba(255,255,255,0.018),
+        0 0 0 120px rgba(255,255,255,0.01);
+    pointer-events: none;
+}
+
+.background::after {
+    content: '';
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    left: -80px;
+    bottom: -80px;
+    border: 50px solid rgba(255,255,255,0.02);
+    pointer-events: none;
+}
+
+.background .container {
+    position: relative;
+    z-index: 1;
 }
 
 .background h1 {
-    font-size: 3rem;
-    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.75rem;
 }
 
 .background p {
-    font-size: 1.25rem;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 2rem;
+}
+
+.background .form-control {
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.65rem 1rem;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.background .form-control::placeholder {
+    color: rgba(255,255,255,0.3);
+}
+
+.background .form-control:focus {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.4);
+    box-shadow: none;
+    outline: none;
+    color: #fff;
+}
+
+.background .btn-dark {
+    background: #fff;
+    color: var(--dark-panel);
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.65rem 1.4rem;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.background .btn-dark:hover {
+    background: #e8e8e8;
+    transform: translateY(-1px);
+}
+
+/* ── Featured Albums section ── */
+main > section.container {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}
+
+main > section.container h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1.5rem !important;
+}
+
+.card {
+    border: 1.5px solid var(--border) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background: var(--white);
+    transition: transform 0.2s, border-color 0.2s;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    border-color: #c8c8c4 !important;
+}
+
+.card-img-top {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-bottom: 1.5px solid var(--border);
+}
+
+.card-body {
+    padding: 0.9rem 1rem;
+}
+
+.card-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem !important;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+}
+
+.card-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+.card .btn-outline-dark {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    background: transparent;
+    padding: 0.45rem 0.85rem;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.card .btn-outline-dark:hover {
+    background: var(--dark-panel);
+    border-color: var(--dark-panel);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.card .card-body + .card-body {
+    padding-top: 0;
+    padding-bottom: 0.9rem;
 }
 
 footer {
-    background-color: #1a1a1a;
-    color: white;
+    background-color: var(--dark-panel);
+    color: #fff;
     padding: 20px 0;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
 }
 
 footer a {
-    color: #fff;
+    color: rgba(255,255,255,0.45);
     text-decoration: none;
+}
+
+footer a:hover {
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .background { padding: 70px 0 60px; }
+    .background h1 { font-size: 2rem; }
 }
