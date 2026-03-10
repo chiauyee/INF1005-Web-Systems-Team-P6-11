@@ -44,187 +44,86 @@ if (isset($_POST['add_to_cart']))
         </div>
       </section>
 
-      <!-- Featured Albums -->
+      <!-- Recently Listed Albums -->
       <section class="container mt-3 mb-3">
         <div class="container">
-          <h2 class="mb-4 text-center">Featured Albums</h2>
-          <div class="row g-3">
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 1</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 2</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 3</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 4</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 5</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 6</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 7</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-3">
-              <div class="card shadow-sm">
-                <a href="product.php?id=1" class="text-decoration-none text-dark">
-                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80" class="card-img-top" alt="Album 1">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">Album Name 8</h5>
-                    <p class="card-text">Artist Name</p>
-                  </div>
-                </a>
-
-                <div class="card-body d-flex gap-2">
-                  <form method="POST" class="m-0">
-                    <input type="hidden" name="add_to_cart" value="1">
-                    <button type="submit" class="btn btn-outline-dark">Add to cart 
-                      <i class="bi bi-cart"></i>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
+          <h2 class="mb-4 text-center">Recently Listed</h2>
+          <div id="featured-albums" class="row g-3">
+            <p class="text-center text-muted">Loading...</p>
+          </div>
         </div>
       </section>
     </main>
-    
+
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    <script>
+      const ALBUM_COVER = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80';
+
+      function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+
+      function renderFeaturedAlbums(listings) {
+        const container = document.getElementById('featured-albums');
+
+        if (!listings.length) {
+          container.innerHTML = '<p class="text-center text-muted">No listings available yet.</p>';
+          return;
+        }
+
+        container.innerHTML = listings.map(listing => `
+          <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+              <a href="album.php?mbid=${encodeURIComponent(listing.album_mbid)}" class="text-decoration-none text-dark">
+                <img src="${ALBUM_COVER}" class="card-img-top" alt="${escHtml(listing.album_name)}">
+                <div class="card-body">
+                  <h3 class="card-title fs-5">${escHtml(listing.album_name)}</h3>
+                  <p class="card-text mb-1">${escHtml(listing.artist_name)}</p>
+                  <p class="card-text mb-1 text-muted small">Listed by: <b>${escHtml(listing.seller)}</b></p>
+                  <p class="card-text mb-1 fw-bold">$${parseFloat(listing.price).toFixed(2)}</p>
+                  <p class="card-text text-muted small">${formatDate(listing.created_at)}</p>
+                </div>
+              </a>
+
+              <div class="card-body d-flex gap-2">
+                <form method="POST" class="m-0">
+                  <input type="hidden" name="add_to_cart" value="1">
+                  <button type="submit" class="btn btn-outline-dark">Add to cart
+                    <i class="bi bi-cart"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function escHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = String(str);
+        return div.innerHTML;
+      }
+
+      fetch('/api/get_listings.php')
+        .then(r => r.json())
+        .then(json => {
+          if (json.error) {
+            document.getElementById('featured-albums').innerHTML =
+              '<p class="text-center text-danger">Failed to load listings.</p>';
+            return;
+          }
+          renderFeaturedAlbums(json.data.slice(0, 8));
+        })
+        .catch(() => {
+          document.getElementById('featured-albums').innerHTML =
+            '<p class="text-center text-danger">Failed to load listings.</p>';
+        });
+    </script>
 </body>
 </html>
-

@@ -82,6 +82,40 @@ CREATE TABLE IF NOT EXISTS album_comments (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-INSERT IGNORE INTO users (username, email, password, role, status) VALUES
-('admin', 'admin@musicmarket.com', '$2y$12$9aPVvCPwYYIaMEF/RSSZe.cAz3JfXEvhoB.hB9RHeH0DYqi3uTH6m', 'admin', 'active');
-;
+/* password for testuser & testuser1 = !TestPW123 */
+INSERT IGNORE INTO `users` (id, username, email, password, phone, address, country, role, status, created_at) VALUES
+(1,'admin','admin@musicmarket.com','$2y$12$9aPVvCPwYYIaMEF/RSSZe.cAz3JfXEvhoB.hB9RHeH0DYqi3uTH6m',NULL,NULL,'SG','admin','active','2026-03-09 12:12:39'),
+(2,'testuser','testuser@gmail.com','$2y$10$gl4/BDzYmdQ1XbcdLLs4/.YjWkCot3/UYEvemfxjkfzHQOR95kdqW',NULL,NULL,'SG','user','active','2026-03-09 12:17:44'),
+(3,'testuser1','testuser1@gmail.com','$2y$10$u5Bb6UdXqQJNiY1us7G3N.b6JKAuRC8Y6zdBo9hF/da3u4NBBoj9i',NULL,NULL,'SG','user','active','2026-03-09 12:26:03');
+
+/* 
+some data below displayed in 
+listings.php & especially index.php 
+else the front page will look empty 
+*/ 
+INSERT INTO `listings` VALUES 
+(10,'1395477C-A71E-4058-A893-D33DFCAD6A4B',2,39,'pending','2026-03-10 17:09:14'),
+(11,'B54CC188-AC86-4821-95D5-FA32841DFAF1',2,999,'pending','2026-03-10 17:09:53'),
+(12,'3466B3D4-2AEA-49E1-8769-7CD1E98092A8',2,79,'pending','2026-03-10 17:10:11'),
+(13,'FE7E674A-C44C-4B73-AD5C-C19BE212B7B4',2,138,'pending','2026-03-10 17:11:36'),
+(14,'9CAA4160-4F12-4379-92E0-CA81EC6AD64B',2,128,'pending','2026-03-10 17:17:55'),
+(15,'16AE3FA2-C7DA-4CC4-A92D-A0D23546172A',2,77,'pending','2026-03-10 17:18:49'),
+(16,'0CA732BA-1796-3592-AD4D-86B21C1D966A',3,405,'pending','2026-03-10 17:26:55');
+
+INSERT INTO `artists` VALUES 
+('0103c1cc-4a09-4a5d-a344-56ad99a77193','AVRIL LAVIGNE'),
+('197450cd-0124-4164-b723-3c22dd16494d','FRANK SINATRA'),
+('381086ea-f511-4aba-bdf9-71c753dc5077','KENDRICK LAMAR'),
+('4e4ebde4-0c56-4dec-844b-6c73adcdd92d','JUICE WRLD'),
+('5cbef01b-cc35-4f52-af7b-d0df0c4f61b9','SONIC YOUTH'),
+('5f000e69-3cfd-4871-8f1b-faa7f0d4bcbc','WESTLIFE'),
+('61af87f4-16ee-4431-8504-cc06187079fb','XXXTENTACION');
+
+INSERT INTO `albums` VALUES 
+('0CA732BA-1796-3592-AD4D-86B21C1D966A','197450cd-0124-4164-b723-3c22dd16494d','MY WAY'),
+('1395477C-A71E-4058-A893-D33DFCAD6A4B','61af87f4-16ee-4431-8504-cc06187079fb','17'),
+('16AE3FA2-C7DA-4CC4-A92D-A0D23546172A','0103c1cc-4a09-4a5d-a344-56ad99a77193','GOODBYE LULLABY'),
+('3466B3D4-2AEA-49E1-8769-7CD1E98092A8','5f000e69-3cfd-4871-8f1b-faa7f0d4bcbc','COAST TO COAST'),
+('9CAA4160-4F12-4379-92E0-CA81EC6AD64B','5cbef01b-cc35-4f52-af7b-d0df0c4f61b9','DAYDREAM NATION'),
+('B54CC188-AC86-4821-95D5-FA32841DFAF1','4e4ebde4-0c56-4dec-844b-6c73adcdd92d','GOODBYE & GOOD RIDDANCE'),
+('FE7E674A-C44C-4B73-AD5C-C19BE212B7B4','381086ea-f511-4aba-bdf9-71c753dc5077','GOOD KID, M.A.A.D CITY');
