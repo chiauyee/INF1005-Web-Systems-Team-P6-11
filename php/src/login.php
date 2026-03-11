@@ -1,15 +1,6 @@
 <?php
 session_start();
 
-// i want to get rid of this because it is worse than useless
-// we can probably integrate an actual captcha, it's not hard
-// will be implementing email otp verification
-
-// Initialise captcha numbers if not set
-if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
-    $_SESSION['captcha_num1'] = rand(1, 10);
-    $_SESSION['captcha_num2'] = rand(1, 10);
-}
 ?>
 
 <!DOCTYPE html>
@@ -76,16 +67,6 @@ if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
                         <a href="forgot_password.php" class="register-prompt">Forgot password?</a>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="captcha" class="form-label">
-                            Security Check: <?= $_SESSION['captcha_num1'] ?> + <?= $_SESSION['captcha_num2'] ?> = ?
-                        </label>
-                        <div class="input-wrap">
-                            <i class="bi bi-shield-lock"></i>
-                            <input type="text" name="captcha" id="captcha" class="form-control" required autocomplete="off">
-                        </div>
-                    </div>
-
                     <button type="button" id="btn-login" class="btn-login">Sign In 
                         <i class="bi bi-arrow-right"></i>
                     </button>
@@ -102,7 +83,6 @@ if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
     document.getElementById('btn-login').addEventListener('click', function () {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
-        const captcha  = document.getElementById('captcha').value.trim();
         const errorDiv = document.getElementById('error-msg');
 
         errorDiv.style.display = 'none';
@@ -110,7 +90,6 @@ if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
         const body = new FormData();
         body.append('username', username);
         body.append('password', password);
-        body.append('captcha', captcha);
 
         fetch('/api/login.php', { method: 'POST', body })
             .then(r => r.json())
@@ -124,8 +103,6 @@ if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
                 } else {
                     errorDiv.textContent = data.error || 'Login failed.';
                     errorDiv.style.display = 'block';
-                    // Reload so PHP regenerates captcha numbers
-                    setTimeout(() => window.location.reload(), 1500);
                 }
             })
             .catch(() => {

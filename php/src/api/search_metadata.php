@@ -35,6 +35,7 @@ if ($row) {
   exit;
 }
 
+// musicbrainz bullshit
 $query = urlencode("artist:$artist AND release:$album");
 $url = "https://musicbrainz.org/ws/2/release/?query=$query&fmt=json";
 

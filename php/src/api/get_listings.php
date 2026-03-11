@@ -16,7 +16,7 @@ $album_mbid   = trim($_GET['album_mbid'] ?? '');
 
 try {
     $params = [];
-    $where  = [];
+    $where  = ["l.status = 'available'"];
 
     if ($artist_mbid) {
         $where[]  = 'ar.artist_mbid = ?';
@@ -54,6 +54,7 @@ try {
         $where_sql
         ORDER BY l.created_at DESC
     ");
+    error_log($stmt->queryString);
     $stmt->execute($params);
     $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

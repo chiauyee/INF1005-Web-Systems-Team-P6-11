@@ -12,18 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $username      = trim($_POST['username'] ?? '');
 $password      = $_POST['password'] ?? '';
-$captcha_input = trim($_POST['captcha'] ?? '');
-$captcha_answer = $_SESSION['captcha_num1'] + $_SESSION['captcha_num2'];
-
-// Regenerate captcha regardless of outcome
-$_SESSION['captcha_num1'] = rand(1, 10);
-$_SESSION['captcha_num2'] = rand(1, 10);
-
-if ((int)$captcha_input !== (int)$captcha_answer) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Wrong answer to the math question. Please try again.']);
-    exit;
-}
 
 if (!$username || !$password) {
     http_response_code(400);

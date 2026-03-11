@@ -68,6 +68,7 @@ function renderListings(listings) {
                     <th>Seller</th>
                     <th>Listed at</th>
                     <th>Price</th>
+                    <th>Buy</th>
                 </tr>
             </thead>
             <tbody>
@@ -82,6 +83,7 @@ function renderListings(listings) {
                 <td>${escHtml(row.seller)}</td>
                 <td>${escHtml(row.created_at)}</td>
                 <td>${escHtml(row.price)}</td>
+                <td onclick=buyListing(${row.listing_id})>Place order</td>
             </tr>
         `;
     });
@@ -89,6 +91,19 @@ function renderListings(listings) {
     html += '</tbody></table>';
     container.innerHTML = html;
 }
+
+function buyListing(listing_id) {
+  fetch('/api/buy_listing.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({listing_id: listing_id})
+  })
+    .then(r => r.json())
+    .then(json => {
+      console.log(json);
+    })
+}
+
 
 function fetchListings(params) {
     const qs = new URLSearchParams(params).toString();

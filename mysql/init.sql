@@ -27,19 +27,20 @@ CREATE TABLE IF NOT EXISTS listings (
     listing_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     album_mbid VARCHAR(200),
     seller_id INT,
+    buyer_id INT DEFAULT NULL,
     price FLOAT,
-    status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+    status ENUM('available', 'pending', 'complete') NOT NULL DEFAULT 'available',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS password_resets (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  token_hash CHAR(64) NOT NULL,
-  expires_at DATETIME NOT NULL,
-  used TINYINT(1) DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token_hash CHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS artist_images (
@@ -82,6 +83,26 @@ CREATE TABLE IF NOT EXISTS album_comments (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS chats (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  listing_id INT,
+  buyer_id INT,
+  seller_id INT,
+  FOREIGN KEY (listing_id) REFERENCES listings(listing_id),
+  FOREIGN KEY (buyer_id) REFERENCES users(id),
+  FOREIGN KEY (seller_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  chat_id INT,
+  sender_id INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  content TEXT NOT NULL,
+  FOREIGN KEY (sender_id) REFERENCES users(id)
+);
+
+
 /* password for testuser & testuser1 = !TestPW123 */
 INSERT IGNORE INTO `users` (id, username, email, password, phone, address, country, role, status, created_at) VALUES
 (1,'admin','admin@musicmarket.com','$2y$12$9aPVvCPwYYIaMEF/RSSZe.cAz3JfXEvhoB.hB9RHeH0DYqi3uTH6m',NULL,NULL,'SG','admin','active','2026-03-09 12:12:39'),
@@ -94,13 +115,13 @@ listings.php & especially index.php
 else the front page will look empty 
 */ 
 INSERT INTO `listings` VALUES 
-(10,'1395477C-A71E-4058-A893-D33DFCAD6A4B',2,39,'pending','2026-03-10 17:09:14'),
-(11,'B54CC188-AC86-4821-95D5-FA32841DFAF1',2,999,'pending','2026-03-10 17:09:53'),
-(12,'3466B3D4-2AEA-49E1-8769-7CD1E98092A8',2,79,'pending','2026-03-10 17:10:11'),
-(13,'FE7E674A-C44C-4B73-AD5C-C19BE212B7B4',2,138,'pending','2026-03-10 17:11:36'),
-(14,'9CAA4160-4F12-4379-92E0-CA81EC6AD64B',2,128,'pending','2026-03-10 17:17:55'),
-(15,'16AE3FA2-C7DA-4CC4-A92D-A0D23546172A',2,77,'pending','2026-03-10 17:18:49'),
-(16,'0CA732BA-1796-3592-AD4D-86B21C1D966A',3,405,'pending','2026-03-10 17:26:55');
+(10,'1395477C-A71E-4058-A893-D33DFCAD6A4B',2,null,39,'pending','2026-03-10 17:09:14'),
+(11,'B54CC188-AC86-4821-95D5-FA32841DFAF1',2,null,999,'pending','2026-03-10 17:09:53'),
+(12,'3466B3D4-2AEA-49E1-8769-7CD1E98092A8',2,null,79,'pending','2026-03-10 17:10:11'),
+(13,'FE7E674A-C44C-4B73-AD5C-C19BE212B7B4',2,null,138,'pending','2026-03-10 17:11:36'),
+(14,'9CAA4160-4F12-4379-92E0-CA81EC6AD64B',2,null,128,'pending','2026-03-10 17:17:55'),
+(15,'16AE3FA2-C7DA-4CC4-A92D-A0D23546172A',2,null,77,'pending','2026-03-10 17:18:49'),
+(16,'0CA732BA-1796-3592-AD4D-86B21C1D966A',3,null,405,'pending','2026-03-10 17:26:55');
 
 INSERT INTO `artists` VALUES 
 ('0103c1cc-4a09-4a5d-a344-56ad99a77193','AVRIL LAVIGNE'),
