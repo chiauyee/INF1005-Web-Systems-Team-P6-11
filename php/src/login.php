@@ -1,33 +1,9 @@
 <?php
 session_start();
 
-$error = '';
-
 // i want to get rid of this because it is worse than useless
 // we can probably integrate an actual captcha, it's not hard
 // will be implementing email otp verification
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username      = trim($_POST['username'] ?? '');
-    $password      = $_POST['password'] ?? '';
-
-    if (!$username || !$password) {
-        $error = "Please fill in both fields.";
-    } else {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id']  = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header('Location: index.php');
-            exit;
-        } else {
-            $error = 'Invalid username or password.';
-        }
-    }
-}
 
 // Initialise captcha numbers if not set
 if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
@@ -140,7 +116,11 @@ if (!isset($_SESSION['captcha_num1']) || !isset($_SESSION['captcha_num2'])) {
             .then(r => r.json())
             .then(data => {
                 if (data.status === 'ok') {
-                    window.location.href = 'index.php';
+                    if (data.role === 'admin') {
+                        window.location.href = '/admin/dashboard.php';
+                    } else {
+                        window.location.href = 'index.php';
+                    }
                 } else {
                     errorDiv.textContent = data.error || 'Login failed.';
                     errorDiv.style.display = 'block';
