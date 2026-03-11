@@ -1,0 +1,121 @@
+<?php
+require '../db.php';
+require __DIR__ . '/inc/admin_auth.php';
+
+/* USERS */
+$totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+
+/* LISTINGS */
+$totalListings = $pdo->query("SELECT COUNT(*) FROM listings")->fetchColumn();
+
+$pendingListings = $pdo->query("
+    SELECT COUNT(*)
+    FROM listings
+    WHERE status='pending'
+")->fetchColumn();
+
+/* IMAGES */
+$artistImages = $pdo->query("SELECT COUNT(*) FROM artist_images")->fetchColumn();
+$albumImages  = $pdo->query("SELECT COUNT(*) FROM album_images")->fetchColumn();
+
+/* COMMENTS */
+$artistComments = $pdo->query("SELECT COUNT(*) FROM artist_comments")->fetchColumn();
+$albumComments  = $pdo->query("SELECT COUNT(*) FROM album_comments")->fetchColumn();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <?php include __DIR__ . '/inc/admin_nav.php'; ?>
+    <main class="container mt-4 mb-5 flex-grow-1">
+        <h1 class="mb-4">Admin Dashboard</h1>
+        <div class="row g-4">
+
+            <!-- Users -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Total Users</h6>
+                        <h2 class="display-6 fw-bold"><?= $totalUsers ?></h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listings -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Total Listings</h6>
+                        <h2 class="display-6 fw-bold"><?= $totalListings ?></h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Listings -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm border-warning h-100">
+                    <div class="card-body">
+                        <h6 class="text-warning">Pending Listings</h6>
+                        <h2 class="display-6 fw-bold"><?= $pendingListings ?></h2>
+
+                        <a href="listings.php" class="btn btn-sm btn-warning mt-2">
+                            Review Listings
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artist Images -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Artist Images</h6>
+                        <h2 class="display-6 fw-bold"><?= $artistImages ?></h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Album Images -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Album Images</h6>
+                        <h2 class="display-6 fw-bold"><?= $albumImages ?></h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artist Comments -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Artist Comments</h6>
+                        <h2 class="display-6 fw-bold"><?= $artistComments ?></h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Album Comments -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Album Comments</h6>
+                        <h2 class="display-6 fw-bold"><?= $albumComments ?></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <?php include __DIR__ . '/../includes/footer.php'; ?>
+</body>
+</html>
