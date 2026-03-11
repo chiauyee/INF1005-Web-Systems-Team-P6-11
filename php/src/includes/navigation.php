@@ -28,12 +28,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <?php $cartCount = count($_SESSION['cart'] ?? []); ?>
+                    <button class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer">
                         <i class="bi bi-cart fs-5"></i>
-                        <?php if (!empty($_SESSION['cart_count'])): ?>
-                            <?= $_SESSION['cart_count'] ?>
-                        <?php endif; ?>
-                    </a>
+                        <span id="cart-badge" class="badge bg-dark ms-1<?= $cartCount === 0 ? ' d-none' : '' ?>"><?= $cartCount ?></span>
+                    </button>
                 </li>
                 
                 <?php if (isset($_SESSION['user_id'])): ?>
@@ -64,3 +63,111 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </div>
 </nav>
+
+<!-- Cart Drawer -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="cartDrawerLabel">
+            <i class="bi bi-cart me-2"></i>Your Cart
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <div id="cart-items" class="flex-grow-1 overflow-auto p-3">
+            <p class="text-muted text-center mt-4">Loading...</p>
+        </div>
+        <div class="border-top p-3">
+            <div class="d-flex justify-content-between mb-3">
+                <strong>Total</strong>
+                <strong id="cart-total">$0.00</strong>
+            </div>
+            <button class="btn btn-dark w-100">Checkout</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function escHtmlCart(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
+function updateCartBadge(count) {
+    const badge = document.getElementById('cart-badge');
+    if (count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('d-none');
+    } else {
+        badge.classList.add('d-none');
+    }
+}
+
+function loadCartItems() {
+    fetch('/api/cart.php?action=get')
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('cart-items');
+            const items = data.items;
+
+            if (!items.length) {
+                container.innerHTML = '<p class="text-muted text-center mt-4">Your cart is empty.</p>';
+                document.getElementById('cart-total').textContent = '$0.00';
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = items.map(item => {
+                total += parseFloat(item.price);
+                return `
+                    <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                        <div>
+                            <div class="fw-semibold">${escHtmlCart(item.album_name)}</div>
+                            <div class="text-muted small">${escHtmlCart(item.artist_name)}</div>
+                            <div class="text-muted small">Seller: ${escHtmlCart(item.seller)}</div>
+                        </div>
+                        <div class="text-end ms-3">
+                            <div class="fw-bold">$${parseFloat(item.price).toFixed(2)}</div>
+                            <button class="btn btn-sm btn-outline-danger mt-1" onclick="removeFromCart(${escHtmlCart(item.listing_id)})">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+        });
+}
+
+function removeFromCart(listingId) {
+    fetch('/api/cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'remove', listing_id: listingId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        updateCartBadge(data.count);
+        loadCartItems();
+    });
+}
+
+function addToCart(listingId) {
+    fetch('/api/cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'add', listing_id: listingId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+        updateCartBadge(data.count);
+        const drawer = new bootstrap.Offcanvas(document.getElementById('cartDrawer'));
+        drawer.show();
+    });
+}
+
+document.getElementById('cartDrawer').addEventListener('show.bs.offcanvas', loadCartItems);
+</script>
