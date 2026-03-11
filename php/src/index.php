@@ -1,18 +1,4 @@
-<?php
-session_start();
-
-if (!isset($_SESSION['cart_count']))
-{
-  $_SESSION['cart_count'] = 0;
-}
-
-if (isset($_POST['add_to_cart']))
-{
-  $_SESSION['cart_count'] += 1;
-  header("Location: " . $_SERVER['PHP_SELF']);
-  exit;
-}
-?>
+<?php session_start(); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -92,12 +78,9 @@ if (isset($_POST['add_to_cart']))
               </a>
 
               <div class="card-body d-flex gap-2">
-                <form method="POST" class="m-0">
-                  <input type="hidden" name="add_to_cart" value="1">
-                  <button type="submit" class="btn btn-outline-dark">Add to cart
-                    <i class="bi bi-cart"></i>
-                  </button>
-                </form>
+                <button class="btn btn-outline-dark" onclick="addToCart(${listing.listing_id})">Add to cart
+                  <i class="bi bi-cart"></i>
+                </button>
               </div>
             </div>
           </div>
