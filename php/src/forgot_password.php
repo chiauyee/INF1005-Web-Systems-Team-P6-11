@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mail->isSMTP();
                 $mail->Host       = 'smtp.gmail.com';
                 $mail->SMTPAuth   = true;
-                $mail->Username   = 'wongchiauyee@gmail.com';
-                $mail->Password   = 'ndhi lknz xqkm gcxf';
+                $mail->Username   = 'MusicMarket2026@gmail.com';
+                $mail->Password   = 'csmq cqml fwuv zdax';
                 $mail->SMTPSecure = 'tls';
                 $mail->Port       = 587;
 
