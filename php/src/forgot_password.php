@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mail->SMTPSecure = 'tls';
                 $mail->Port       = 587;
 
-                $mail->setFrom('wongchiauyee@gmail.com', 'MusicMarket');
+                $mail->setFrom('MusicMarket2026@gmail.com', 'MusicMarket');
                 $mail->addAddress($email);
 
                 $mail->Subject = 'Password Reset';
