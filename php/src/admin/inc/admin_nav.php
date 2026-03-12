@@ -25,18 +25,31 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
             <!-- Right side -->
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3">
-                    <span class="navbar-text">
-                        Admin: <?= htmlspecialchars($_SESSION['username']) ?>
-                    </span>
-                </li>
-
-                <li class="nav-item">
-                    <a class="btn btn-dark" href="/logout.php">
-                        Logout
-                    </a>
-                </li>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="ms-2"><?= htmlspecialchars($_SESSION['username']) ?></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
+                        </ul>
+                    </li>
+                <?php else: ?>
+                    <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
+                    <li class="nav-item me-2">
+                        <a class="btn <?= $current_page == 'login.php' ? 'btn-outline-dark' : 'btn-dark' ?>" href="login.php">
+                            Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn <?= $current_page == 'register.php' ? 'btn-outline-dark' : 'btn-dark' ?>" href="register.php">
+                            Register
+                        </a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
 </nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
