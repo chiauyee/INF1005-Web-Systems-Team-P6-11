@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS listings (
     seller_id INT,
     buyer_id INT DEFAULT NULL,
     price FLOAT,
-    status ENUM('available', 'pending', 'complete') NOT NULL DEFAULT 'available',
+    status ENUM('pending', 'rejected', 'available', 'complete') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -115,8 +115,8 @@ listings.php & especially index.php
 else the front page will look empty 
 */ 
 INSERT INTO `listings` VALUES 
-(10,'1395477C-A71E-4058-A893-D33DFCAD6A4B',2,null,39,'pending','2026-03-10 17:09:14'),
-(11,'B54CC188-AC86-4821-95D5-FA32841DFAF1',2,null,999,'pending','2026-03-10 17:09:53'),
+(10,'1395477C-A71E-4058-A893-D33DFCAD6A4B',2,null,39,'available','2026-03-10 17:09:14'),
+(11,'B54CC188-AC86-4821-95D5-FA32841DFAF1',2,null,999,'available','2026-03-10 17:09:53'),
 (12,'3466B3D4-2AEA-49E1-8769-7CD1E98092A8',2,null,79,'pending','2026-03-10 17:10:11'),
 (13,'FE7E674A-C44C-4B73-AD5C-C19BE212B7B4',2,null,138,'pending','2026-03-10 17:11:36'),
 (14,'9CAA4160-4F12-4379-92E0-CA81EC6AD64B',2,null,128,'pending','2026-03-10 17:17:55'),

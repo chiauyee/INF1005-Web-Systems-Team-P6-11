@@ -6,7 +6,7 @@ require __DIR__ . '/inc/admin_auth.php';
 if (isset($_GET['approve'])) {
     $stmt = $pdo->prepare("
         UPDATE listings
-        SET status='approved'
+        SET status='available'
         WHERE listing_id=?
     ");
 
