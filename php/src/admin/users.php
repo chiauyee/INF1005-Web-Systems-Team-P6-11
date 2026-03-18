@@ -79,7 +79,7 @@ $totalBanned = count(array_filter($users, fn($u) => $u['status'] === 'banned'));
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../css/navigation.css">
@@ -233,7 +233,7 @@ $totalBanned = count(array_filter($users, fn($u) => $u['status'] === 'banned'));
     </main>
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>
