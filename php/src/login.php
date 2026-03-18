@@ -80,36 +80,48 @@ session_start();
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   <script>
-    document.getElementById('btn-login').addEventListener('click', function () {
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value;
-        const errorDiv = document.getElementById('error-msg');
+    // Add this function to get URL parameters
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
 
-        errorDiv.style.display = 'none';
+document.getElementById('btn-login').addEventListener('click', function () {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('error-msg');
+    
+    // Get the redirect parameter from URL
+    const redirect = getUrlParameter('redirect') || 'index.php';
 
-        const body = new FormData();
-        body.append('username', username);
-        body.append('password', password);
+    errorDiv.style.display = 'none';
 
-        fetch('/api/login.php', { method: 'POST', body })
-            .then(r => r.json())
-            .then(data => {
-                if (data.status === 'ok') {
-                    if (data.role === 'admin') {
-                        window.location.href = '/admin/dashboard.php';
-                    } else {
-                        window.location.href = 'index.php';
-                    }
+    const body = new FormData();
+    body.append('username', username);
+    body.append('password', password);
+
+    fetch('/api/login.php', { method: 'POST', body })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                if (data.role === 'admin') {
+                    window.location.href = '/admin/dashboard.php';
                 } else {
-                    errorDiv.textContent = data.error || 'Login failed.';
-                    errorDiv.style.display = 'block';
+                    // Use the redirect parameter from URL
+                    window.location.href = redirect;
                 }
-            })
-            .catch(() => {
-                errorDiv.textContent = 'An error occurred. Please try again.';
+            } else {
+                errorDiv.textContent = data.error || 'Login failed.';
                 errorDiv.style.display = 'block';
-            });
-    });
+            }
+        })
+        .catch(() => {
+            errorDiv.textContent = 'An error occurred. Please try again.';
+            errorDiv.style.display = 'block';
+        });
+});
   </script>
 </body>
 </html>

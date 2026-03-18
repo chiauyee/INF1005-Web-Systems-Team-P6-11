@@ -20,7 +20,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <ul class="navbar-nav mx-auto justify-content-center">
                 <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link active" href="#">Shop Music</a></li>
-                <li class="nav-item"><a class="nav-link active" href="#">Sell Music</a></li>
+                <li class="nav-item"><a class="nav-link active" href="make_listing.php">Sell Music</a></li>
                 <li class="nav-item"><a class="nav-link active" href="about.php">About Us</a></li>
                 <li class="nav-item"><a class="nav-link active" href="contact.php">Contact Us</a></li>
                 <li class="nav-item"><a class="nav-link active" href="faq.php">FAQ</a></li>
