@@ -29,8 +29,9 @@ try {
     }
 
     if ($search) {
-        $where[]  = '(al.album_name LIKE ? OR ar.artist_name LIKE ?)';
+        $where[]  = '(al.album_name LIKE ? OR ar.artist_name LIKE ? OR u.username LIKE ?)';
         $like     = '%' . $search . '%';
+        $params[] = $like;
         $params[] = $like;
         $params[] = $like;
     }
