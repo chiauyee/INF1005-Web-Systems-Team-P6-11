@@ -41,11 +41,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             Login
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="btn <?= $current_page == 'register.php' ? 'btn-outline-dark' : 'btn-dark' ?>" href="register.php">
-                            Register
-                        </a>
-                    </li>
                 <?php endif; ?>
             </ul>
         </div>
