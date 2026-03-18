@@ -62,33 +62,13 @@ session_start();
       background-color: #1a1a1a;
       position: relative;
       overflow: hidden;
-      padding: 5.5rem 0 4.5rem;
+      min-height: calc(100vh - 56px);
+      display: flex;
+      align-items: center;
+      padding: 6rem 0;
       color: #fff;
     }
-    .faq-hero::before {
-      content: '';
-      position: absolute;
-      width: 500px; height: 500px;
-      border-radius: 50%;
-      right: -150px; bottom: -150px;
-      border: 60px solid rgba(255,255,255,0.03);
-      box-shadow:
-        0 0 0 60px  rgba(255,255,255,0.03),
-        0 0 0 120px rgba(255,255,255,0.02),
-        0 0 0 180px rgba(255,255,255,0.015);
-      pointer-events: none;
-    }
-    .faq-hero::after {
-      content: '';
-      position: absolute;
-      width: 260px; height: 260px;
-      border-radius: 50%;
-      left: -60px; top: -60px;
-      border: 40px solid rgba(255,255,255,0.025);
-      box-shadow: 0 0 0 40px rgba(255,255,255,0.015);
-      pointer-events: none;
-    }
-
+    
     .hero-eyebrow {
       font-size: 0.7rem;
       letter-spacing: 0.2em;
@@ -98,21 +78,22 @@ session_start();
     }
     .hero-heading {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 4.5vw, 3.2rem);
-      line-height: 1.2;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.15;
       color: #fff;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
+
     .hero-heading em {
       font-style: italic;
       color: rgba(255,255,255,0.45);
     }
+
     .hero-desc {
-      font-size: 0.92rem;
-      color: rgba(255,255,255,0.4);
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.45);
       line-height: 1.9;
-      max-width: 420px;
-      margin-bottom: 2rem;
+      max-width: 460px;
     }
 
     .faq-search-wrap {
@@ -362,8 +343,20 @@ session_start();
     }
     footer a { color: #fff; text-decoration: none; }
 
+    .hero-cassette {
+      position: absolute;
+      right: 20px;
+      bottom: -50px;
+      width: 580px;
+      height: 580px;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    
     /* Responsive */
     @media (max-width: 991px) {
+      .hero-cassette { width: 340px; height: 340px; right: -40px; bottom: -40px; }
+      .faq-hero { min-height: calc(100svh - 56px); padding: 5rem 0; }
       .cat-nav { position: static; margin-bottom: 2rem; }
       .cat-btn { display: inline-flex; width: auto; margin-right: 0.4rem; margin-bottom: 0.4rem; }
     }
@@ -381,6 +374,7 @@ session_start();
   <main>
 
     <section class="faq-hero" aria-label="Frequently Asked Questions">
+      <div id="cassette-container" class="hero-cassette"></div>
       <div class="container" style="position:relative;z-index:1;">
         <p class="hero-eyebrow">Help Centre</p>
         <h1 class="hero-heading">
@@ -821,6 +815,149 @@ session_start();
         panel.classList.toggle('active', visibleItems.length > 0);
       });
     });
+  </script>
+
+  <!-- Three.js Cassette -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    (function() {
+      const container = document.getElementById('cassette-container');
+      if (!container) return;
+
+      const scene = new THREE.Scene();
+
+      // Slightly pushed back and FOV=35
+      const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 1000);
+      camera.position.set(0, 0, 21);
+      camera.lookAt(0, 0, 0);
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      const cassette = new THREE.Group();
+      scene.add(cassette);
+
+      const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 });
+      const faintLineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1 });
+      const meshMat = new THREE.MeshBasicMaterial({ 
+        color: 0x1a1a1a, 
+        polygonOffset: true, 
+        polygonOffsetFactor: 1, 
+        polygonOffsetUnits: 1 
+      });
+
+      function createSolid(geometry, edgeMat, parent, x = 0, y = 0, z = 0) {
+        const group = new THREE.Group();
+        group.position.set(x, y, z);
+        
+        const mesh = new THREE.Mesh(geometry, meshMat);
+        group.add(mesh);
+
+        const edges = new THREE.EdgesGeometry(geometry);
+        const lines = new THREE.LineSegments(edges, edgeMat);
+        group.add(lines);
+
+        parent.add(group);
+        return group;
+      }
+
+      // 1. Main body
+      createSolid(new THREE.BoxGeometry(10, 6.4, 0.8), lineMat, cassette, 0, 0, 0);
+
+      // 2. Main label area (slightly raised)
+      createSolid(new THREE.BoxGeometry(8, 3.8, 0.85), faintLineMat, cassette, 0, 0, 0);
+
+      // 3. Central Tape Window
+      createSolid(new THREE.BoxGeometry(4.4, 1.8, 0.9), lineMat, cassette, 0, 0, 0);
+
+      // 4. Spool hubs and tape reels
+      const spoolGroupL = new THREE.Group();
+      spoolGroupL.position.set(-1.6, 0, 0);
+      cassette.add(spoolGroupL);
+
+      const spoolGroupR = new THREE.Group();
+      spoolGroupR.position.set(1.6, 0, 0);
+      cassette.add(spoolGroupR);
+
+      // Internal hubs/gears
+      const hubGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.95, 12);
+      hubGeo.rotateX(Math.PI / 2);
+      createSolid(hubGeo, lineMat, spoolGroupL);
+      createSolid(hubGeo, lineMat, spoolGroupR);
+
+      // Internal tape rolls
+      // Left roll (fuller)
+      for(let r = 0.5; r <= 1.4; r += 0.15) {
+        const ringGeo = new THREE.EdgesGeometry(new THREE.CylinderGeometry(r, r, 0.88, 32));
+        ringGeo.rotateX(Math.PI / 2);
+        spoolGroupL.add(new THREE.LineSegments(ringGeo, faintLineMat));
+      }
+
+      // Right roll (emptier)
+      for(let r = 0.5; r <= 0.9; r += 0.15) {
+        const ringGeo = new THREE.EdgesGeometry(new THREE.CylinderGeometry(r, r, 0.88, 32));
+        ringGeo.rotateX(Math.PI / 2);
+        spoolGroupR.add(new THREE.LineSegments(ringGeo, faintLineMat));
+      }
+
+      // Bridge line between spools to represent the tape unspooling
+      const tapeLineGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-1.6, -1.4, 0.4),
+        new THREE.Vector3(1.6, -0.9, 0.4)
+      ]);
+      cassette.add(new THREE.Line(tapeLineGeo, faintLineMat));
+      
+      const tapeLineGeoBack = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-1.6, -1.4, -0.4),
+        new THREE.Vector3(1.6, -0.9, -0.4)
+      ]);
+      cassette.add(new THREE.Line(tapeLineGeoBack, faintLineMat));
+
+      // 5. Bottom trapezoid section
+      createSolid(new THREE.BoxGeometry(7, 1.4, 0.95), lineMat, cassette, 0, -2.5, 0);
+
+      // Two little holes at bottom corners of trapezoid
+      const holeGeo = new THREE.CylinderGeometry(0.3, 0.3, 1.0, 16);
+      holeGeo.rotateX(Math.PI / 2);
+      createSolid(holeGeo, lineMat, cassette, -2.5, -2.5, 0);
+      createSolid(holeGeo, lineMat, cassette, 2.5, -2.5, 0);
+
+      // 6. Screws in the corners
+      const screwGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.9, 8);
+      screwGeo.rotateX(Math.PI / 2);
+      createSolid(screwGeo, lineMat, cassette, -4.6, 2.8, 0);
+      createSolid(screwGeo, lineMat, cassette, 4.6, 2.8, 0);
+      createSolid(screwGeo, lineMat, cassette, -4.6, -2.8, 0);
+      createSolid(screwGeo, lineMat, cassette, 4.6, -2.8, 0);
+
+      cassette.rotation.x = Math.PI / 8;
+      cassette.rotation.y = -Math.PI / 5;
+      cassette.rotation.z = Math.PI / 16;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        spoolGroupL.rotation.z -= 0.04;
+        spoolGroupR.rotation.z -= 0.04;
+
+        cassette.position.y = Math.sin(Date.now() * 0.001) * 0.3;
+        cassette.rotation.y = -Math.PI / 5 + Math.sin(Date.now() * 0.0005) * 0.04;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        if (!container) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      });
+    })();
   </script>
 
 </body>

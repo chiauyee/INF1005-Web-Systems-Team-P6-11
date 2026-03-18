@@ -4,42 +4,34 @@ session_start();
 $success = '';
 $error   = '';
 
-// Generate math CAPTCHA (same pattern as login.php)
-if (!isset($_SESSION['contact_captcha_n1']) || !isset($_SESSION['contact_captcha_n2'])) {
-    $_SESSION['contact_captcha_n1'] = rand(1, 10);
-    $_SESSION['contact_captcha_n2'] = rand(1, 10);
-}
-$captcha_answer = $_SESSION['contact_captcha_n1'] + $_SESSION['contact_captcha_n2'];
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Honeypot check
+    $honeypot = trim($_POST['website_url'] ?? '');
+
     // Sanitize inputs
     $name            = htmlspecialchars(trim($_POST['name']    ?? ''), ENT_QUOTES, 'UTF-8');
     $email           = filter_var(trim($_POST['email']  ?? ''), FILTER_SANITIZE_EMAIL);
     $subject         = htmlspecialchars(trim($_POST['subject']  ?? ''), ENT_QUOTES, 'UTF-8');
     $topic           = htmlspecialchars(trim($_POST['topic']    ?? ''), ENT_QUOTES, 'UTF-8');
     $message         = htmlspecialchars(trim($_POST['message']  ?? ''), ENT_QUOTES, 'UTF-8');
-    $captcha_input   = trim($_POST['captcha'] ?? '');
     $feedback_rating = intval($_POST['feedback_rating'] ?? 0);
 
-    // Regenerate captcha for next attempt
-    $_SESSION['contact_captcha_n1'] = rand(1, 10);
-    $_SESSION['contact_captcha_n2'] = rand(1, 10);
-
-    // Validate
-    if (!$name || !$email || !$subject || !$message || !$topic) {
-        $error = 'Please fill in all required fields.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Please enter a valid email address.';
-    } elseif ($captcha_input != $captcha_answer) {
-        $error = 'Incorrect answer to the security question. Please try again.';
-    } elseif ($feedback_rating < 1 || $feedback_rating > 5) {
-        $error = 'Please select a rating before submitting.';
-    } else {
-        // TODO: persist to DB or send email
+    // If honeypot is filled, pretend submission was successful to deter bots
+    if ($honeypot !== '') {
         $success = 'Thank you, ' . $name . '! We\'ll get back to you within 2 business days.';
+    } else {
+        // Validate normally
+        if (!$name || !$email || !$subject || !$message || !$topic) {
+            $error = 'Please fill in all required fields.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Please enter a valid email address.';
+        } elseif ($feedback_rating < 1 || $feedback_rating > 5) {
+            $error = 'Please select a rating before submitting.';
+        } else {
+            // TODO: persist to DB or send email
+            $success = 'Thank you, ' . $name . '! We\'ll get back to you within 2 business days.';
+        }
     }
-
-    $captcha_answer = $_SESSION['contact_captcha_n1'] + $_SESSION['contact_captcha_n2'];
 }
 ?>
 <!DOCTYPE html>
@@ -103,31 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       background-color: #1a1a1a;
       position: relative;
       overflow: hidden;
-      padding: 5.5rem 0 4.5rem;
+      min-height: calc(100vh - 56px);
+      display: flex;
+      align-items: center;
+      padding: 6rem 0;
       color: #fff;
-    }
-    .contact-hero::before {
-      content: '';
-      position: absolute;
-      width: 500px; height: 500px;
-      border-radius: 50%;
-      right: -150px; bottom: -150px;
-      border: 60px solid rgba(255,255,255,0.03);
-      box-shadow:
-        0 0 0 60px  rgba(255,255,255,0.03),
-        0 0 0 120px rgba(255,255,255,0.02),
-        0 0 0 180px rgba(255,255,255,0.015);
-      pointer-events: none;
-    }
-    .contact-hero::after {
-      content: '';
-      position: absolute;
-      width: 260px; height: 260px;
-      border-radius: 50%;
-      left: -60px; top: -60px;
-      border: 40px solid rgba(255,255,255,0.025);
-      box-shadow: 0 0 0 40px rgba(255,255,255,0.015);
-      pointer-events: none;
     }
 
     .hero-eyebrow {
@@ -139,20 +111,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .hero-heading {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 4.5vw, 3.2rem);
-      line-height: 1.2;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.15;
       color: #fff;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
+
     .hero-heading em {
       font-style: italic;
       color: rgba(255,255,255,0.45);
     }
+
     .hero-desc {
-      font-size: 0.92rem;
-      color: rgba(255,255,255,0.4);
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.45);
       line-height: 1.9;
-      max-width: 400px;
+      max-width: 460px;
     }
 
     .contact-body {
@@ -372,8 +346,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     footer a { color: #fff; text-decoration: none; }
 
+    .hero-speaker {
+      position: absolute;
+      right: -30px;
+      bottom: 0px;
+      width: 580px;
+      height: 580px;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
     @media (max-width: 768px) {
-      .contact-hero { padding: 4rem 0 3rem; }
+      .hero-speaker { width: 360px; height: 360px; right: -40px; bottom: -40px; }
+      .contact-hero { min-height: calc(100svh - 56px); padding: 5rem 0; }
       .form-card { padding: 1.75rem 1.25rem; }
     }
   </style>
@@ -386,14 +371,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <main>
 
     <section class="contact-hero" aria-label="Contact MusicMarket">
+      <div id="speaker-container" class="hero-speaker"></div>
       <div class="container" style="position:relative;z-index:1;">
         <p class="hero-eyebrow">Get In Touch</p>
         <h1 class="hero-heading">
           We'd love to<br>hear <em>from you.</em>
         </h1>
         <p class="hero-desc">
-          Questions about an order, feedback on the platform, or just want to 
-          talk records — we're here for all of it.
+          Questions about an order, feedback on the platform, just want to talk records? Keep us in the loop — drop the needle and we're here for all of it.
         </p>
       </div>
     </section>
@@ -560,22 +545,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 </div>
 
-                <h3 class="form-section-title">Security check</h3>
-                <div class="mb-4">
-                  <label for="captcha" class="form-label">
-                    What is <?= $_SESSION['contact_captcha_n1'] ?> + <?= $_SESSION['contact_captcha_n2'] ?>? <span aria-hidden="true">*</span>
-                  </label>
-                  <div class="input-wrap" style="max-width:180px;">
-                    <i class="bi bi-shield-lock"></i>
-                    <input
-                      type="text" name="captcha" id="captcha"
-                      class="form-control"
-                      placeholder="Your answer"
-                      required
-                      autocomplete="off"
-                      aria-required="true"
-                    >
-                  </div>
+                <!-- Honeypot -->
+                <div style="display:none;" aria-hidden="true">
+                  <label for="website_url">Leave this field blank if you are human:</label>
+                  <input type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
                 </div>
 
                 <button type="submit" class="btn-submit">
@@ -631,6 +604,137 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }, { threshold: 0.1 });
 
       targets.forEach(el => observer.observe(el));
+    })();
+  </script>
+
+  <!-- Three.js Speaker -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    (function() {
+      const container = document.getElementById('speaker-container');
+      if (!container) return;
+
+      const scene = new THREE.Scene();
+
+      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 1000);
+      camera.position.set(0, 0, 24);
+      camera.lookAt(0, 0, 0);
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      const speaker = new THREE.Group();
+      scene.add(speaker);
+
+      const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 });
+      const faintLineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1 });
+      const meshMat = new THREE.MeshBasicMaterial({ 
+        color: 0x1a1a1a, 
+        polygonOffset: true, 
+        polygonOffsetFactor: 1, 
+        polygonOffsetUnits: 1 
+      });
+
+      function createSolid(geometry, edgeMat, parent, x = 0, y = 0, z = 0) {
+        const group = new THREE.Group();
+        group.position.set(x, y, z);
+        
+        const mesh = new THREE.Mesh(geometry, meshMat);
+        group.add(mesh);
+
+        const edges = new THREE.EdgesGeometry(geometry);
+        const lines = new THREE.LineSegments(edges, edgeMat);
+        group.add(lines);
+
+        parent.add(group);
+        return group;
+      }
+
+      // Speaker Cabinet
+      createSolid(new THREE.BoxGeometry(6.6, 11.2, 5.0), lineMat, speaker, 0, 0, 0);
+
+      // Tweeter Frame
+      const tweeterGroup = new THREE.Group();
+      tweeterGroup.position.set(0, 3.2, 2.5);
+      speaker.add(tweeterGroup);
+      
+      const tweeterBase = new THREE.CylinderGeometry(1.4, 1.4, 0.2, 32);
+      tweeterBase.rotateX(Math.PI / 2);
+      createSolid(tweeterBase, lineMat, tweeterGroup, 0, 0, 0);
+      
+      const tweeterInside = new THREE.CylinderGeometry(0.8, 1.3, 0.4, 32);
+      tweeterInside.rotateX(Math.PI / 2);
+      createSolid(tweeterInside, faintLineMat, tweeterGroup, 0, 0, -0.2);
+      
+      const tweeterCap = new THREE.SphereGeometry(0.5, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+      tweeterCap.rotateX(Math.PI / 2);
+      createSolid(tweeterCap, lineMat, tweeterGroup, 0, 0, 0);
+
+      // Woofer Frame
+      const wooferGroup = new THREE.Group();
+      wooferGroup.position.set(0, -1.6, 2.5);
+      speaker.add(wooferGroup);
+      
+      const wooferBase = new THREE.CylinderGeometry(2.8, 2.8, 0.2, 32);
+      wooferBase.rotateX(Math.PI / 2);
+      createSolid(wooferBase, lineMat, wooferGroup, 0, 0, 0);
+      
+      const wooferSurround = new THREE.CylinderGeometry(2.4, 2.7, 0.3, 32);
+      wooferSurround.rotateX(Math.PI / 2);
+      createSolid(wooferSurround, faintLineMat, wooferGroup, 0, 0, 0);
+      
+      // Moving pieces of the woofer
+      const wooferConeMat = faintLineMat; 
+      const wooferConeGeo = new THREE.CylinderGeometry(0.8, 2.4, 1.0, 32);
+      wooferConeGeo.rotateX(Math.PI / 2);
+      
+      const wooferCapGeo = new THREE.SphereGeometry(0.9, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+      wooferCapGeo.rotateX(Math.PI / 2);
+      
+      // We manually add depth logic to separate the cone / cap meshes and animate them directly
+      const coneGroup = createSolid(wooferConeGeo, wooferConeMat, wooferGroup, 0, 0, -0.4);
+      const capGroup = createSolid(wooferCapGeo, lineMat, wooferGroup, 0, 0, 0.2);
+
+      // Audio Port Hole
+      const portHole = new THREE.CylinderGeometry(1.0, 1.0, 0.4, 32);
+      portHole.rotateX(Math.PI / 2);
+      createSolid(portHole, lineMat, speaker, 0, -4.6, 2.5);
+
+      speaker.rotation.x = -Math.PI / 12;
+      speaker.rotation.y = -Math.PI / 8;
+      speaker.rotation.z = Math.PI / 30;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        speaker.position.y = Math.sin(Date.now() * 0.001) * 0.3;
+        speaker.rotation.y = -Math.PI / 8 + Math.sin(Date.now() * 0.0005) * 0.03;
+
+        // Pumping effect logic
+        const pumpAmount = Math.sin(Date.now() * 0.015) * 0.15;
+        // Pumping the cone + cap for woofer
+        coneGroup.position.z = pumpAmount - 0.4;
+        capGroup.position.z = pumpAmount * 1.05 + 0.1;
+
+        // Smaller pumping for tweeter
+        const tweetPump = Math.sin(Date.now() * 0.02) * 0.05;
+        tweeterGroup.children[1].position.z = tweetPump - 0.2;
+        tweeterGroup.children[2].position.z = tweetPump;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        if (!container) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      });
     })();
   </script>
 

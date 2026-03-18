@@ -66,39 +66,11 @@ session_start();
         background-color: #1a1a1a;
         position: relative;
         overflow: hidden;
-        padding: 7rem 0 6rem;
+        min-height: calc(100vh - 56px);
+        display: flex;
+        align-items: center;
+        padding: 6rem 0;
         color: #fff;
-      }
-
-      /* Ring motif */
-      .about-hero::before {
-        content: '';
-        position: absolute;
-        width: 600px;
-        height: 600px;
-        border-radius: 50%;
-        right: -180px;
-        bottom: -180px;
-        border: 60px solid rgba(255,255,255,0.03);
-        box-shadow:
-          0 0 0 60px  rgba(255,255,255,0.03),
-          0 0 0 120px rgba(255,255,255,0.02),
-          0 0 0 180px rgba(255,255,255,0.015);
-        pointer-events: none;
-      }
-      .about-hero::after {
-        content: '';
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        border-radius: 50%;
-        left: -80px;
-        top: -80px;
-        border: 40px solid rgba(255,255,255,0.025);
-        box-shadow:
-          0 0 0 40px rgba(255,255,255,0.02),
-          0 0 0 80px rgba(255,255,255,0.01);
-        pointer-events: none;
       }
 
       .hero-eyebrow {
@@ -434,9 +406,20 @@ session_start();
         margin: 0;
       }
 
+      .hero-turntable {
+        position: absolute;
+        right: -40px;
+        bottom: -40px;
+        width: 580px;
+        height: 580px;
+        pointer-events: none;
+        opacity: 0.9;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
-        .about-hero { padding: 5rem 0 4rem; }
+        .hero-turntable { width: 360px; height: 360px; right: -60px; bottom: -60px; }
+        .about-hero { min-height: calc(100svh - 56px); padding: 5rem 0; }
         .hero-stats { gap: 2rem; }
         .story-img-wrap::before { display: none; }
         .story-img-wrap img { height: 280px; }
@@ -451,6 +434,7 @@ session_start();
     <main>
 
       <section class="about-hero" aria-label="About MusicMarket">
+        <div id="turntable-container" class="hero-turntable"></div>
         <div class="container" style="position:relative; z-index:1;">
           <p class="hero-eyebrow">About Us</p>
           <h1 class="hero-heading">
@@ -458,7 +442,7 @@ session_start();
             tells <em>a story.</em>
           </h1>
           <p class="hero-desc">
-            MusicMarket is a community marketplace for music enthusiasts to discover, 
+            MusicMarket is a community for music lovers to discover, 
             buy, sell and celebrate physical media — vinyl, CDs, cassettes and beyond.
           </p>
           <div class="hero-stats">
@@ -482,7 +466,7 @@ session_start();
         </div>
       </section>
 
-      <!-- ═══ Our Story ══════════════════════════════════════════ -->
+      <!-- Our Story -->
       <section class="story-section" aria-labelledby="story-heading">
         <div class="container">
           <div class="row g-5 align-items-center">
@@ -530,7 +514,7 @@ session_start();
 
       <hr class="ruled">
 
-      <!-- ═══ Values ═════════════════════════════════════════════ -->
+      <!-- Values -->
       <section class="values-section" aria-labelledby="values-heading">
         <div class="container">
           <div class="text-center mb-5">
@@ -705,5 +689,135 @@ session_start();
       })();
     </script>
 
+    <!-- Three.js Turntable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      (function() {
+        const container = document.getElementById('turntable-container');
+        if (!container) return;
+
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 1000);
+        camera.position.set(0, 15.5, 15.5);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const turntable = new THREE.Group();
+        scene.add(turntable);
+
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 });
+        const faintLineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1 });
+        const meshMat = new THREE.MeshBasicMaterial({ 
+          color: 0x1a1a1a, 
+          polygonOffset: true, 
+          polygonOffsetFactor: 1, 
+          polygonOffsetUnits: 1 
+        });
+
+        function createSolid(geometry, edgeMat, parent, y = 0, x = 0, z = 0) {
+          const group = new THREE.Group();
+          group.position.set(x, y, z);
+          
+          const mesh = new THREE.Mesh(geometry, meshMat);
+          group.add(mesh);
+
+          const edges = new THREE.EdgesGeometry(geometry);
+          const lines = new THREE.LineSegments(edges, edgeMat);
+          group.add(lines);
+
+          parent.add(group);
+          return group;
+        }
+
+        // Base
+        createSolid(new THREE.BoxGeometry(11, 0.8, 11), lineMat, turntable, -0.4);
+
+        // Platter
+        const platterGroup = new THREE.Group();
+        platterGroup.position.set(-1.8, 0.2, 0);
+        turntable.add(platterGroup);
+
+        createSolid(new THREE.CylinderGeometry(4.5, 4.5, 0.4, 64), lineMat, platterGroup);
+
+        // Grooves (just lines)
+        [3.8, 3.2, 2.6, 2.0].forEach(r => {
+          const edges = new THREE.EdgesGeometry(new THREE.CylinderGeometry(r, r, 0.41, 64));
+          const lines = new THREE.LineSegments(edges, faintLineMat);
+          platterGroup.add(lines);
+        });
+
+        // Label
+        createSolid(new THREE.CylinderGeometry(1.4, 1.4, 0.42, 32), lineMat, platterGroup);
+
+        // Spindle
+        createSolid(new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16), lineMat, turntable, 0.4, -1.8, 0);
+
+        // Tonearm
+        const tonearmGroup = new THREE.Group();
+        tonearmGroup.position.set(3.5, 0.2, -3.5);
+        turntable.add(tonearmGroup);
+        
+        // Tonearm base
+        createSolid(new THREE.CylinderGeometry(1.0, 1.0, 0.4, 32), lineMat, tonearmGroup);
+        createSolid(new THREE.CylinderGeometry(0.4, 0.4, 1.2, 16), lineMat, tonearmGroup, 0.6);
+
+        // Pivot & Arm
+        const armPivot = new THREE.Group();
+        armPivot.position.set(0, 1.2, 0);
+        tonearmGroup.add(armPivot);
+
+        const armGeo = new THREE.CylinderGeometry(0.1, 0.1, 6.5, 12);
+        armGeo.rotateX(Math.PI / 2);
+        createSolid(armGeo, lineMat, armPivot, 0, 0, 2.2);
+
+        // Headshell
+        const headshellGeo = new THREE.BoxGeometry(0.4, 0.2, 1.0);
+        const headshell = createSolid(headshellGeo, lineMat, armPivot, 0, 0, 5.2);
+        headshell.rotation.y = Math.PI / 8;
+
+        // Stylus indicator
+        createSolid(new THREE.CylinderGeometry(0.04, 0.04, 0.3, 8), lineMat, headshell, -0.15, 0, 0.3);
+
+        // Set arm angle
+        armPivot.rotation.y = Math.PI / 5.5;
+
+        // Pitch slider
+        createSolid(new THREE.BoxGeometry(0.8, 0.2, 3.0), faintLineMat, turntable, 0.1, 4.0, 2.5);
+        createSolid(new THREE.BoxGeometry(0.4, 0.3, 0.6), lineMat, turntable, 0.25, 4.0, 2.5);
+
+        // Decor details
+        createSolid(new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16), lineMat, turntable, 0.1, -4.0, 4.0); // power button
+
+        turntable.rotation.x = Math.PI / 7;
+        turntable.rotation.y = -Math.PI / 4.5;
+        turntable.rotation.z = Math.PI / 16;
+
+        function animate() {
+          requestAnimationFrame(animate);
+          
+          platterGroup.rotation.y -= 0.02;
+
+          turntable.position.y = Math.sin(Date.now() * 0.001) * 0.3;
+          turntable.rotation.y = -Math.PI / 4.5 + Math.sin(Date.now() * 0.0005) * 0.03;
+
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+          if (!container) return;
+          const width = container.clientWidth;
+          const height = container.clientHeight;
+          renderer.setSize(width, height);
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+        });
+      })();
+    </script>
   </body>
 </html>
