@@ -23,8 +23,8 @@
         <div class="container">
           <h1>Discover Music Collections</h1>
           <p>Search, buy and sell vinyl records, CDs and more</p>
-          <form class="d-flex justify-content-center mt-4" role="search">
-            <input class="form-control w-50 me-2" type="search" placeholder="Search albums title, artists..." aria-label="Search"></input>
+          <form class="d-flex justify-content-center mt-4" role="search" id="searchForm">
+            <input class="form-control w-50 me-2" type="search" id="searchInput" placeholder="Search albums title, artists..."></input>
             <button class="btn btn-dark" type="submit">Search</button>
           </form>
         </div>
@@ -108,5 +108,54 @@
             '<p class="text-center text-danger">Failed to load listings.</p>';
         });
     </script>
+
+    <!-- Search Function -->
+    <script>
+      document.getElementById("searchForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const query = document.getElementById("searchInput").value.trim();
+
+        if (!query) 
+        {
+          fetch('/api/get_listings.php')
+            .then(res => res.json())
+            .then(json => {
+              if (json.error) {
+                document.getElementById('featured-albums').innerHTML =
+                  '<p class="text-danger text-center">Failed to load listings.</p>';
+                return;
+              }
+
+              renderFeaturedAlbums(json.data.slice(0, 8));
+            });
+          return;
+        }
+
+        fetch(`/api/get_listings.php?search=${encodeURIComponent(query)}`)
+          .then(res => res.json())
+          .then(json => {
+            if (json.error) {
+              document.getElementById('featured-albums').innerHTML =
+                '<p class="text-danger text-center">Search failed.</p>';
+              return;
+            }
+
+            if (!json.data || json.data.length === 0) {
+              document.getElementById('featured-albums').innerHTML =
+                `<p class="text-center text-muted">No results found for 
+                "<b>${query}</b>"</p>`;
+              return;
+            }
+
+            renderFeaturedAlbums(json.data);
+          })
+          .catch(() => {
+            document.getElementById('featured-albums').innerHTML =
+              '<p class="text-danger text-center">Search failed.</p>';
+          });
+      });
+    </script>
+
 </body>
 </html>
