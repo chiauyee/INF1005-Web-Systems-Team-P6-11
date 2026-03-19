@@ -337,12 +337,15 @@ session_start();
     }
 
     footer {
-      background-color: #1a1a1a;
+      background-color: var(--dark-panel, #1a1a1a);
       color: #fff;
       padding: 20px 0;
       text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
     }
-    footer a { color: #fff; text-decoration: none; }
+    footer a { color: rgba(255,255,255,0.45); text-decoration: none; }
+    footer a:hover { color: #fff; }
 
     .hero-cassette {
       position: absolute;
@@ -479,11 +482,11 @@ session_start();
                     aria-controls="buying-ans-<?= $i ?>"
                     id="buying-q-<?= $i ?>"
                   >
-                    <?= htmlspecialchars($faq[0]) ?>
+                    <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
                   <div class="faq-answer" id="buying-ans-<?= $i ?>" role="region" aria-labelledby="buying-q-<?= $i ?>">
-                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                    <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -525,11 +528,11 @@ session_start();
                     aria-controls="selling-ans-<?= $i ?>"
                     id="selling-q-<?= $i ?>"
                   >
-                    <?= htmlspecialchars($faq[0]) ?>
+                    <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
                   <div class="faq-answer" id="selling-ans-<?= $i ?>" role="region" aria-labelledby="selling-q-<?= $i ?>">
-                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                    <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -567,11 +570,11 @@ session_start();
                     aria-controls="shipping-ans-<?= $i ?>"
                     id="shipping-q-<?= $i ?>"
                   >
-                    <?= htmlspecialchars($faq[0]) ?>
+                    <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
                   <div class="faq-answer" id="shipping-ans-<?= $i ?>" role="region" aria-labelledby="shipping-q-<?= $i ?>">
-                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                    <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -609,11 +612,11 @@ session_start();
                     aria-controls="account-ans-<?= $i ?>"
                     id="account-q-<?= $i ?>"
                   >
-                    <?= htmlspecialchars($faq[0]) ?>
+                    <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
                   <div class="faq-answer" id="account-ans-<?= $i ?>" role="region" aria-labelledby="account-q-<?= $i ?>">
-                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                    <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -651,11 +654,11 @@ session_start();
                     aria-controls="payments-ans-<?= $i ?>"
                     id="payments-q-<?= $i ?>"
                   >
-                    <?= htmlspecialchars($faq[0]) ?>
+                    <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
                   <div class="faq-answer" id="payments-ans-<?= $i ?>" role="region" aria-labelledby="payments-q-<?= $i ?>">
-                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                    <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -693,11 +696,11 @@ session_start();
                     aria-controls="grading-ans-<?= $i ?>"
                     id="grading-q-<?= $i ?>"
                   >
-                    <?= htmlspecialchars($faq[0]) ?>
+                    <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
                   <div class="faq-answer" id="grading-ans-<?= $i ?>" role="region" aria-labelledby="grading-q-<?= $i ?>">
-                    <div class="faq-answer-inner"><?= $faq[1] ?></div>
+                    <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -724,6 +727,7 @@ session_start();
   <?php include __DIR__ . '/includes/footer.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 
   <script>
     // Category switching 
@@ -774,7 +778,9 @@ session_start();
     const noResults   = document.getElementById('no-results');
 
     searchInput.addEventListener('input', () => {
-      const query = searchInput.value.trim().toLowerCase();
+      // DOMPurify to prevent XSS during search execution
+      let rawQuery = searchInput.value.trim().toLowerCase();
+      const query = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawQuery) : rawQuery;
 
       if (!query) {
         // Restore category view

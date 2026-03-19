@@ -340,12 +340,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     footer {
-      background-color: #1a1a1a;
+      background-color: var(--dark-panel, #1a1a1a);
       color: #fff;
       padding: 20px 0;
       text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
     }
-    footer a { color: #fff; text-decoration: none; }
+    footer a { color: rgba(255,255,255,0.45); text-decoration: none; }
+    footer a:hover { color: #fff; }
 
     .hero-speaker {
       position: absolute;
@@ -459,7 +462,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         type="text" name="name" id="name"
                         class="form-control"
                         placeholder="Jane Smith"
-                        value="<?= htmlspecialchars($_POST['name'] ?? '') ?>"
+                        value="<?= htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                         required
                         aria-required="true"
                       >
@@ -474,7 +477,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         type="email" name="email" id="email"
                         class="form-control"
                         placeholder="jane@example.com"
-                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                        value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                         required
                         aria-required="true"
                       >
@@ -505,7 +508,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         type="text" name="subject" id="subject"
                         class="form-control"
                         placeholder="Brief summary of your enquiry"
-                        value="<?= htmlspecialchars($_POST['subject'] ?? '') ?>"
+                        value="<?= htmlspecialchars($_POST['subject'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                         required
                         aria-required="true"
                       >
@@ -521,7 +524,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         placeholder="Tell us what's on your mind…"
                         required
                         aria-required="true"
-                      ><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
+                      ><?= htmlspecialchars($_POST['message'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
                     </div>
                   </div>
 

@@ -141,6 +141,13 @@
         const mainSite = document.getElementById('main-site');
         if (!wrap) return;
 
+        if (sessionStorage.getItem('vinylIntroPlayed') === 'true') {
+          document.body.classList.remove('intro-active');
+          if (intro) intro.style.display = 'none';
+          if (mainSite) mainSite.classList.add('visible');
+          return;
+        }
+
         const scene = new THREE.Scene();
         // Transparent background so we can wipe the HTML background behind it
         const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -262,6 +269,8 @@
         function enterSite() {
           if (enterState !== 0) return;
           enterState = 1;
+          
+          sessionStorage.setItem('vinylIntroPlayed', 'true');
 
           // Make main site visible immediately so it's behind the intro wipe
           mainSite.classList.add('visible');

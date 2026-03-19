@@ -299,7 +299,7 @@ session_start();
 
       /* CTA banner */
       .cta-section {
-        background: #1a1a1a;
+        background: #232323ff;
         padding: 5rem 0;
         position: relative;
         overflow: hidden;
@@ -393,11 +393,17 @@ session_start();
         color: #fff;
         padding: 20px 0;
         text-align: center;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.875rem;
       }
 
       footer a {
-        color: #fff;
+        color: rgba(255,255,255,0.45);
         text-decoration: none;
+      }
+
+      footer a:hover {
+        color: #fff;
       }
 
       /* Divider rule */
