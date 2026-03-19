@@ -86,6 +86,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </div>
 </div>
 
+<!-- Already in cart toast -->
+<div id="cart-toast" style="
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(1rem);
+  background: #212529; color: #fff; padding: 0.6rem 1.4rem;
+  border-radius: 999px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
+  z-index: 9999; white-space: nowrap;">
+  Already added to cart
+</div>
+
 <script>
 function escHtmlCart(str) {
     const div = document.createElement('div');
@@ -151,6 +161,18 @@ function removeFromCart(listingId) {
     });
 }
 
+let _cartToastTimer = null;
+function showCartToast() {
+    const toast = document.getElementById('cart-toast');
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(_cartToastTimer);
+    _cartToastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(1rem)';
+    }, 2500);
+}
+
 function addToCart(listingId) {
     fetch('/api/cart.php', {
         method: 'POST',
@@ -164,8 +186,12 @@ function addToCart(listingId) {
             return;
         }
         updateCartBadge(data.count);
-        const drawer = new bootstrap.Offcanvas(document.getElementById('cartDrawer'));
-        drawer.show();
+        if (data.already_in_cart) {
+            showCartToast();
+        } else {
+            const drawer = new bootstrap.Offcanvas(document.getElementById('cartDrawer'));
+            drawer.show();
+        }
     });
 }
 
