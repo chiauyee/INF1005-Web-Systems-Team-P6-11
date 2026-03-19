@@ -23,26 +23,28 @@ if ($action === 'add') {
         exit;
     }
 
-    if (!isset($_SESSION['cart'][$listing_id])) {
-        $stmt = $pdo->prepare("
-            SELECT l.listing_id, l.price, al.album_name, al.album_mbid, ar.artist_name, u.username AS seller
-            FROM listings l
-            JOIN albums al  ON l.album_mbid  = al.album_mbid
-            JOIN artists ar ON al.artist_mbid = ar.artist_mbid
-            JOIN users u    ON l.seller_id    = u.id
-            WHERE l.listing_id = ?
-        ");
-        $stmt->execute([$listing_id]);
-        $listing = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$listing) {
-            echo json_encode(['error' => 'Listing not found']);
-            exit;
-        }
-
-        $_SESSION['cart'][$listing_id] = $listing;
+    if (isset($_SESSION['cart'][$listing_id])) {
+        echo json_encode(['count' => count($_SESSION['cart']), 'already_in_cart' => true]);
+        exit;
     }
 
+    $stmt = $pdo->prepare("
+        SELECT l.listing_id, l.price, al.album_name, al.album_mbid, ar.artist_name, u.username AS seller
+        FROM listings l
+        JOIN albums al  ON l.album_mbid  = al.album_mbid
+        JOIN artists ar ON al.artist_mbid = ar.artist_mbid
+        JOIN users u    ON l.seller_id    = u.id
+        WHERE l.listing_id = ?
+    ");
+    $stmt->execute([$listing_id]);
+    $listing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$listing) {
+        echo json_encode(['error' => 'Listing not found']);
+        exit;
+    }
+
+    $_SESSION['cart'][$listing_id] = $listing;
     echo json_encode(['count' => count($_SESSION['cart'])]);
     exit;
 }

@@ -343,6 +343,7 @@
 
     <script>
       const ALBUM_COVER = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80';
+      const CURRENT_USER = <?php echo json_encode($_SESSION['username'] ?? null); ?>;
 
       function formatDate(dateStr) {
         const d = new Date(dateStr);
@@ -372,9 +373,10 @@
               </a>
 
               <div class="card-body d-flex gap-2">
-                <button class="btn btn-outline-dark" onclick="addToCart(${listing.listing_id})">Add to cart
-                  <i class="bi bi-cart"></i>
-                </button>
+                ${CURRENT_USER && CURRENT_USER === listing.seller
+                  ? '<span class="btn btn-outline-dark disabled" style="pointer-events:none; opacity:1; border:none;">Your listing</span>'
+                  : `<button class="btn btn-outline-dark" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>`
+                }
               </div>
             </div>
           </div>
