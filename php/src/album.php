@@ -1,10 +1,18 @@
 <?php
 session_start();
+
+// Sanitize and validate the MBID parameter to prevent XSS and SQL injection
 $mbid = trim($_GET['mbid'] ?? '');
-if (!$mbid) {
+
+// MusicBrainz IDs are 36-character UUIDs (hexadecimal + hyphens). Validate format:
+if (!$mbid || !preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $mbid)) {
     header('Location: listings.php');
     exit;
 }
+
+// Sanitize the validated string just to be defensively safe against any XSS vectors
+$mbid = htmlspecialchars($mbid, ENT_QUOTES, 'UTF-8');
+
 $logged_in = isset($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>

@@ -1,179 +1,293 @@
 <?php
 session_start();
+
+// Sanitize and validate the MBID parameter to prevent XSS and SQL injection
 $mbid = trim($_GET['mbid'] ?? '');
-if (!$mbid) {
+
+// MusicBrainz IDs are 36-character UUIDs (hexadecimal + hyphens). Validate format:
+if (!$mbid || !preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $mbid)) {
     header('Location: listings.php');
     exit;
 }
+
+// Sanitize the validated string just to be defensively safe against any XSS vectors
+$mbid = htmlspecialchars($mbid, ENT_QUOTES, 'UTF-8');
+
 $logged_in = isset($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Artist</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>Artist | MusicMarket</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/navigation.css">
-    <link rel="stylesheet" href="/css/artist.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="/css/navigation.css"> 
+    <link rel="stylesheet" href="/css/main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+    <style>
+        .section-header {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+        .artist-photo {
+            object-fit: cover;
+            aspect-ratio: 1;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            background: #e8e8e8;
+        }
+        .artist-photo:hover {
+            transform: scale(1.02);
+        }
+        .comment-article {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .comment-time {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        /* Custom Hero Styling */
+        .hero-artist {
+            background: var(--dark-panel);
+            position: relative;
+            overflow: hidden;
+            padding: 80px 0 60px;
+            color: #fff;
+        }
+        .hero-artist::before {
+            content: '';
+            position: absolute;
+            width: 480px; height: 480px;
+            border-radius: 50%;
+            right: -100px; top: -150px;
+            border: 40px solid rgba(255,255,255,0.03);
+            pointer-events: none;
+        }
+        .hero-artist-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .mbid-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        .mbid-link:hover {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        .album-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: transform 0.2s, border-color 0.2s;
+            margin-bottom: 0.75rem;
+        }
+        .album-card:hover {
+            transform: translateY(-2px);
+            border-color: #c8c8c4;
+            color: var(--text);
+        }
+        .album-card i {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-right: 1rem;
+        }
+    </style>
 </head>
 <body>
 <?php include __DIR__ . '/includes/navigation.php'; ?>
 
-<main class="artist-page">
+<main>
+    <div id="error-banner" class="alert alert-danger m-3 border-0 shadow-sm" style="display:none;"></div>
 
-    <!-- Error banner -->
-    <div id="error-banner" class="alert-danger-banner" style="display:none;"></div>
-
-    <!-- Artist hero card (populated by JS) -->
-    <div id="artist-hero" class="artist-hero">
-        <div class="artist-hero-loading">
-            <div class="spinner"></div> Loading artist...
-        </div>
-    </div>
-
-    <!-- Two-column layout: left = main content, right = sidebar -->
-    <div class="artist-layout">
-
-        <!-- Left: Photos + Albums -->
-        <div class="artist-main">
-
-            <!-- Photos -->
-            <div class="section-card">
-                <div class="section-card-header">
-                    <h2 class="section-title"><i class="bi bi-images me-2"></i>Photos</h2>
-                    <?php if ($logged_in): ?>
-                        <label for="image-input" class="btn-upload-label">
-                            <i class="bi bi-upload"></i> Upload Photo
-                        </label>
-                        <input type="file" id="image-input" accept="image/*" style="display:none;">
-                    <?php endif; ?>
+    <!-- Artist Hero Section -->
+    <section class="hero-artist text-start">
+        <div class="container position-relative z-1">
+            <div id="artist-info-content" style="display: none;">
+                <h1 id="hero-title" class="hero-artist-title"></h1>
+                <p class="fs-5 text-white-50 mb-4 hero-artist-subtitle">
+                    Artist Profile
+                </p>
+                <div>
+                    <a id="hero-mbid-link" href="#" target="_blank" class="mbid-link">
+                        <i class="bi bi-box-arrow-up-right"></i> View on MusicBrainz
+                    </a>
                 </div>
-
-                <div id="images-list" class="images-grid"></div>
-
-                <?php if ($logged_in): ?>
-                    <div id="upload-status" class="status-msg"></div>
-                <?php else: ?>
-                    <p class="login-prompt"><a href="login.php">Log in</a> to upload photos.</p>
-                <?php endif; ?>
             </div>
-
-            <!-- Albums -->
-            <div class="section-card">
-                <h2 class="section-title"><i class="bi bi-vinyl me-2"></i>Albums</h2>
-                <div id="albums-list"></div>
-            </div>
-
         </div>
+    </section>
 
-        <!-- Right: Comments -->
-        <div class="artist-sidebar">
-            <div class="section-card">
-                <h2 class="section-title"><i class="bi bi-chat me-2"></i>Comments</h2>
+    <div class="container py-5">
+        <div class="row g-5">
+            <!-- Left Column: Albums & Comments -->
+            <div class="col-lg-8">
+                <!-- Albums Section -->
+                <section id="albums-section" class="mb-5">
+                    <h2 class="section-header mb-4">Released Albums</h2>
+                    <div id="albums-list"></div>
+                </section>
 
-                <?php if ($logged_in): ?>
-                    <div class="comment-form">
-                        <textarea id="comment-input" class="comment-textarea"
-                                  rows="3" maxlength="2000"
-                                  placeholder="Write a comment..."></textarea>
-                        <button type="button" id="btn-comment" class="btn-post-comment">
-                            <i class="bi bi-send"></i> Post
-                        </button>
-                        <div id="comment-status" class="status-msg"></div>
+                <!-- Comments Section -->
+                <section id="comments-section">
+                    <h2 class="section-header mb-4">Discussion & Comments</h2>
+                    
+                    <?php if ($logged_in): ?>
+                    <div class="card mb-4 border-0" style="border: 1.5px solid var(--border) !important; border-radius: 8px;">
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-semibold mb-3 fs-6">Leave a comment</h5>
+                            <textarea id="comment-input" class="form-control mb-3 bg-light border-0" rows="3" maxlength="2000" placeholder="Discuss the artist..." style="resize: none;"></textarea>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span id="comment-status" class="text-muted small fw-medium"></span>
+                                <button type="button" id="btn-comment" class="btn btn-dark px-4 rounded-pill fw-medium shadow-sm">Post Comment</button>
+                            </div>
+                        </div>
                     </div>
-                <?php else: ?>
-                    <p class="login-prompt"><a href="login.php">Log in</a> to leave a comment.</p>
-                <?php endif; ?>
+                    <?php else: ?>
+                    <div class="alert bg-white" style="border: 1.5px dashed var(--border); border-radius: 8px;">
+                        <i class="bi bi-info-circle me-2 text-muted"></i> <a href="login.php" class="text-dark fw-bold text-decoration-underline text-underline-offset-4">Log in</a> to leave a comment.
+                    </div>
+                    <?php endif; ?>
 
-                <div id="comments-list"></div>
+                    <div id="comments-list" class="mt-4"></div>
+                </section>
+            </div>
+            
+            <!-- Right Column: Photos -->
+            <div class="col-lg-4">
+                <section id="images-section">
+                    <h2 class="section-header mb-4">Community Photos</h2>
+                    
+                    <?php if ($logged_in): ?>
+                    <div class="card mb-4 border-0" style="border: 1.5px solid var(--border) !important; border-radius: 8px; background: #fafafa;">
+                        <div class="card-body p-3">
+                            <p class="mb-2 fw-semibold fs-6">Upload a photo</p>
+                            <div class="input-group input-group-sm mb-2 shadow-sm">
+                                <input type="file" class="form-control border-0" id="image-input" accept="image/*">
+                                <button class="btn btn-dark" type="button" id="btn-upload">Upload</button>
+                            </div>
+                            <span id="upload-status" class="text-muted small fw-medium"></span>
+                        </div>
+                    </div>
+                    <?php else: ?>
+                    <div class="alert bg-white small mb-4" style="border: 1.5px dashed var(--border); border-radius: 8px;">
+                        <a href="login.php" class="text-dark fw-bold text-decoration-underline text-underline-offset-4">Log in</a> to upload photos.
+                    </div>
+                    <?php endif; ?>
+
+                    <div id="images-list" class="row g-3"></div>
+                </section>
             </div>
         </div>
-
     </div>
 </main>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-const MBID      = <?= json_encode($mbid) ?>;
+const MBID = <?= json_encode($mbid) ?>;
 const LOGGED_IN = <?= json_encode($logged_in) ?>;
 
 function escHtml(str) {
     return DOMPurify.sanitize(String(str));
 }
 
-function formatDate(str) {
-    return new Date(str).toLocaleDateString('en-SG', {
-        day: 'numeric', month: 'short', year: 'numeric'
-    });
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function renderImages(images) {
     const el = document.getElementById('images-list');
-    if (!images.length) {
-        el.innerHTML = '<p class="empty-text">No photos yet.</p>';
-        return;
-    }
+    if (!images.length) { el.innerHTML = '<div class="col-12"><p class="text-muted p-4 text-center" style="border: 1px dashed var(--border); border-radius: 8px;">No photos yet.</p></div>'; return; }
     el.innerHTML = images.map(img => `
-        <figure class="photo-figure">
-            <img src="/uploads/artists/${escHtml(img.filename)}" alt="Artist photo">
-            <figcaption>
-                <i class="bi bi-person-circle"></i> ${escHtml(img.username)}
-                <span class="dot">·</span>
-                ${escHtml(formatDate(img.created_at))}
-            </figcaption>
-        </figure>
+        <div class="col-6 col-md-4 col-lg-6">
+            <div class="position-relative">
+                <a href="/uploads/artists/${escHtml(img.filename)}" target="_blank">
+                    <img src="/uploads/artists/${escHtml(img.filename)}" class="artist-photo" alt="Artist photo">
+                </a>
+                <div class="mt-2 small text-muted text-truncate fw-medium" title="Uploaded by ${escHtml(img.username)}">
+                    <i class="bi bi-person me-1"></i>${escHtml(img.username)}
+                </div>
+            </div>
+        </div>
     `).join('');
 }
 
 function renderAlbums(albums) {
     const el = document.getElementById('albums-list');
-    if (!albums.length) {
-        el.innerHTML = '<p class="empty-text">No albums listed.</p>';
-        return;
+    if (!albums.length) { 
+        el.innerHTML = `
+            <div class="text-center p-5" style="background: #fafafa; border: 1.5px dashed var(--border); border-radius: 8px;">
+                <i class="bi bi-vinyl fs-1 text-muted mb-2 opacity-50"></i>
+                <p class="text-muted mb-0 fw-medium">No albums recorded yet.</p>
+            </div>
+        `; 
+        return; 
     }
     el.innerHTML = albums.map(a => `
-        <a href="album.php?mbid=${encodeURIComponent(a.album_mbid)}" class="album-row">
-            <i class="bi bi-vinyl"></i>
-            <span>${escHtml(a.album_name)}</span>
-            <i class="bi bi-chevron-right ms-auto"></i>
+        <a href="album.php?mbid=${encodeURIComponent(a.album_mbid)}" class="album-card shadow-sm">
+            <i class="bi bi-disc"></i>
+            <span class="fs-6 fw-medium text-dark flex-grow-1">${escHtml(a.album_name)}</span>
+            <i class="bi bi-chevron-right text-muted opacity-50 pe-1"></i>
         </a>
     `).join('');
 }
 
-function renderComments(comments) {
-    const el = document.getElementById('comments-list');
-    if (!comments.length) {
-        el.innerHTML = '<p class="empty-text">No comments yet. Be the first!</p>';
-        return;
-    }
-    el.innerHTML = comments.map(c => commentHTML(c)).join('');
-}
-
-function commentHTML(c) {
+function formatComment(c) {
     return `
-        <div class="comment-item">
-            <div class="comment-meta">
-                <span class="comment-author">${escHtml(c.username)}</span>
-                <span class="comment-date">${escHtml(formatDate(c.created_at))}</span>
+        <div class="comment-article shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="fs-6 text-dark"><i class="bi bi-person-circle me-2 text-secondary"></i>${escHtml(c.username)}</strong>
+                <span class="comment-time">${formatDate(c.created_at)}</span>
             </div>
-            <p class="comment-body">${escHtml(c.comment)}</p>
+            <p class="mb-0 text-dark" style="line-height: 1.6;">${escHtml(c.comment).replace(/\n/g, '<br>')}</p>
         </div>
     `;
 }
 
+function renderComments(comments) {
+    const el = document.getElementById('comments-list');
+    if (!comments.length) { 
+        el.innerHTML = '<p class="text-muted p-4 text-center" style="border: 1px dashed var(--border); border-radius: 8px;">No comments yet. Start the discussion!</p>'; 
+        return; 
+    }
+    el.innerHTML = comments.map(formatComment).join('');
+}
+
 function prependComment(comment) {
     const el = document.getElementById('comments-list');
-    const emptyMsg = el.querySelector('.empty-text');
-    if (emptyMsg) emptyMsg.remove();
+    if (el.querySelector('p.text-center')) el.innerHTML = ''; // remove 'No comments yet'
     const div = document.createElement('div');
-    div.innerHTML = commentHTML(comment);
+    div.innerHTML = formatComment(comment);
     el.prepend(div.firstElementChild);
 }
 
@@ -182,88 +296,83 @@ fetch(`/api/get_artist.php?mbid=${encodeURIComponent(MBID)}`)
     .then(r => r.json())
     .then(data => {
         if (data.error) {
-            const banner = document.getElementById('error-banner');
-            banner.textContent = data.error;
-            banner.style.display = 'block';
-            document.getElementById('artist-hero').innerHTML = '';
+            const errBanner = document.getElementById('error-banner');
+            errBanner.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i> ${escHtml(data.error)}`;
+            errBanner.style.display = 'block';
             return;
         }
 
         const a = data.artist;
-        document.title = escHtml(a.artist_name) + ' — Artist';
-
-        document.getElementById('artist-hero').innerHTML = `
-            <div class="artist-hero-inner">
-                <div class="artist-avatar">${escHtml(a.artist_name.charAt(0).toUpperCase())}</div>
-                <div class="artist-hero-info">
-                    <p class="artist-eyebrow">Artist</p>
-                    <h1 class="artist-name">${escHtml(a.artist_name)}</h1>
-                    <a class="mbid-link"
-                       href="https://musicbrainz.org/artist/${escHtml(a.artist_mbid)}"
-                       target="_blank" rel="noopener">
-                        <i class="bi bi-box-arrow-up-right"></i>
-                        View on MusicBrainz
-                    </a>
-                </div>
-            </div>
-        `;
+        document.title = escHtml(a.artist_name) + ' | MusicMarket';
+        
+        const contentDiv = document.getElementById('artist-info-content');
+        document.getElementById('hero-title').textContent = a.artist_name;
+        
+        const mbidLink = document.getElementById('hero-mbid-link');
+        mbidLink.href = `https://musicbrainz.org/artist/${encodeURIComponent(a.artist_mbid)}`;
+        
+        contentDiv.style.display = 'block';
 
         renderImages(data.images);
         renderAlbums(data.albums);
         renderComments(data.comments);
     })
     .catch(() => {
-        const banner = document.getElementById('error-banner');
-        banner.textContent = 'Failed to load artist.';
-        banner.style.display = 'block';
-        document.getElementById('artist-hero').innerHTML = '';
+        const errBanner = document.getElementById('error-banner');
+        errBanner.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i> Failed to load artist.`;
+        errBanner.style.display = 'block';
     });
 
-// Upload photo (trigger on file select)
+// Upload photo
 if (LOGGED_IN) {
-    document.getElementById('image-input').addEventListener('change', function () {
-        const file   = this.files[0];
+    document.getElementById('btn-upload').addEventListener('click', function () {
+        const file   = document.getElementById('image-input').files[0];
         const status = document.getElementById('upload-status');
-        if (!file) return;
-
-        const label = document.querySelector('.btn-upload-label');
-        label.innerHTML = '<i class="bi bi-arrow-repeat"></i> Uploading...';
-        label.classList.add('loading');
+        if (!file) { 
+            status.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>Please select a file.</span>'; 
+            return; 
+        }
 
         const body = new FormData();
         body.append('type', 'artist');
         body.append('mbid', MBID);
         body.append('image', file);
 
+        status.innerHTML = '<span class="text-secondary"><i class="spinner-border spinner-border-sm me-1" role="status"></i>Uploading...</span>'; // Validation
         fetch('/api/upload_image.php', { method: 'POST', body })
             .then(r => r.json())
             .then(data => {
-                label.innerHTML = '<i class="bi bi-upload"></i> Upload Photo';
-                label.classList.remove('loading');
                 if (data.status === 'ok') {
-                    status.textContent = 'Photo uploaded!';
-                    status.className = 'status-msg ok';
+                    status.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Uploaded successfully!</span>';
+                    document.getElementById('image-input').value = '';
                     const list = document.getElementById('images-list');
-                    const emptyMsg = list.querySelector('.empty-text');
-                    if (emptyMsg) emptyMsg.remove();
-                    const fig = document.createElement('figure');
-                    fig.className = 'photo-figure';
+                    if (list.querySelector('p.text-center')) list.innerHTML = '';
+                    const mockImg = {
+                        filename: data.filename,
+                        username: 'You'
+                    };
+                    const fig = document.createElement('div');
                     fig.innerHTML = `
-                        <img src="/uploads/artists/${escHtml(data.filename)}" alt="Artist photo">
-                        <figcaption><i class="bi bi-person-circle"></i> You <span class="dot">·</span> Just now</figcaption>
+                        <div class="col-6 col-md-4 col-lg-6">
+                            <div class="position-relative">
+                                <a href="/uploads/artists/${escHtml(mockImg.filename)}" target="_blank">
+                                    <img src="/uploads/artists/${escHtml(mockImg.filename)}" class="artist-photo" alt="Artist photo">
+                                </a>
+                                <div class="mt-2 small text-muted text-truncate fw-medium">
+                                    <i class="bi bi-person me-1"></i>${escHtml(mockImg.username)}
+                                </div>
+                            </div>
+                        </div>
                     `;
-                    list.prepend(fig);
-                    setTimeout(() => { status.textContent = ''; status.className = 'status-msg'; }, 3000);
+                    list.insertAdjacentHTML('afterbegin', fig.innerHTML);
+                    
+                    setTimeout(() => { status.innerHTML = ''; }, 3000);
                 } else {
-                    status.textContent = data.error || 'Upload failed.';
-                    status.className = 'status-msg error';
+                    status.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>${escHtml(data.error || 'Upload failed.')}</span>`;
                 }
             })
-            .catch(() => {
-                label.innerHTML = '<i class="bi bi-upload"></i> Upload Photo';
-                label.classList.remove('loading');
-                status.textContent = 'Upload failed.';
-                status.className = 'status-msg error';
+            .catch(() => { 
+                status.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>Upload failed. Network error.</span>'; 
             });
     });
 
@@ -271,15 +380,13 @@ if (LOGGED_IN) {
     document.getElementById('btn-comment').addEventListener('click', function () {
         const comment = document.getElementById('comment-input').value.trim();
         const status  = document.getElementById('comment-status');
-        if (!comment) {
-            status.textContent = 'Comment cannot be empty.';
-            status.className = 'status-msg error';
-            return;
+        if (!comment) { 
+            status.innerHTML = '<span class="text-danger">Comment cannot be empty.</span>'; 
+            return; 
         }
 
-        this.disabled = true;
-        this.innerHTML = '<i class="bi bi-arrow-repeat"></i> Posting...';
-
+        status.innerHTML = '<span class="text-secondary"><i class="spinner-border spinner-border-sm me-1" role="status"></i>Posting...</span>';
+        
         fetch('/api/add_comment.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -287,22 +394,17 @@ if (LOGGED_IN) {
         })
         .then(r => r.json())
         .then(data => {
-            this.disabled = false;
-            this.innerHTML = '<i class="bi bi-send"></i> Post';
             if (data.status === 'ok') {
-                status.textContent = '';
+                status.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Posted!</span>';
                 document.getElementById('comment-input').value = '';
                 prependComment(data.comment);
+                setTimeout(() => { status.innerHTML = ''; }, 3000); // Validation
             } else {
-                status.textContent = data.error || 'Failed to post comment.';
-                status.className = 'status-msg error';
+                status.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>${escHtml(data.error || 'Failed to post comment.')}</span>`;
             }
         })
-        .catch(() => {
-            this.disabled = false;
-            this.innerHTML = '<i class="bi bi-send"></i> Post';
-            status.textContent = 'Failed to post comment.';
-            status.className = 'status-msg error';
+        .catch(() => { 
+            status.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>Failed to post comment. Network error.</span>'; 
         });
     });
 }
