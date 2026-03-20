@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../db.php';
 
 header('Content-Type: application/json');
 
@@ -24,6 +25,29 @@ if (empty($cart)) {
 }
 
 \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
+
+// Re-checks all cart items are still available before charging the user
+$listing_ids = array_keys($cart);
+$placeholders = implode(',', array_fill(0, count($listing_ids), '?'));
+$stmt = $pdo->prepare(
+    "SELECT listing_id FROM listings WHERE listing_id IN ($placeholders) AND status = 'available'"
+);
+$stmt->execute($listing_ids);
+$available_ids = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'listing_id');
+
+$unavailable = array_diff($listing_ids, $available_ids);
+if (!empty($unavailable)) {
+
+    // Removes sold item from cart to avoid any mistransactions
+    foreach ($unavailable as $sold_id) {
+        unset($_SESSION['cart'][$sold_id]);
+    }
+    http_response_code(409);
+    echo json_encode([
+        'error' => 'One or more items in your cart have just been sold. They have been removed from your cart. Please review your cart and try again.'
+    ]);
+    exit;
+}
 
 $line_items = [];
 foreach ($cart as $listing_id => $item) {

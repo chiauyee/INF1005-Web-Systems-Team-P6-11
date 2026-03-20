@@ -34,13 +34,13 @@ if ($action === 'add') {
         JOIN albums al  ON l.album_mbid  = al.album_mbid
         JOIN artists ar ON al.artist_mbid = ar.artist_mbid
         JOIN users u    ON l.seller_id    = u.id
-        WHERE l.listing_id = ?
+        WHERE l.listing_id = ? AND l.status = 'available'
     ");
     $stmt->execute([$listing_id]);
     $listing = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$listing) {
-        echo json_encode(['error' => 'Listing not found']);
+        echo json_encode(['error' => 'This listing is no longer available']);
         exit;
     }
 
