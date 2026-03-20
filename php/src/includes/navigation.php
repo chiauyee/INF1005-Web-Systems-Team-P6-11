@@ -81,7 +81,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <strong>Total</strong>
                 <strong id="cart-total">$0.00</strong>
             </div>
-            <button class="btn btn-dark w-100">Checkout</button>
+            <button class="btn btn-dark w-100" onclick="window.location.href='/checkout.php'">Checkout</button>
         </div>
     </div>
 </div>

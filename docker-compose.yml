@@ -35,6 +35,8 @@ services:
       DB_NAME: appdb
       DB_USER: appuser
       DB_PASS: apppass
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
     volumes:
     - ./php/src:/var/www/html
 
