@@ -18,16 +18,55 @@ if ($session_id) {
             $listing_ids = array_filter(explode(',', $metadata['listing_ids'] ?? ''));
             $buyer_id    = (int) ($metadata['buyer_id'] ?? 0);
 
-            foreach ($listing_ids as $lid) {
-                $lid  = (int) $lid;
-                $stmt = $pdo->prepare(
-                    "UPDATE listings SET status = 'complete', buyer_id = ? WHERE listing_id = ? AND status = 'available'"
-                );
-                $stmt->execute([$buyer_id, $lid]);
-            }
+            // To prevent repeating of session_id, it skips the transaction and shows success
+            // else users can mess up the db updates 
+            $check_ids    = array_map('intval', $listing_ids);
+            $check_ph     = implode(',', array_fill(0, count($check_ids), '?'));
+            $check_params = array_merge($check_ids, [$buyer_id]);
+            $check_stmt   = $pdo->prepare(
+                "SELECT COUNT(*) FROM listings WHERE listing_id IN ($check_ph) AND status = 'complete' AND buyer_id = ?"
+            );
+            $check_stmt->execute($check_params);
+            if ((int) $check_stmt->fetchColumn() === count($check_ids)) {
+                // Already fulfilled — treat as success without touching the DB again
+                $_SESSION['cart'] = [];
+                $paid = true;
+            } else {
 
-            $_SESSION['cart'] = [];
-            $paid = true;
+            // Before completing the stripe transaction, it checks if the listing is already complete
+            $listing_ids = array_map('intval', $listing_ids);
+            $placeholders = implode(',', array_fill(0, count($listing_ids), '?'));
+
+            $pdo->beginTransaction();
+            try {
+                $lock_stmt = $pdo->prepare(
+                    "SELECT listing_id FROM listings WHERE listing_id IN ($placeholders) AND status = 'available' FOR UPDATE"
+                );
+                $lock_stmt->execute($listing_ids);
+                $locked_available = array_map('intval', array_column($lock_stmt->fetchAll(PDO::FETCH_ASSOC), 'listing_id'));
+
+                $missing = array_diff($listing_ids, $locked_available);
+                if (!empty($missing)) {
+                    // rollbacks cart so no items are recorded
+                    $pdo->rollBack();
+                    $error = 'Your payment was received, but one or more items were sold to another buyer at the same time. Please contact support for a full refund. Reference: ' . htmlspecialchars($session_id);
+                } else {
+                    // all rows are locked and confirmed available — update unconditionally
+                    $update_stmt = $pdo->prepare(
+                        "UPDATE listings SET status = 'complete', buyer_id = ? WHERE listing_id = ?"
+                    );
+                    foreach ($listing_ids as $lid) {
+                        $update_stmt->execute([$buyer_id, $lid]);
+                    }
+                    $pdo->commit();
+                    $_SESSION['cart'] = [];
+                    $paid = true;
+                }
+            } catch (\Exception $e) {
+                $pdo->rollBack();
+                $error = 'An error occurred while confirming your order. Please contact support. Reference: ' . htmlspecialchars($session_id);
+            }
+            } // end else (not already fulfilled)
         } else {
             $error = 'Payment is not complete yet.';
         }
