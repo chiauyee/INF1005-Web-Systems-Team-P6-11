@@ -375,7 +375,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label" for="phone">Phone Number</label>
                     <div class="input-wrap">
                         <i class="bi bi-telephone"></i>
-                        <input type="tel" name="phone" id="phone" class="form-control" placeholder="8123 4567" value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
+                        <input type="tel" name="phone" id="phone" class="form-control" placeholder="8123 4567" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required>
                     </div>
                 </div>
 
@@ -383,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label" for="address">Delivery Address</label>
                     <div class="input-wrap">
                         <i class="bi bi-geo-alt"></i>
-                        <input type="text" name="address" id="address" class="form-control" placeholder="e.g. 123 Orchard Road, Singapore" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
+                        <input type="text" name="address" id="address" class="form-control" placeholder="e.g. 123 Orchard Road, Singapore" value="<?= htmlspecialchars($user['address'] ?? '') ?>" required>
                     </div>
                 </div>
                             
@@ -453,57 +453,431 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   <script>
-    document.getElementById('btn-register').addEventListener('click', function () {
-        const username = document.getElementById('username').value.trim();
-        const email    = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const phone    = document.getElementById('phone').value.trim();
-        const address  = document.getElementById('address').value.trim();
-        const country  = document.getElementById('country').value;
-        const errorDiv   = document.getElementById('error-msg');
-        const successDiv = document.getElementById('success-msg');
+	// Geocoding function to convert address to coordinates
+	async function getCoordinates(address, country) {
+		try {
+			// Get the country name from the country code
+			const countryName = getCountryName(country); // You'll need this function
+			
+			// Format address more precisely
+			const fullAddress = `${address}, ${countryName}`;
+			const encodedAddress = encodeURIComponent(fullAddress);
+			
+			console.log('Geocoding address:', fullAddress);
+			
+			// Add more parameters for better accuracy
+			const response = await fetch(
+				`https://nominatim.openstreetmap.org/search?` +
+				`format=json&q=${encodedAddress}&limit=1&` +
+				`addressdetails=1&countrycodes=${country.toLowerCase()}`
+			);
+			const data = await response.json();
+			
+			if (data && data.length > 0) {
+				console.log('Geocoding result:', data[0]);
+				return {
+					lat: parseFloat(data[0].lat),
+					lon: parseFloat(data[0].lon)
+				};
+			} else {
+				console.log('No geocoding results found');
+			}
+		} catch (error) {
+			console.error('Geocoding failed:', error);
+		}
+		return null;
+	}
 
-        errorDiv.style.display   = 'none';
-        successDiv.style.display = 'none';
+	// Helper function to get country name from code
+	function getCountryName(countryCode) {
+		const countries = array(
+			'AD' => 'Andorra',
+			'AE' => 'United Arab Emirates',
+			'AF' => 'Afghanistan',
+			'AG' => 'Antigua and Barbuda',
+			'AI' => 'Anguilla',
+			'AL' => 'Albania',
+			'AM' => 'Armenia',
+			'AN' => 'Netherlands Antilles',
+			'AO' => 'Angola',
+			'AQ' => 'Antarctica',
+			'AR' => 'Argentina',
+			'AS' => 'American Samoa',
+			'AT' => 'Austria',
+			'AU' => 'Australia',
+			'AW' => 'Aruba',
+			'AZ' => 'Azerbaijan',
+			'BA' => 'Bosnia and Herzegovina',
+			'BB' => 'Barbados',
+			'BD' => 'Bangladesh',
+			'BE' => 'Belgium',
+			'BF' => 'Burkina Faso',
+			'BG' => 'Bulgaria',
+			'BH' => 'Bahrain',
+			'BI' => 'Burundi',
+			'BJ' => 'Benin',
+			'BL' => 'Saint Barthelemy',
+			'BM' => 'Bermuda',
+			'BN' => 'Brunei Darussalam',
+			'BO' => 'Bolivia',
+			'BR' => 'Brazil',
+			'BS' => 'Bahamas',
+			'BT' => 'Bhutan',
+			'BW' => 'Botswana',
+			'BY' => 'Belarus',
+			'BZ' => 'Belize',
+			'CA' => 'Canada',
+			'CC' => 'Cocos (Keeling) Islands',
+			'CD' => 'Congo, The Democratic Republic of the',
+			'CF' => 'Central African Republic',
+			'CG' => 'Congo',
+			'CH' => 'Switzerland',
+			'CI' => 'Cote D Ivoire',
+			'CK' => 'Cook Islands',
+			'CL' => 'Chile',
+			'CM' => 'Cameroon',
+			'CN' => 'China',
+			'CO' => 'Colombia',
+			'CR' => 'Costa Rica',
+			'CU' => 'Cuba',
+			'CV' => 'Cape Verde',
+			'CX' => 'Christmas Island',
+			'CY' => 'Cyprus',
+			'CZ' => 'Czech Republic',
+			'DE' => 'Germany',
+			'DJ' => 'Djibouti',
+			'DK' => 'Denmark',
+			'DM' => 'Dominica',
+			'DO' => 'Dominican Republic',
+			'DZ' => 'Algeria',
+			'EC' => 'Ecuador',
+			'EE' => 'Estonia',
+			'EG' => 'Egypt',
+			'ER' => 'Eritrea',
+			'ES' => 'Spain',
+			'ET' => 'Ethiopia',
+			'FI' => 'Finland',
+			'FJ' => 'Fiji',
+			'FK' => 'Falkland Islands (Malvinas)',
+			'FM' => 'Micronesia, Federated States of',
+			'FO' => 'Faroe Islands',
+			'FR' => 'France',
+			'GA' => 'Gabon',
+			'GB' => 'United Kingdom',
+			'GD' => 'Grenada',
+			'GE' => 'Georgia',
+			'GH' => 'Ghana',
+			'GI' => 'Gibraltar',
+			'GL' => 'Greenland',
+			'GM' => 'Gambia',
+			'GN' => 'Guinea',
+			'GQ' => 'Equatorial Guinea',
+			'GR' => 'Greece',
+			'GT' => 'Guatemala',
+			'GU' => 'Guam',
+			'GW' => 'Guinea-Bissau',
+			'GY' => 'Guyana',
+			'HK' => 'Hong Kong',
+			'HN' => 'Honduras',
+			'HR' => 'Croatia',
+			'HT' => 'Haiti',
+			'HU' => 'Hungary',
+			'ID' => 'Indonesia',
+			'IE' => 'Ireland',
+			'IL' => 'Israel',
+			'IM' => 'Isle of Man',
+			'IN' => 'India',
+			'IQ' => 'Iraq',
+			'IR' => 'Iran, Islamic Republic of',
+			'IS' => 'Iceland',
+			'IT' => 'Italy',
+			'JM' => 'Jamaica',
+			'JO' => 'Jordan',
+			'JP' => 'Japan',
+			'KE' => 'Kenya',
+			'KG' => 'Kyrgyzstan',
+			'KH' => 'Cambodia',
+			'KI' => 'Kiribati',
+			'KM' => 'Comoros',
+			'KN' => 'Saint Kitts and Nevis',
+			'KP' => 'Korea Democratic Peoples Republic of',
+			'KR' => 'Korea Republic of',
+			'KW' => 'Kuwait',
+			'KY' => 'Cayman Islands',
+			'KZ' => 'Kazakstan',
+			'LA' => 'Lao Peoples Democratic Republic',
+			'LB' => 'Lebanon',
+			'LC' => 'Saint Lucia',
+			'LI' => 'Liechtenstein',
+			'LK' => 'Sri Lanka',
+			'LR' => 'Liberia',
+			'LS' => 'Lesotho',
+			'LT' => 'Lithuania',
+			'LU' => 'Luxembourg',
+			'LV' => 'Latvia',
+			'LY' => 'Libyan Arab Jamahiriya',
+			'MA' => 'Morocco',
+			'MC' => 'Monaco',
+			'MD' => 'Moldova, Republic of',
+			'ME' => 'Montenegro',
+			'MF' => 'Saint Martin',
+			'MG' => 'Madagascar',
+			'MH' => 'Marshall Islands',
+			'MK' => 'Macedonia, The Former Yugoslav Republic of',
+			'ML' => 'Mali',
+			'MM' => 'Myanmar',
+			'MN' => 'Mongolia',
+			'MO' => 'Macau',
+			'MP' => 'Northern Mariana Islands',
+			'MR' => 'Mauritania',
+			'MS' => 'Montserrat',
+			'MT' => 'Malta',
+			'MU' => 'Mauritius',
+			'MV' => 'Maldives',
+			'MW' => 'Malawi',
+			'MX' => 'Mexico',
+			'MY' => 'Malaysia',
+			'MZ' => 'Mozambique',
+			'NA' => 'Namibia',
+			'NC' => 'New Caledonia',
+			'NE' => 'Niger',
+			'NG' => 'Nigeria',
+			'NI' => 'Nicaragua',
+			'NL' => 'Netherlands',
+			'NO' => 'Norway',
+			'NP' => 'Nepal',
+			'NR' => 'Nauru',
+			'NU' => 'Niue',
+			'NZ' => 'New Zealand',
+			'OM' => 'Oman',
+			'PA' => 'Panama',
+			'PE' => 'Peru',
+			'PF' => 'French Polynesia',
+			'PG' => 'Papua New Guinea',
+			'PH' => 'Philippines',
+			'PK' => 'Pakistan',
+			'PL' => 'Poland',
+			'PM' => 'Saint Pierre and Miquelon',
+			'PN' => 'Pitcairn',
+			'PR' => 'Puerto Rico',
+			'PT' => 'Portugal',
+			'PW' => 'Palau',
+			'PY' => 'Paraguay',
+			'QA' => 'Qatar',
+			'RO' => 'Romania',
+			'RS' => 'Serbia',
+			'RU' => 'Russian Federation',
+			'RW' => 'Rwanda',
+			'SA' => 'Saudi Arabia',
+			'SB' => 'Solomon Islands',
+			'SC' => 'Seychelles',
+			'SD' => 'Sudan',
+			'SE' => 'Sweden',
+			'SG' => 'Singapore',
+			'SH' => 'Saint Helena',
+			'SI' => 'Slovenia',
+			'SK' => 'Slovakia',
+			'SL' => 'Sierra Leone',
+			'SM' => 'San Marino',
+			'SN' => 'Senegal',
+			'SO' => 'Somalia',
+			'SR' => 'Suriname',
+			'ST' => 'Sao Tome and Principe',
+			'SV' => 'El Salvador',
+			'SY' => 'Syrian Arab Republic',
+			'SZ' => 'Swaziland',
+			'TC' => 'Turks and Caicos Islands',
+			'TD' => 'Chad',
+			'TG' => 'Togo',
+			'TH' => 'Thailand',
+			'TJ' => 'Tajikistan',
+			'TK' => 'Tokelau',
+			'TL' => 'Timor-Leste',
+			'TM' => 'Turkmenistan',
+			'TN' => 'Tunisia',
+			'TO' => 'Tonga',
+			'TR' => 'Turkey',
+			'TT' => 'Trinidad and Tobago',
+			'TV' => 'Tuvalu',
+			'TW' => 'Taiwan, Province of China',
+			'TZ' => 'Tanzania, United Republic of',
+			'UA' => 'Ukraine',
+			'UG' => 'Uganda',
+			'US' => 'United States',
+			'UY' => 'Uruguay',
+			'UZ' => 'Uzbekistan',
+			'VA' => 'Holy See (Vatican City State)',
+			'VC' => 'Saint Vincent and The Grenadines',
+			'VE' => 'Venezuela',
+			'VG' => 'Virgin Islands, British',
+			'VI' => 'Virgin Islands, U.S.',
+			'VN' => 'Viet Nam',
+			'VU' => 'Vanuatu',
+			'WF' => 'Wallis and Futuna',
+			'WS' => 'Samoa',
+			'XK' => 'Kosovo',
+			'YE' => 'Yemen',
+			'YT' => 'Mayotte',
+			'ZA' => 'South Africa',
+			'ZM' => 'Zambia',
+			'ZW' => 'Zimbabwe'
+		);
+		return countries[countryCode] || countryCode;
+	}
 
-        // Validate password strength on client side
-        const passwordErrors = [];
-        if (password.length < 8) passwordErrors.push("At least 8 characters");
-        if (!/[A-Z]/.test(password)) passwordErrors.push("One uppercase letter");
-        if (!/[a-z]/.test(password)) passwordErrors.push("One lowercase letter");
-        if (!/[0-9]/.test(password)) passwordErrors.push("One number");
-        if (!/[@$!%*?&]/.test(password)) passwordErrors.push("One special character");
-        
-        if (passwordErrors.length > 0) {
-            errorDiv.textContent = "Password requirements: " + passwordErrors.join(", ");
-            errorDiv.style.display = 'block';
-            return;
-        }
+	// Make the click handler async
+	document.getElementById('btn-register').addEventListener('click', async function () {
+		const username = document.getElementById('username').value.trim();
+		const email    = document.getElementById('email').value.trim();
+		const password = document.getElementById('password').value;
+		const phone    = document.getElementById('phone').value.trim();
+		const address  = document.getElementById('address').value.trim();
+		const country  = document.getElementById('country').value;
+		const errorDiv   = document.getElementById('error-msg');
+		const successDiv = document.getElementById('success-msg');
 
-        const body = new FormData();
-        body.append('username', username);
-        body.append('email', email);
-        body.append('password', password);
-        body.append('phone', phone);
-        body.append('address', address);
-        body.append('country', country);
+		errorDiv.style.display   = 'none';
+		successDiv.style.display = 'none';
 
-        fetch('/api/register.php', { method: 'POST', body })
-            .then(r => r.json())
-            .then(data => {
-                if (data.status === 'ok') {
-                    successDiv.style.display = 'block';
-                    setTimeout(() => { window.location.href = 'login.php?registered=1'; }, 1200);
-                } else {
-                    errorDiv.textContent = data.error || 'Registration failed.';
-                    errorDiv.style.display = 'block';
-                }
-            })
-            .catch(() => {
-                errorDiv.textContent = 'An error occurred. Please try again.';
-                errorDiv.style.display = 'block';
-            });
-    });
-</script>
+		// Check all required fields
+		if (!username) {
+			errorDiv.textContent = 'Username is required.';
+			errorDiv.style.display = 'block';
+			return;
+		}
+		
+		if (!email) {
+			errorDiv.textContent = 'Email is required.';
+			errorDiv.style.display = 'block';
+			return;
+		}
+		
+		// Email format validation
+		const emailPattern = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+		if (!emailPattern.test(email)) {
+			errorDiv.textContent = 'Please enter a valid email address (e.g., name@example.com).';
+			errorDiv.style.display = 'block';
+			return;
+		}
+		
+		if (!phone) {
+			errorDiv.textContent = 'Phone number is required.';
+			errorDiv.style.display = 'block';
+			return;
+		}
+		
+		if (!address) {
+			errorDiv.textContent = 'Delivery address is required.';
+			errorDiv.style.display = 'block';
+			return;
+		}
+		
+		if (!password) {
+			errorDiv.textContent = 'Password is required.';
+			errorDiv.style.display = 'block';
+			return;
+		}
+
+		// Validate password strength
+		const passwordErrors = [];
+		if (password.length < 8) passwordErrors.push("At least 8 characters");
+		if (!/[A-Z]/.test(password)) passwordErrors.push("One uppercase letter");
+		if (!/[a-z]/.test(password)) passwordErrors.push("One lowercase letter");
+		if (!/[0-9]/.test(password)) passwordErrors.push("One number");
+		if (!/[@$!%*?&]/.test(password)) passwordErrors.push("One special character");
+		
+		if (passwordErrors.length > 0) {
+			errorDiv.textContent = "Password requirements: " + passwordErrors.join(", ");
+			errorDiv.style.display = 'block';
+			return;
+		}
+
+		// Phone number format validation (basic)
+		const phonePattern = /^[0-9+\-\s()]+$/;
+		if (!phonePattern.test(phone)) {
+			errorDiv.textContent = 'Please enter a valid phone number.';
+			errorDiv.style.display = 'block';
+			return;
+		}
+
+		// Show loading state
+		const registerBtn = document.getElementById('btn-register');
+		const originalBtnText = registerBtn.innerHTML;
+		registerBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Getting location...';
+		registerBtn.disabled = true;
+
+		// Get coordinates from address
+		let latitude = null;
+		let longitude = null;
+		
+		try {
+			errorDiv.textContent = 'Geocoding address...';
+			errorDiv.style.display = 'block';
+			errorDiv.style.backgroundColor = '#fff3cd';
+			errorDiv.style.color = '#856404';
+			
+			const coords = await getCoordinates(address, country);
+			if (coords) {
+				latitude = coords.lat;
+				longitude = coords.lon;
+				errorDiv.textContent = '✓ Address located! Registering...';
+			} else {
+				errorDiv.textContent = 'Could not locate address. Registering without location...';
+			}
+		} catch (error) {
+			console.error('Geocoding error:', error);
+			errorDiv.textContent = 'Location service error. Registering without location...';
+		}
+
+		// Prepare form data
+		const body = new FormData();
+		body.append('username', username);
+		body.append('email', email);
+		body.append('password', password);
+		body.append('phone', phone);
+		body.append('address', address);
+		body.append('country', country);
+		
+		// Add coordinates if available
+		if (latitude && longitude) {
+			body.append('latitude', latitude);
+			body.append('longitude', longitude);
+			console.log(`Coordinates added: ${latitude}, ${longitude}`);
+		} else {
+			console.log('No coordinates available');
+		}
+
+		// Update button text
+		registerBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating account...';
+
+		fetch('/api/register.php', { method: 'POST', body })
+			.then(r => r.json())
+			.then(data => {
+				if (data.status === 'ok') {
+					successDiv.style.display = 'block';
+					errorDiv.style.display = 'none';
+					setTimeout(() => { 
+						window.location.href = 'login.php?registered=1'; 
+					}, 1200);
+				} else {
+					errorDiv.textContent = data.error || 'Registration failed.';
+					errorDiv.style.display = 'block';
+					errorDiv.style.backgroundColor = '#f8d7da';
+					errorDiv.style.color = '#721c24';
+					registerBtn.innerHTML = originalBtnText;
+					registerBtn.disabled = false;
+				}
+			})
+			.catch((error) => {
+				console.error('Fetch error:', error);
+				errorDiv.textContent = 'An error occurred. Please try again.';
+				errorDiv.style.display = 'block';
+				errorDiv.style.backgroundColor = '#f8d7da';
+				errorDiv.style.color = '#721c24';
+				registerBtn.innerHTML = originalBtnText;
+				registerBtn.disabled = false;
+			});
+	});
+	</script>
 </body>
 </html>

@@ -241,7 +241,7 @@ function countrySelector($defaultCountry = "", $id = "", $name = "", $classes = 
     $output = "<select id='" . $id . "' name='" . $name . "' class='" . $classes . "' style='appearance: auto; -webkit-appearance: menulist; width: 100%;'>";
     
     foreach($countryArray as $code => $country) {
-        $countryName = ucwords(strtolower($country["name"]));
+		$countryName = ucwords(strtolower($country["name"]));
         $selected = ($code == $defaultCountry) ? "selected" : "";
         $output .= "<option value='" . $code . "' " . $selected . ">" . $code . " - " . $countryName . " (+" . $country["code"] . ")</option>";
     }
@@ -263,17 +263,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone   = trim($_POST['phone'] ?? '');
     $address = trim($_POST['address'] ?? '');
     $country = $_POST['country'] ?? 'SG';
+    $latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
+    $longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
 
     try {
-        $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ? WHERE id = ?");
-        
-        if ($stmt->execute([$phone, $address, $country, $_SESSION['user_id']])) {
-            $success = 'Profile updated successfully.';
-        } else {
-            $error = 'Something went wrong. Please try again.';
+        // Check if latitude/longitude columns exist
+        $checkColumns = $pdo->query("SHOW COLUMNS FROM users LIKE 'latitude'");
+        if ($checkColumns->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN latitude DECIMAL(10,8) NULL");
+            $pdo->exec("ALTER TABLE users ADD COLUMN longitude DECIMAL(11,8) NULL");
         }
-    } catch (PDOException $e) {
+        
+        // Update with or without coordinates
+        if ($latitude !== null && $longitude !== null) {
+            $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ?, latitude = ?, longitude = ? WHERE id = ?");
+            $stmt->execute([$phone, $address, $country, $latitude, $longitude, $_SESSION['user_id']]);
+        } 
+		
+		else {
+            $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ? WHERE id = ?");
+            $stmt->execute([$phone, $address, $country, $_SESSION['user_id']]);
+        }
+        
+        $success = 'Profile updated successfully.';
+    } 
+	
+	catch (PDOException $e) {
         $error = 'Database error. Please try again.';
+        error_log("Profile update error: " . $e->getMessage());
     }
 }
 
@@ -407,5 +424,159 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+	<script>
+		// Geocoding function to convert address to coordinates
+		async function getCoordinates(address, country) {
+			try {
+				// Add country to address for better accuracy
+				const fullAddress = `${address}, ${country}`;
+				const encodedAddress = encodeURIComponent(fullAddress);
+				
+				// Using OpenStreetMap Nominatim API (free, no API key needed)
+				const response = await fetch(
+					`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`
+				);
+				const data = await response.json();
+				
+				if (data && data.length > 0) {
+					return {
+						lat: parseFloat(data[0].lat),
+						lon: parseFloat(data[0].lon)
+					};
+				}
+			} 
+			
+			catch (error) {
+				console.error('Geocoding failed:', error);
+			}
+			return null;
+		}
+
+		// Intercept form submission
+		document.querySelector('form').addEventListener('submit', async function(e) {
+			e.preventDefault(); // Prevent normal form submission
+			
+			const phone = document.getElementById('phone').value.trim();
+			const address = document.getElementById('address').value.trim();
+			const country = document.getElementById('country').value;
+			const errorDiv = document.querySelector('.alert-danger');
+			const successDiv = document.querySelector('.alert-success');
+			
+			// Hide any existing alerts
+			if (errorDiv) errorDiv.style.display = 'none';
+			if (successDiv) successDiv.style.display = 'none';
+			
+			// Validate required fields
+			if (!address) {
+				showAlert('error', 'Delivery address is required.');
+				return;
+			}
+			
+			// Show loading state
+			const submitBtn = this.querySelector('button[type="submit"]');
+			const originalBtnText = submitBtn.innerHTML;
+			submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Geocoding address...';
+			submitBtn.disabled = true;
+			
+			// Get coordinates from address
+			let latitude = null;
+			let longitude = null;
+			
+			try {
+				const coords = await getCoordinates(address, country);
+				if (coords) {
+					latitude = coords.lat;
+					longitude = coords.lon;
+					console.log(`Coordinates found: ${latitude}, ${longitude}`);
+				} else {
+					console.log('Could not geocode address, continuing without coordinates');
+				}
+			} catch (error) {
+				console.error('Geocoding error:', error);
+			}
+			
+			// Prepare form data
+			const formData = new FormData();
+			formData.append('phone', phone);
+			formData.append('address', address);
+			formData.append('country', country);
+			
+			if (latitude && longitude) {
+				formData.append('latitude', latitude);
+				formData.append('longitude', longitude);
+			}
+			
+			// Submit via AJAX
+			submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+			
+			try {
+				const response = await fetch(window.location.href, {
+					method: 'POST',
+					body: formData
+				});
+				
+				const html = await response.text();
+				
+				// Parse the response to check for success message
+				if (html.includes('Profile updated successfully')) {
+					showAlert('success', 'Profile updated successfully!');
+					
+					// Refresh the page to show updated data
+					setTimeout(() => {
+						window.location.reload();
+					}, 1500);
+				} else if (html.includes('Database error')) {
+					showAlert('error', 'Database error. Please try again.');
+				} else {
+					showAlert('error', 'Something went wrong. Please try again.');
+				}
+			} catch (error) {
+				console.error('Submission error:', error);
+				showAlert('error', 'An error occurred. Please try again.');
+			} finally {
+				submitBtn.innerHTML = originalBtnText;
+				submitBtn.disabled = false;
+			}
+		});
+
+		function showAlert(type, message) {
+			// Remove existing alerts
+			const existingAlerts = document.querySelectorAll('.alert-success, .alert-danger');
+			existingAlerts.forEach(alert => alert.remove());
+			
+			// Create new alert
+			const alertDiv = document.createElement('div');
+			alertDiv.className = type === 'success' ? 'alert-success' : 'alert-danger';
+			alertDiv.style.marginBottom = '1rem';
+			alertDiv.style.padding = '0.75rem 1rem';
+			alertDiv.style.borderRadius = '0.5rem';
+			alertDiv.style.fontSize = '0.875rem';
+			
+			if (type === 'success') {
+				alertDiv.style.backgroundColor = '#d1e7dd';
+				alertDiv.style.color = '#0f5132';
+				alertDiv.style.border = '1px solid #badbcc';
+				alertDiv.innerHTML = `<i class="bi bi-check-circle me-2"></i>${message}`;
+			} else {
+				alertDiv.style.backgroundColor = '#f8d7da';
+				alertDiv.style.color = '#721c24';
+				alertDiv.style.border = '1px solid #f5c6cb';
+				alertDiv.innerHTML = `<i class="bi bi-exclamation-circle me-2"></i>${message}`;
+			}
+			
+			// Insert alert before the form
+			const form = document.querySelector('form');
+			form.parentNode.insertBefore(alertDiv, form);
+			
+			// Auto-hide success message after 3 seconds
+			if (type === 'success') {
+				setTimeout(() => {
+					alertDiv.style.opacity = '0';
+					setTimeout(() => alertDiv.remove(), 300);
+				}, 3000);
+			}
+		}
+		</script>
 </body>
 </html>

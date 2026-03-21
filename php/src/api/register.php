@@ -17,6 +17,11 @@ $address = trim($_POST['address'] ?? '');
 $country = trim($_POST['country'] ?? 'SG');
 $password = $_POST['password'] ?? '';
 
+$latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
+$longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
+
+error_log("Registration - Latitude: " . ($latitude ?? 'null') . ", Longitude: " . ($longitude ?? 'null'));
+
 if (!$username || !$email || !$password) {
     http_response_code(400);
     echo json_encode(['error' => 'All fields are required.']);
@@ -62,11 +67,36 @@ if (!preg_match('/[@$!%*?&]/', $password)) {
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO users (username, email, password, phone, address, country) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$username, $email, $hash, $phone, $address, $country]);
-    echo json_encode(['status' => 'ok']);
-} catch (PDOException $e) {
-    http_response_code(409);
-    echo json_encode(['error' => 'Username or email already taken.']);
+    $checkColumns = $pdo->query("SHOW COLUMNS FROM users LIKE 'latitude'");
+    if ($checkColumns->rowCount() == 0) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN latitude DECIMAL(10,8) NULL");
+        $pdo->exec("ALTER TABLE users ADD COLUMN longitude DECIMAL(11,8) NULL");
+    }
+    
+    if ($latitude !== null && $longitude !== null) {
+        $stmt = $pdo->prepare("
+            INSERT INTO users (username, email, password, phone, address, country, latitude, longitude) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([$username, $email, $hash, $phone, $address, $country, $latitude, $longitude]);
+    } else {
+        $stmt = $pdo->prepare("
+            INSERT INTO users (username, email, password, phone, address, country) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([$username, $email, $hash, $phone, $address, $country]);
+    }
+    
+    echo json_encode(['status' => 'ok', 'message' => 'Registration successful']);
+} 
+
+catch (PDOException $e) {
+    if ($e->errorInfo[1] == 1062) {
+        http_response_code(409);
+        echo json_encode(['error' => 'Username or email already taken.']);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    }
 }
 ?>

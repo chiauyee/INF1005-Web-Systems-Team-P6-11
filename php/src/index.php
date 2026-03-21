@@ -84,7 +84,6 @@
   </head>
 
   <body class="intro-active">
-
     <!-- Intro Screen -->
     <div id="vinyldisk-intro">
       <div id="intro-bg"></div>
@@ -107,14 +106,52 @@
       <!-- Background Section -->
       <section class="background">
         <div class="container">
-          <h1>Discover Music Collections</h1>
-          <p>Search, buy and sell vinyl records, CDs and more</p>
-          <form class="d-flex justify-content-center mt-4" role="search" id="searchForm">
-            <input class="form-control w-50 me-2" type="search" id="searchInput" placeholder="Search albums title, artists..."></input>
-            <button class="btn btn-dark" type="submit">Search</button>
-          </form>
+            <p class="hero-eyebrow">Music Marketplace</p>
+            <h1 class="hero-heading">Discover Music<br><em>Collections</em></h1>
+            <p class="hero-sub">Search, buy and sell vinyl records, CDs and more</p>
+
+            <!-- Search bar row -->
+            <div class="hero-search-wrap">
+                <div class="hero-search-bar">
+                    <div class="hero-input-group">
+                        <i class="bi bi-search"></i>
+                        <input type="search" id="searchInput"
+                              class="hero-input" placeholder="Search albums, artists...">
+                    </div>
+                    <div class="hero-divider"></div>
+                    <div class="hero-input-group">
+                        <i class="bi bi-geo-alt"></i>
+                        <input type="text" id="locationInput"
+                              class="hero-input" placeholder="Country or city...">
+                    </div>
+                    <button class="hero-search-btn" id="filterLocationBtn">
+                        <i class="bi bi-search"></i>
+                        <span>Search</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Secondary actions -->
+            <div class="hero-actions">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <button class="hero-action-btn" id="sortDistanceBtn">
+                        <i class="bi bi-geo-alt-fill"></i> Sort by Distance
+                    </button>
+                    <button class="hero-action-ghost" id="clearFiltersBtn">
+                        <i class="bi bi-x-circle"></i> Clear Filters
+                    </button>
+                <?php else: ?>
+                    <button class="hero-action-ghost" id="clearFiltersBtn">
+                        <i class="bi bi-x-circle"></i> Clear Filters
+                    </button>
+                    <a href="login.php" class="hero-login-prompt">
+                        <i class="bi bi-lock"></i>
+                        Log in to sort by distance
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
-      </section>
+    </section>
 
       <!-- Recently Listed Albums -->
       <section class="container mt-3 mb-3">
@@ -139,8 +176,9 @@
         const wrap = document.getElementById('vinyldisk-canvas-wrap');
         const intro = document.getElementById('vinyldisk-intro');
         const mainSite = document.getElementById('main-site');
+        
         if (!wrap) return;
-
+        
         if (sessionStorage.getItem('vinylIntroPlayed') === 'true') {
           document.body.classList.remove('intro-active');
           if (intro) intro.style.display = 'none';
@@ -173,7 +211,7 @@
         function createSolid(geometry, edgeMat, parent, x = 0, y = 0, z = 0) {
           const group = new THREE.Group();
           group.position.set(x, y, z);
-          
+            
           const mesh = new THREE.Mesh(geometry, meshMat);
           group.add(mesh);
 
@@ -269,7 +307,7 @@
         function enterSite() {
           if (enterState !== 0) return;
           enterState = 1;
-          
+            
           sessionStorage.setItem('vinylIntroPlayed', 'true');
 
           // Make main site visible immediately so it's behind the intro wipe
@@ -297,17 +335,21 @@
               vinylGroup.rotation.y -= 0.004; // Ambient spin
               vinylGroup.position.y = Math.sin(Date.now() * 0.002) * 0.3; // Ambient bob
             }
-          } else if (enterState === 1) {
+          }
+
+          else if (enterState === 1) {
             // Phase 1: Shift vinyl to the far left, lay flat
             vinylGroup.position.x = THREE.MathUtils.lerp(vinylGroup.position.x, -35, 0.06);
             vinylGroup.rotation.x = THREE.MathUtils.lerp(vinylGroup.rotation.x, Math.PI / 1, 0.08); 
             vinylGroup.rotation.y = THREE.MathUtils.lerp(vinylGroup.rotation.y, 0, 0.08);
-            
+              
             // Wait until it's off-screen or far left
             if (vinylGroup.position.x < -20) {
               enterState = 2;
             }
-          } else if (enterState === 2) {
+          } 
+
+          else if (enterState === 2) {
             // Phase 2: Roll back to the right across the screen
             vinylGroup.position.x += 1.2;
             vinylGroup.rotation.z -= 0.15; // Roll like a wheel
@@ -318,17 +360,17 @@
             // Move projection point slightly left of center to hide the straight line behind the curved vinyl body
             vector.sub(new THREE.Vector3(1, 0, 0));
             vector.project(camera);
-            
+              
             const xPct = Math.max(0, Math.min(100, ((vector.x + 1) / 2) * 100));
-            
+              
             if (introBg) {
-               introBg.style.clipPath = `polygon(${xPct}% 0%, 100% 0%, 100% 100%, ${xPct}% 100%)`;
+              introBg.style.clipPath = `polygon(${xPct}% 0%, 100% 0%, 100% 100%, ${xPct}% 100%)`;
             }
 
             if (vinylGroup.position.x > 35) {
-               enterState = 3;
-               intro.style.display = 'none';
-               renderer.dispose();
+              enterState = 3;
+              intro.style.display = 'none';
+              renderer.dispose();
             }
           }
 
@@ -353,10 +395,23 @@
     <script>
       const ALBUM_COVER = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80';
       const CURRENT_USER = <?php echo json_encode($_SESSION['username'] ?? null); ?>;
+      const IS_LOGGED_IN = <?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
+
+      let currentSearch = '';
+      let currentLocation = '';
+      let currentUserLat = null;
+      let currentUserLon = null;
+      let sortByDistance = false;
 
       function formatDate(dateStr) {
         const d = new Date(dateStr);
         return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+
+      function escHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = String(str);
+        return div.innerHTML;
       }
 
       function renderFeaturedAlbums(listings) {
@@ -371,96 +426,239 @@
           <div class="col-md-3">
             <div class="card shadow-sm h-100">
               <a href="album.php?mbid=${encodeURIComponent(listing.album_mbid)}" class="text-decoration-none text-dark">
-                <img src="${ALBUM_COVER}" class="card-img-top" alt="${escHtml(listing.album_name)}">
+              <img src="${ALBUM_COVER}" class="card-img-top" alt="${escHtml(listing.album_name)}">
                 <div class="card-body">
                   <h3 class="card-title fs-5">${escHtml(listing.album_name)}</h3>
                   <p class="card-text mb-1">${escHtml(listing.artist_name)}</p>
-                  <p class="card-text mb-1 text-muted small">Listed by: <b>${escHtml(listing.seller)}</b></p>
+                  <p class="card-text mb-1 text-muted small">
+                    Listed by: <b>${escHtml(listing.seller)}</b>
+                    ${listing.distance_km ? `<br><i class="bi bi-geo-alt"></i> ${listing.distance_km} km away` : ''}
+                  </p>
                   <p class="card-text mb-1 fw-bold">$${parseFloat(listing.price).toFixed(2)}</p>
                   <p class="card-text text-muted small">${formatDate(listing.created_at)}</p>
                 </div>
               </a>
-
               <div class="card-body d-flex gap-2">
                 ${CURRENT_USER && CURRENT_USER === listing.seller
-                  ? '<span class="btn btn-outline-dark disabled" style="pointer-events:none; opacity:1; border:none;">Your listing</span>'
-                  : `<button class="btn btn-outline-dark" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>`
+                ? '<span class="btn btn-outline-dark disabled" style="pointer-events:none; opacity:1; border:none;">Your listing</span>'
+                : `<button class="btn btn-outline-dark" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>`
                 }
-              </div>
+                </div>
             </div>
           </div>
         `).join('');
       }
 
-      function escHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = String(str);
-        return div.innerHTML;
-      }
-
-      fetch('/api/get_listings.php')
-        .then(r => r.json())
-        .then(json => {
-          if (json.error) {
-            document.getElementById('featured-albums').innerHTML =
-              '<p class="text-center text-danger">Failed to load listings.</p>';
-            return;
-          }
-          renderFeaturedAlbums(json.data.slice(0, 8));
-        })
-        .catch(() => {
-          document.getElementById('featured-albums').innerHTML =
-            '<p class="text-center text-danger">Failed to load listings.</p>';
-        });
-    </script>
-
-    <!-- Search Function -->
-    <script>
-      document.getElementById("searchForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        const query = document.getElementById("searchInput").value.trim();
-
-        if (!query) 
-        {
-          fetch('/api/get_listings.php')
-            .then(res => res.json())
-            .then(json => {
-              if (json.error) {
-                document.getElementById('featured-albums').innerHTML =
-                  '<p class="text-danger text-center">Failed to load listings.</p>';
-                return;
-              }
-
-              renderFeaturedAlbums(json.data.slice(0, 8));
-            });
-          return;
+      function loadListings() {
+        let url = '/api/get_listings.php?';
+        const params = [];
+          
+        if (currentSearch) {
+          params.push(`search=${encodeURIComponent(currentSearch)}`);
         }
-
-        fetch(`/api/get_listings.php?search=${encodeURIComponent(query)}`)
-          .then(res => res.json())
+          
+        if (currentLocation) {
+          params.push(`location=${encodeURIComponent(currentLocation)}`);
+        }
+          
+        // Only add coordinates if user is logged in AND sort by distance is enabled
+        if (IS_LOGGED_IN && sortByDistance && currentUserLat && currentUserLon) {
+          params.push(`lat=${currentUserLat}`);
+          params.push(`lon=${currentUserLon}`);
+          console.log('Sorting by distance with coordinates:', currentUserLat, currentUserLon);
+        }
+          
+        url += params.join('&');
+          
+        const container = document.getElementById('featured-albums');
+        container.innerHTML = '<p class="text-center text-muted">Loading...</p>';
+          
+        fetch(url)
+          .then(r => r.json())
           .then(json => {
             if (json.error) {
-              document.getElementById('featured-albums').innerHTML =
-                '<p class="text-danger text-center">Search failed.</p>';
+              container.innerHTML = '<p class="text-center text-danger">Failed to load listings.</p>';
               return;
             }
-
-            if (!json.data || json.data.length === 0) {
-              document.getElementById('featured-albums').innerHTML =
-                `<p class="text-center text-muted">No results found for 
-                "<b>${query}</b>"</p>`;
+                  
+            if (json.data.length === 0) {
+              container.innerHTML = '<p class="text-center text-muted">No listings found for your filters.</p>';
               return;
             }
+                  
+            renderFeaturedAlbums(json.data.slice(0, 8));
+                  
+            // Update button state only if button exists (user is logged in)
+            const distanceBtn = document.getElementById('sortDistanceBtn');
+            if (distanceBtn) {
+              if (sortByDistance) {
+                distanceBtn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Sorting by Distance';
+                distanceBtn.classList.add('active');
+              } 
+              
+              else {
+                distanceBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Sort by Distance';
+                distanceBtn.classList.remove('active');
+              }
+            }
+        })
+          
+        .catch((error) => {
+          console.error('Fetch error:', error);
+          container.innerHTML = '<p class="text-center text-danger">Failed to load listings.</p>';
+        });
+      }
 
-            renderFeaturedAlbums(json.data);
-          })
-          .catch(() => {
-            document.getElementById('featured-albums').innerHTML =
-              '<p class="text-danger text-center">Search failed.</p>';
-          });
-      });
+      // Get user's location - only called when logged in
+      function getUserLocation() {
+        const locationBtn = document.getElementById('sortDistanceBtn');
+          
+        // If button doesn't exist (user not logged in), just return
+        if (!locationBtn) {
+          return;
+        }
+          
+        if ("geolocation" in navigator) {
+          locationBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Getting location...';
+          locationBtn.disabled = true;
+              
+          navigator.geolocation.getCurrentPosition(
+            function(position) {
+              currentUserLat = position.coords.latitude;
+              currentUserLon = position.coords.longitude;
+              console.log(`Location obtained: ${currentUserLat}, ${currentUserLon}`);
+                      
+              locationBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Sort by Distance';
+              locationBtn.disabled = false;
+                      
+              // Show success message
+              const successDiv = document.createElement('div');
+              successDiv.className = 'alert alert-success mt-2';
+              successDiv.innerHTML = '<i class="bi bi-check-circle"></i> Location detected! Click "Sort by Distance" to see nearest listings.';
+              successDiv.style.fontSize = '0.875rem';
+              successDiv.style.padding = '0.5rem 1rem';
+              successDiv.style.borderRadius = '0.5rem';
+                      
+              const container = document.querySelector('.hero-actions');
+              if (container) container.parentNode.insertBefore(successDiv, container.nextSibling);
+              setTimeout(() => successDiv.remove(), 3000);
+            },
+            
+            function(error) {
+              console.log("Location permission denied or error:", error);
+              locationBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Sort by Distance';
+              locationBtn.disabled = false;
+                      
+              // Show error message
+              const errorDiv = document.createElement('div');
+              errorDiv.className = 'alert alert-warning mt-2';
+              errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please enable location to sort by distance.';
+              errorDiv.style.fontSize = '0.875rem';
+              errorDiv.style.padding = '0.5rem 1rem';
+              errorDiv.style.borderRadius = '0.5rem';
+                      
+              const container = document.querySelector('.hero-actions');
+              if (container) container.parentNode.insertBefore(errorDiv, container.nextSibling);
+              setTimeout(() => errorDiv.remove(), 3000);
+            }
+          );
+        } 
+        
+        else {
+          console.log("Geolocation not supported");
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'alert alert-warning mt-2';
+          errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Your browser doesn\'t support location services.';
+          errorDiv.style.fontSize = '0.875rem';
+          errorDiv.style.padding = '0.5rem 1rem';
+          errorDiv.style.borderRadius = '0.5rem';
+              
+          const container = document.querySelector('.hero-actions');
+          if (container) container.parentNode.insertBefore(errorDiv, container.nextSibling);
+          setTimeout(() => errorDiv.remove(), 3000);
+        }
+      }
+
+      // Search function that handles both search and location
+      function performSearch() {
+        currentSearch = document.getElementById("searchInput").value.trim();
+        currentLocation = document.getElementById("locationInput").value.trim();
+        sortByDistance = false; // Reset distance sorting when doing a new search
+        loadListings();
+      }
+
+      // Search button click
+      const searchBtn = document.getElementById("filterLocationBtn");
+      if (searchBtn) {
+        searchBtn.addEventListener("click", function(e) {
+          e.preventDefault();
+          performSearch();
+        });
+      }
+
+      // Search with Enter key on either input
+      const searchInput = document.getElementById("searchInput");
+      const locationInput = document.getElementById("locationInput");
+
+      if (searchInput) {
+        searchInput.addEventListener("keypress", function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            performSearch();
+          }
+        });
+      }
+
+      if (locationInput) {
+        locationInput.addEventListener("keypress", function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            performSearch();
+          }
+        });
+      }
+
+      // Sort by Distance button - only add if it exists (user is logged in)
+      const sortDistanceBtn = document.getElementById("sortDistanceBtn");
+      if (sortDistanceBtn) {
+        sortDistanceBtn.addEventListener("click", function() {
+          if (!currentUserLat || !currentUserLon) {
+            getUserLocation();
+            setTimeout(() => {
+              if (currentUserLat && currentUserLon) {
+                sortByDistance = !sortByDistance;
+                loadListings();
+              }
+            }, 1000);
+          } 
+          
+          else {
+            sortByDistance = !sortByDistance;
+            loadListings();
+          }
+        });
+      }
+
+      // Clear all filters
+      const clearBtn = document.getElementById("clearFiltersBtn");
+      if (clearBtn) {
+        clearBtn.addEventListener("click", function() {
+          currentSearch = '';
+          currentLocation = '';
+          sortByDistance = false;
+          if (searchInput) searchInput.value = '';
+          if (locationInput) locationInput.value = '';
+          loadListings();
+        });
+      }
+
+      // Initial load - always load listings
+      loadListings();
+
+      // Only try to get location if logged in
+      if (IS_LOGGED_IN) {
+        getUserLocation();
+      }
     </script>
-
-</body>
+  </body>
 </html>

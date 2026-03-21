@@ -113,6 +113,203 @@ body {
     transform: translateY(-1px);
 }
 
+/* ── Hero section ── */
+.hero-eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 0.6rem;
+}
+
+.hero-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+}
+
+.hero-heading em {
+    font-style: italic;
+    color: rgba(255,255,255,0.6);
+}
+
+.hero-sub {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 2.5rem;
+}
+
+/* ── Search bar pill ── */
+.hero-search-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+}
+
+.hero-search-bar {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 50px;
+    padding: 0.35rem 0.35rem 0.35rem 0;
+    width: 100%;
+    max-width: 640px;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.hero-search-bar:focus-within {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.25);
+}
+
+.hero-input-group {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 0 1rem;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.hero-input-group .bi {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.hero-input-group:focus-within .bi {
+    color: rgba(255,255,255,0.65);
+}
+
+.hero-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    width: 100%;
+    padding: 0.5rem 0;
+}
+
+.hero-input::placeholder {
+    color: rgba(255,255,255,0.28);
+}
+
+.hero-divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+}
+
+.hero-input:-webkit-autofill,
+.hero-input:-webkit-autofill:hover,
+.hero-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: #fff;
+}
+
+.hero-search-btn {
+    background: #fff;
+    color: var(--dark-panel);
+    border: none;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.6rem 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.hero-search-btn:hover {
+    background: #e8e8e6;
+    transform: translateY(-1px);
+}
+
+/* ── Secondary actions row ── */
+.hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.hero-action-btn {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.825rem;
+    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.hero-action-btn:hover {
+    background: rgba(255,255,255,0.16);
+    border-color: rgba(255,255,255,0.28);
+    transform: translateY(-1px);
+}
+
+.hero-action-ghost {
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.825rem;
+    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.hero-action-ghost:hover {
+    color: rgba(255,255,255,0.7);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.hero-login-prompt {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.3);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.hero-login-prompt:hover {
+    color: rgba(255,255,255,0.65);
+    border-color: rgba(255,255,255,0.18);
+}
+
 /* ── Featured Albums section ── */
 main>section.container {
     padding-top: 2.5rem;
