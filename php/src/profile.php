@@ -235,19 +235,20 @@ $countryArray = array(
 	'ZW'=>array('name'=>'ZIMBABWE','code'=>'263')
 );
 
-function countrySelector($defaultCountry = "", $id = "", $name = "", $classes = ""){
+function countrySelector($defaultCountry = "", $id = "", $name = "", $classes = "") {
     global $countryArray;
     
-    $output = "<select id='".$id."' name='".$name."' class='".$classes."'>";
-	
-	foreach($countryArray as $code => $country){
-		$countryName = ucwords(strtolower($country["name"])); // Making it look good
-		$output .= "<option value='".$code."' ".(($code==strtoupper($defaultCountry))?"selected":"").">".$code." - ".$countryName." (+".$country["code"].")</option>";
-	}
-	
-	$output .= "</select>";
-	
-	return $output;
+    $output = "<select id='" . $id . "' name='" . $name . "' class='" . $classes . "' style='appearance: auto; -webkit-appearance: menulist; width: 100%;'>";
+    
+    foreach($countryArray as $code => $country) {
+        $countryName = ucwords(strtolower($country["name"]));
+        $selected = ($code == $defaultCountry) ? "selected" : "";
+        $output .= "<option value='" . $code . "' " . $selected . ">" . $code . " - " . $countryName . " (+" . $country["code"] . ")</option>";
+    }
+    
+    $output .= "</select>";
+    
+    return $output;
 }
 
 if (!isset($_SESSION['user_id'])) {
@@ -259,20 +260,24 @@ $success = '';
 $error   = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $phone   = trim($_POST['phone'] ?? '');
     $address = trim($_POST['address'] ?? '');
-    $country = $_POST['country'] ?? '';
+    $country = $_POST['country'] ?? 'SG';
 
-    $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ? WHERE id = ?");
-
-    if ($stmt->execute([$phone, $address, $country, $_SESSION['user_id']])) {
-        $success = 'Profile updated successfully.';
-    } else {
-        $error = 'Something went wrong. Please try again.';
+    try {
+        $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ? WHERE id = ?");
+        
+        if ($stmt->execute([$phone, $address, $country, $_SESSION['user_id']])) {
+            $success = 'Profile updated successfully.';
+        } else {
+            $error = 'Something went wrong. Please try again.';
+        }
+    } catch (PDOException $e) {
+        $error = 'Database error. Please try again.';
     }
 }
 
+// Fetch user data (refresh after update)
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
