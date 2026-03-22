@@ -298,6 +298,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Purchases: listings bought by this user
+$stmt = $pdo->prepare("
+    SELECT l.listing_id, l.price, l.created_at,
+           al.album_name, ar.artist_name,
+           s.username AS seller_username
+    FROM listings l
+    JOIN albums al ON l.album_mbid = al.album_mbid
+    JOIN artists ar ON al.artist_mbid = ar.artist_mbid
+    JOIN users s ON l.seller_id = s.id
+    WHERE l.buyer_id = ? AND l.status = 'complete'
+    ORDER BY l.created_at DESC
+");
+$stmt->execute([$_SESSION['user_id']]);
+$purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Sales: listings created by this user
+$stmt = $pdo->prepare("
+    SELECT l.listing_id, l.price, l.status, l.created_at,
+           al.album_name, ar.artist_name,
+           b.username AS buyer_username
+    FROM listings l
+    JOIN albums al ON l.album_mbid = al.album_mbid
+    JOIN artists ar ON al.artist_mbid = ar.artist_mbid
+    LEFT JOIN users b ON l.buyer_id = b.id
+    WHERE l.seller_id = ?
+    ORDER BY FIELD(l.status, 'complete', 'available', 'pending', 'rejected'), l.created_at DESC
+");
+$stmt->execute([$_SESSION['user_id']]);
+$my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -399,16 +429,70 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         <div class="section-card">
             <h2 class="section-title">Recent Orders</h2>
-            <div class="empty-state">
-                <i class="bi bi-bag"></i>No orders yet. <a href="index.php">Start shopping</a>
-            </div>
+            <?php if (empty($purchases)): ?>
+                <div class="empty-state">
+                    <i class="bi bi-bag"></i>No orders yet. <a href="listings.php">Start shopping</a>
+                </div>
+            <?php else: ?>
+                <div class="order-list">
+                    <?php foreach ($purchases as $p): ?>
+                    <div class="order-row-profile">
+                        <div class="order-info">
+                            <div class="order-album-name"><?= htmlspecialchars($p['album_name']) ?></div>
+                            <div class="order-meta-text"><?= htmlspecialchars($p['artist_name']) ?> &middot; Seller: <?= htmlspecialchars($p['seller_username']) ?></div>
+                            <div class="order-date"><?= date('d M Y', strtotime($p['created_at'])) ?></div>
+                        </div>
+                        <div class="order-right">
+                            <div class="order-price-val">$<?= number_format((float)$p['price'], 2) ?></div>
+                            <span class="status-badge status-complete">Purchased</span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="section-card">
             <h2 class="section-title">My Listings</h2>
-            <div class="empty-state">
-                <i class="bi bi-vinyl"></i>No listings yet. <a href="#">Sell a record</a>
-            </div>
+            <?php if (empty($my_listings)): ?>
+                <div class="empty-state">
+                    <i class="bi bi-vinyl"></i>No listings yet. <a href="make_listing.php">Sell a record</a>
+                </div>
+            <?php else: ?>
+                <div class="order-list">
+                    <?php foreach ($my_listings as $l): ?>
+                    <div class="order-row-profile">
+                        <div class="order-info">
+                            <div class="order-album-name"><?= htmlspecialchars($l['album_name']) ?></div>
+                            <div class="order-meta-text"><?= htmlspecialchars($l['artist_name']) ?>
+                                <?php if ($l['status'] === 'complete' && $l['buyer_username']): ?>
+                                    &middot; Sold to: <?= htmlspecialchars($l['buyer_username']) ?>
+                                <?php endif; ?>
+                            </div>
+                            <div class="order-date"><?= date('d M Y', strtotime($l['created_at'])) ?></div>
+                        </div>
+                        <div class="order-right">
+                            <div class="order-price-val">$<?= number_format((float)$l['price'], 2) ?></div>
+                            <?php
+                                $badgeClass = match($l['status']) {
+                                    'available' => 'status-available',
+                                    'complete'  => 'status-complete',
+                                    'rejected'  => 'status-rejected',
+                                    default     => 'status-pending',
+                                };
+                                $badgeLabel = match($l['status']) {
+                                    'available' => 'Available',
+                                    'complete'  => 'Sold',
+                                    'rejected'  => 'Rejected',
+                                    default     => 'Pending',
+                                };
+                            ?>
+                            <span class="status-badge <?= $badgeClass ?>"><?= $badgeLabel ?></span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="profile-actions">
