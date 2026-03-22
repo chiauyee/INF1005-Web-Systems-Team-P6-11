@@ -251,8 +251,79 @@ body {
     transform: translateY(-1px);
 }
 
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.order-row-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.order-row-profile:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.order-row-profile:first-child {
+    padding-top: 0;
+}
+
+.order-album-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+}
+
+.order-meta-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.15rem;
+}
+
+.order-date {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.order-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.order-price-val {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+}
+
+.status-complete  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.status-available { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.status-pending   { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.status-rejected  { background: #fff5f5; color: #b91c1c; border: 1px solid #fecaca; }
+
 @media (max-width: 768px) {
     .profile-header { flex-direction: column; text-align: center; }
     .field-row { grid-template-columns: 1fr; }
     .profile-actions { flex-direction: column; }
+    .order-row-profile { align-items: flex-start; }
 }
