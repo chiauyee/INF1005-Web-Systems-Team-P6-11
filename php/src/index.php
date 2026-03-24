@@ -535,9 +535,14 @@
               const successDiv = document.createElement('div');
               successDiv.className = 'alert alert-success mt-2';
               successDiv.innerHTML = '<i class="bi bi-check-circle"></i> Location detected! Click "Sort by Distance" to see nearest listings.';
-              successDiv.style.fontSize = '0.875rem';
-              successDiv.style.padding = '0.5rem 1rem';
-              successDiv.style.borderRadius = '0.5rem';
+              successDiv.style.cssText = `
+              font-size: 0.875rem;
+              padding: 0.5rem 1rem;
+              border-radius: 0.5rem;
+              max-width: 500px;
+              margin: 0 auto;
+              text-align: center;
+              `;
                       
               const container = document.querySelector('.hero-actions');
               if (container) container.parentNode.insertBefore(successDiv, container.nextSibling);

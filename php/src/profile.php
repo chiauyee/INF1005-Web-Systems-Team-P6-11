@@ -453,47 +453,57 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="section-card">
-            <h2 class="section-title">My Listings</h2>
-            <?php if (empty($my_listings)): ?>
-                <div class="empty-state">
-                    <i class="bi bi-vinyl"></i>No listings yet. <a href="make_listing.php">Sell a record</a>
-                </div>
-            <?php else: ?>
-                <div class="order-list">
-                    <?php foreach ($my_listings as $l): ?>
-                    <div class="order-row-profile">
-                        <div class="order-info">
-                            <div class="order-album-name"><?= htmlspecialchars($l['album_name']) ?></div>
-                            <div class="order-meta-text"><?= htmlspecialchars($l['artist_name']) ?>
-                                <?php if ($l['status'] === 'complete' && $l['buyer_username']): ?>
-                                    &middot; Sold to: <?= htmlspecialchars($l['buyer_username']) ?>
-                                <?php endif; ?>
-                            </div>
-                            <div class="order-date"><?= date('d M Y', strtotime($l['created_at'])) ?></div>
-                        </div>
-                        <div class="order-right">
-                            <div class="order-price-val">$<?= number_format((float)$l['price'], 2) ?></div>
-                            <?php
-                                $badgeClass = match($l['status']) {
-                                    'available' => 'status-available',
-                                    'complete'  => 'status-complete',
-                                    'rejected'  => 'status-rejected',
-                                    default     => 'status-pending',
-                                };
-                                $badgeLabel = match($l['status']) {
-                                    'available' => 'Available',
-                                    'complete'  => 'Sold',
-                                    'rejected'  => 'Rejected',
-                                    default     => 'Pending',
-                                };
-                            ?>
-                            <span class="status-badge <?= $badgeClass ?>"><?= $badgeLabel ?></span>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
+			<h2 class="section-title">My Listings</h2>
+			<?php if (empty($my_listings)): ?>
+				<div class="empty-state">
+					<i class="bi bi-vinyl"></i>No listings yet. <a href="make_listing.php">Sell a record</a>
+				</div>
+			<?php else: ?>
+				<div class="order-list">
+					<?php foreach ($my_listings as $l): ?>
+					<div class="order-row-profile">
+						<div class="order-info">
+							<div class="order-album-name">
+								<?= htmlspecialchars($l['album_name']) ?>
+							</div>
+							<div class="order-meta-text"><?= htmlspecialchars($l['artist_name']) ?>
+								<?php if ($l['status'] === 'complete' && $l['buyer_username']): ?>
+									&middot; Sold to: <?= htmlspecialchars($l['buyer_username']) ?>
+								<?php endif; ?>
+								<?php if ($l['status'] === 'available'): ?>
+									&middot; Publicly listed
+								<?php endif; ?>
+							</div>
+							<div class="order-date">
+								<?= date('d M Y', strtotime($l['created_at'])) ?>
+
+							</div>
+						</div>
+						<div class="order-right">
+							<div class="order-price-val">$<?= number_format((float)$l['price'], 2) ?></div>
+							<?php
+								$badgeClass = match($l['status']) {
+									'available' => 'status-available',
+									'complete'  => 'status-complete',
+									'rejected'  => 'status-rejected',
+									'pending'   => 'status-pending',
+									default     => 'status-pending',
+								};
+								$badgeLabel = match($l['status']) {
+									'available' => 'Approved',
+									'complete'  => 'Sold',
+									'rejected'  => 'Rejected',
+									'pending'   => 'Pending Review',
+									default     => 'Pending',
+								};
+							?>
+							<span class="status-badge <?= $badgeClass ?>"><?= $badgeLabel ?></span>
+						</div>
+					</div>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+		</div>
 
         <div class="profile-actions">
             <a href="index.php" class="btn-dark-custom">

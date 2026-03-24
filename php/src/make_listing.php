@@ -165,7 +165,9 @@ $isLoggedIn = isset($_SESSION['user_id']);
         window.location.href = 'login.php?redirect=/make_listing.php';
         return false;
       }
-      return true; 
+      
+      alert('Your listing has been published and sent to an admin for review.\nIt will appear publicly once approved.');
+      return true;
     }
     
     $(document).ready(function() {
