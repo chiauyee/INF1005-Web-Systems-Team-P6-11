@@ -290,7 +290,16 @@ session_start();
                     .then(r => r.json())
                     .then(data => 
                     {
-                        if (data.status === 'otp_required') 
+                        // Test accounts bypass OTP and log in directly
+                        if (data.status === 'ok') 
+                        {
+                            sessionStorage.removeItem('lockoutEndTime');
+                            window.location.href = data.role === 'admin' 
+                                ? '/admin/dashboard.php' 
+                                : (getUrlParameter('redirect') || 'index.php');
+                        }
+
+                        else if (data.status === 'otp_required') 
                         {
                             fetch('/send_otp.php', { method: 'POST' })
                                 .then(r => r.json())
@@ -312,7 +321,6 @@ session_start();
                         
                         else if (data.locked) 
                         {
-                            // Account is locked - start countdown
                             const lockoutEnd = Date.now() + (data.remaining_seconds * 1000);
                             sessionStorage.setItem('lockoutEndTime', lockoutEnd);
                             startCountdown(data.remaining_seconds);
@@ -320,7 +328,6 @@ session_start();
                         
                         else if (data.attempts_remaining) 
                         {
-                            // Show remaining attempts
                             let warningMessage = `${data.error} You have ${data.attempts_remaining} attempt(s) remaining.`;
                             if (data.attempts_remaining === 1) 
                             {
@@ -332,7 +339,6 @@ session_start();
                         
                         else 
                         {
-                            // Regular error
                             showError(data.error || 'Login failed.');
                             disableForm(false);
                         }

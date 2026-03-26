@@ -60,7 +60,6 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user && password_verify($password, $user['password'])) 
 {
-    // Successful login - reset attempts
     $_SESSION['login_attempts'] = 0;
     unset($_SESSION['locked']);
 
@@ -71,9 +70,29 @@ if ($user && password_verify($password, $user['password']))
         exit;
     }
 
+    // Test accounts bypass OTP
+    $otp_bypass_emails = [
+        'admin@musicmarket.com',
+        'testuser@gmail.com',
+        'testuser1@gmail.com'
+    ];
+
+    if (in_array($user['email'], $otp_bypass_emails)) 
+    {
+        session_regenerate_id(true);
+        $_SESSION['user_id']  = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['email']    = $user['email'];
+        $_SESSION['role']     = $user['role'];
+        echo json_encode(['status' => 'ok', 'role' => $user['role']]);
+        exit;
+    }
+
+    // Normal users go through OTP
     $_SESSION['otp_user_id'] = $user['id'];
-    echo json_encode(['status' => 'otp_required', 'role' => $user['role']]);
-} 
+    echo json_encode(['status' => 'otp_required']);
+    exit; 
+}
 
 else 
 {
