@@ -558,9 +558,14 @@
               const errorDiv = document.createElement('div');
               errorDiv.className = 'alert alert-warning mt-2';
               errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please enable location to sort by distance.';
-              errorDiv.style.fontSize = '0.875rem';
-              errorDiv.style.padding = '0.5rem 1rem';
-              errorDiv.style.borderRadius = '0.5rem';
+              errorDiv.style.cssText = `
+              font-size: 0.875rem;
+              padding: 0.5rem 1rem;
+              border-radius: 0.5rem;
+              max-width: 500px;
+              margin: 0 auto;
+              text-align: center;
+              `;
                       
               const container = document.querySelector('.hero-actions');
               if (container) container.parentNode.insertBefore(errorDiv, container.nextSibling);
