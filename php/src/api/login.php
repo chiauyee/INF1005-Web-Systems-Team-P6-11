@@ -68,6 +68,10 @@ if ($user && password_verify($password, $user['password'])) {
     echo json_encode(['status' => 'ok', 'role' => $user['role']]);
 } else {
     // Failed login - increment attempts
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 0;
+    }
+    
     $_SESSION['login_attempts']++;
     
     $remaining_attempts = 3 - $_SESSION['login_attempts'];
