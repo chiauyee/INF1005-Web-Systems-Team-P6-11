@@ -63,6 +63,14 @@ if ($user && password_verify($password, $user['password']))
     $_SESSION['login_attempts'] = 0;
     unset($_SESSION['locked']);
 
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+    {
+        http_response_code(400);
+        echo json_encode(['error' => 'Please enter a valid email address.']);
+        exit;
+    }
+
     if ($user['status'] === 'banned')
     {
         http_response_code(403);

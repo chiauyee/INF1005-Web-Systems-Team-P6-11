@@ -281,7 +281,30 @@ session_start();
                 
                 // Disable form while processing
                 disableForm(true);
-                
+
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email) 
+                {
+                    showError('Please enter your email.');
+                    disableForm(false);
+                    return;
+                }
+
+                if (!emailRegex.test(email)) 
+                {
+                    showError('Please enter a valid email address.');
+                    disableForm(false);
+                    return;
+                }
+
+                if (!password) 
+                {
+                    showError('Please enter your password.');
+                    disableForm(false);
+                    return;
+                }
+
                 const body = new FormData();
                 body.append('email', email);
                 body.append('password', password);
