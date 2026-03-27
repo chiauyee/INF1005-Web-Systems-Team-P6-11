@@ -1,5 +1,6 @@
 <?php
 session_start();
+require 'db.php';
 
 ?>
 
@@ -46,6 +47,7 @@ session_start();
                         <div id="error-msg" class="alert alert-danger" style="display:none;"></div>
 
                         <div id="login-form">
+                            <input type="hidden" id="csrf_token" value="<?php echo Security::generateCSRFToken(); ?>">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email:</label>
                                 <div class="input-wrap">
@@ -256,8 +258,10 @@ session_start();
             }
 
             // Login form submission
-            document.getElementById('btn-login').addEventListener('click', function () 
+            document.getElementById('btn-login').addEventListener('click', function (e) 
             {
+                e.preventDefault(); // Prevent any default form submission
+                
                 // Don't process if already locked out
                 if (isLockedOut || countdownInterval) 
                 {
@@ -265,8 +269,10 @@ session_start();
                     return;
                 }
                 
+                // Get form data
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
+                const csrfToken = document.getElementById('csrf_token').value;
                 const errorDiv = document.getElementById('error-msg');
                 const loginBtn = this;
                 
@@ -308,6 +314,7 @@ session_start();
                 const body = new FormData();
                 body.append('email', email);
                 body.append('password', password);
+                body.append('csrf_token', csrfToken);
                 
                 fetch('/api/login.php', { method: 'POST', body })
                     .then(r => r.json())
@@ -331,6 +338,10 @@ session_start();
                                         disableForm(false);
                                         document.getElementById('login-form').style.display = 'none';
                                         document.getElementById('otp-form').style.display = 'block';
+                                    } else if (otpData.rate_limited) {
+                                        showError(otpData.error || 'Too many OTP requests.');
+                                        startOtpRateLimitCountdown(otpData.remaining_seconds);
+                                        disableForm(false);
                                     } else {
                                         showError(otpData.error || 'Failed to send OTP.');
                                         disableForm(false);
@@ -387,8 +398,10 @@ session_start();
             });
 
             // Handle OTP submission
-            document.getElementById('btn-verify-otp').addEventListener('click', function() 
+            document.getElementById('btn-verify-otp').addEventListener('click', function(e) 
             {
+                e.preventDefault(); // Prevent any default form submission
+                
                 const otp = document.getElementById('otp').value.trim();
                 const btn = this;
 
@@ -440,10 +453,83 @@ session_start();
                     });
             });
 
+            // OTP rate limit countdown variables
+            let otpRateLimitCountdown = null;
+            let isOtpRateLimited = false;
+
+            function showOtpRateLimitMessage(seconds) {
+                const errorDiv = document.getElementById('error-msg');
+                errorDiv.classList.add('rate-limit-error');
+                errorDiv.innerHTML = `
+                    <div class="rate-limit-message">
+                        <i class="bi bi-clock-history me-2"></i>
+                        <strong>Too many OTP requests!</strong><br>
+                        <span class="countdown-text">Please wait <span id="otp-countdown-timer" class="countdown-number">${seconds}</span> seconds before requesting another code.</span>
+                    </div>
+                `;
+                errorDiv.style.display = 'block';
+                isOtpRateLimited = true;
+            }
+
+            function updateOtpRateLimitMessage(seconds) {
+                const timerSpan = document.getElementById('otp-countdown-timer');
+                if (timerSpan) {
+                    timerSpan.textContent = seconds;
+                }
+            }
+
+            function hideOtpRateLimitMessage() {
+                const errorDiv = document.getElementById('error-msg');
+                errorDiv.classList.remove('rate-limit-error');
+                if (!document.querySelector('.lockout-error')) {
+                    errorDiv.style.display = 'none';
+                }
+                isOtpRateLimited = false;
+            }
+
+            function startOtpRateLimitCountdown(remainingSeconds) {
+                // Clear any existing intervals
+                if (otpRateLimitCountdown) {
+                    clearInterval(otpRateLimitCountdown);
+                }
+
+                // Disable resend button
+                const resendLink = document.getElementById('resend-otp');
+                resendLink.style.pointerEvents = 'none';
+                resendLink.style.opacity = '0.5';
+
+                // Show rate limit message
+                showOtpRateLimitMessage(remainingSeconds);
+
+                // Start the countdown
+                let seconds = remainingSeconds;
+                otpRateLimitCountdown = setInterval(() => {
+                    seconds--;
+
+                    if (seconds <= 0) {
+                        // Countdown finished
+                        clearInterval(otpRateLimitCountdown);
+                        otpRateLimitCountdown = null;
+                        resendLink.style.pointerEvents = 'auto';
+                        resendLink.style.opacity = '1';
+                        hideOtpRateLimitMessage();
+                    } else {
+                        // Update the countdown display
+                        updateOtpRateLimitMessage(seconds);
+                    }
+                }, 1000);
+            }
+
             // Handles resend of OTP
             document.getElementById('resend-otp').addEventListener('click', function(e) 
             {
                 e.preventDefault();
+                
+                // Don't allow if rate limited
+                if (isOtpRateLimited) {
+                    return;
+                }
+
                 this.textContent = 'Sending...';
                 const link = this;
 
@@ -454,13 +540,18 @@ session_start();
                         if (data.status === 'ok') 
                         {
                             showError('A new code has been sent to your email.');
-                        } 
-                        
+                            link.textContent = 'Resend';
+                        }
+                        else if (data.rate_limited) 
+                        {
+                            startOtpRateLimitCountdown(data.remaining_seconds);
+                            link.textContent = 'Resend';
+                        }
                         else 
                         {
                             showError(data.error || 'Failed to resend OTP.');
+                            link.textContent = 'Resend';
                         }
-                        link.textContent = 'Resend';
                     })
                     .catch(() => 
                     {

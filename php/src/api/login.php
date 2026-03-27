@@ -11,6 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST')
     exit;
 }
 
+// Validate CSRF token
+$csrfToken = $_POST['csrf_token'] ?? '';
+if (!Security::validateCSRFToken($csrfToken)) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid CSRF token']);
+    exit;
+}
+
 // Initialize login attempts if not set
 if (!isset($_SESSION['login_attempts'])) 
 {

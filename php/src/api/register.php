@@ -10,6 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Validate CSRF token
+$csrfToken = $_POST['csrf_token'] ?? '';
+if (!Security::validateCSRFToken($csrfToken)) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid CSRF token']);
+    exit;
+}
+
 $username = trim($_POST['username'] ?? '');
 $email    = trim($_POST['email'] ?? '');
 $phone = trim($_POST['phone'] ?? '');
@@ -79,13 +87,18 @@ try {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([$username, $email, $hash, $phone, $address, $country, $latitude, $longitude]);
+        $userId = $pdo->lastInsertId();
     } else {
         $stmt = $pdo->prepare("
             INSERT INTO users (username, email, password, phone, address, country) 
             VALUES (?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([$username, $email, $hash, $phone, $address, $country]);
+        $userId = $pdo->lastInsertId();
     }
+    
+    // Add password to history
+    Security::addPasswordToHistory($userId, $hash);
     
     echo json_encode(['status' => 'ok', 'message' => 'Registration successful']);
 } 

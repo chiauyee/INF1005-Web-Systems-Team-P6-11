@@ -70,6 +70,7 @@ if (!$reset) {
 
                     <form method="POST" action="process_reset.php" id="resetForm">
                         <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRFToken(); ?>">
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password:</label>
@@ -142,6 +143,37 @@ if (!$reset) {
             document.getElementById("special").style.color =
                 /[@$!%*?&]/.test(value) ? "green" : "red";
         });
+
+        document.getElementById('resetForm').addEventListener('submit', function(e) {
+        const value = document.getElementById('password').value;
+        const confirmValue = document.getElementById('confirm_password').value;
+        const errors = [];
+
+        if (value.length < 8) errors.push("At least 8 characters");
+        if (!/[A-Z]/.test(value)) errors.push("One uppercase letter");
+        if (!/[a-z]/.test(value)) errors.push("One lowercase letter");
+        if (!/[0-9]/.test(value)) errors.push("One number");
+        if (!/[@$!%*?&]/.test(value)) errors.push("One special character");
+
+        if (value !== confirmValue) {
+            errors.push("Passwords do not match");
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault(); // Block form submission
+            
+            // Show error
+            let errorDiv = document.getElementById('validation-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = 'validation-error';
+                errorDiv.className = 'alert alert-danger mt-3';
+                document.getElementById('resetForm').prepend(errorDiv);
+            }
+            errorDiv.textContent = 'Password requirements not met: ' + errors.join(', ');
+            errorDiv.style.display = 'block';
+        }
+    });
     </script>
 </body>
 </html>

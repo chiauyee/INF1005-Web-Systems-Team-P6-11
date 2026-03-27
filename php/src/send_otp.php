@@ -25,6 +25,17 @@ if (!isset($_SESSION['otp_user_id']))
     exit;
 }
 
+// Check rate limiting for OTP requests (max 5 per hour per user)
+$userId = $_SESSION['otp_user_id'];
+$rateLimit = Security::checkRateLimit("user_{$userId}", 'otp_request', 5, 3600);
+
+if (!$rateLimit['allowed']) {
+    $remainingMinutes = ceil($rateLimit['remaining_seconds'] / 60);
+    http_response_code(429);
+    echo json_encode(['error' => "Too many OTP requests. Please try again in {$remainingMinutes} minutes."]);
+    exit;
+}
+
 // Generate 6-digit OTP
 $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 $_SESSION['otp_code']    = $otp;
@@ -76,7 +87,8 @@ try
 } 
 catch (Exception $e) 
 {
+    error_log("OTP Email Error: " . $mail->ErrorInfo);
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to send OTP email.']);
+    echo json_encode(['error' => 'Failed to send OTP email: ' . $mail->ErrorInfo]);
 }
 ?>

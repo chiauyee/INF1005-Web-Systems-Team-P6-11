@@ -11,70 +11,108 @@ require __DIR__ . '/PHPMailer-master/src/SMTP.php';
 $success = '';
 $error   = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') 
+{
+    // Validate CSRF token
+    $csrfToken = $_POST['csrf_token'] ?? '';
+    if (!Security::validateCSRFToken($csrfToken)) 
+    {
+        $error = 'Invalid request. Please try again.';
+    } 
+    
+    else {
+        $email = trim($_POST['email'] ?? '');
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Please enter a valid email address.';
-    } else {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+        {
+            $error = 'Please enter a valid email address.';
+        } 
+        
+        else 
+        {
+            // Check rate limiting for password reset requests
+            $clientIP = Security::getClientIP();
+            $rateLimit = Security::checkRateLimit($email, 'password_reset', 3, 3600); // 3 per hour per email
+            $ipRateLimit = Security::checkRateLimit($clientIP, 'password_reset_ip', 5, 3600); // 5 per hour per IP
 
-        if ($user) {
-            // Generate secure token
-            $token = bin2hex(random_bytes(32));
-            $token_hash = hash('sha256', $token);
-
-            // Expiry time (30 minutes)
-            $expires = date("Y-m-d H:i:s", time() + 1800);
-
-            // Store token in database
-            $stmt = $pdo->prepare("INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, ?)");
-            $stmt->execute([$user['id'], $token_hash, $expires]);
-
-            // Create reset link
-            $reset_link = "http://localhost:8080/reset_password.php?token=" . $token;
-
+            if (!$rateLimit['allowed']) 
+            {
+                $remainingMinutes = ceil($rateLimit['remaining_seconds'] / 60);
+                $error = "Too many password reset requests. Please try again in {$remainingMinutes} minutes.";
+            } 
             
+            elseif (!$ipRateLimit['allowed']) 
+            {
+                $remainingMinutes = ceil($ipRateLimit['remaining_seconds'] / 60);
+                $error = "Too many requests from your IP. Please try again in {$remainingMinutes} minutes.";
+            } 
+            
+            else 
+            {
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $mail = new PHPMailer(true);
+                if ($user) 
+                {
+                    // Generate secure token
+                    $token = bin2hex(random_bytes(32));
+                    $token_hash = hash('sha256', $token);
 
-            try {
+                    // Expiry time (30 minutes)
+                    $expires = date("Y-m-d H:i:s", time() + 1800);
 
-                $mail->isSMTP();
-                $mail->Host       = 'smtp.gmail.com';
-                $mail->SMTPAuth   = true;
-                $mail->Username   = 'MusicMarket2026@gmail.com';
-                $mail->Password   = 'csmq cqml fwuv zdax';
-                $mail->SMTPSecure = 'tls';
-                $mail->Port       = 587;
+                    // Store token in database
+                    $stmt = $pdo->prepare("INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, ?)");
+                    $stmt->execute([$user['id'], $token_hash, $expires]);
 
-                $mail->setFrom('MusicMarket2026@gmail.com', 'MusicMarket');
-                $mail->addAddress($email);
+                    // Create reset link
+                    $reset_link = "http://localhost:8080/reset_password.php?token=" . $token;
 
-                $mail->Subject = 'Password Reset';
+                    
 
-                $mail->Body = <<<EOT
-                Dear {$user['username']},
+                    $mail = new PHPMailer(true);
 
-                We received a request to reset the password for your account.
+                    try {
 
-                To reset your password, please click the link below:
-                $reset_link
+                        $mail->isSMTP();
+                        $mail->Host       = 'smtp.gmail.com';
+                        $mail->SMTPAuth   = true;
+                        $mail->Username   = 'MusicMarket2026@gmail.com';
+                        $mail->Password   = 'csmq cqml fwuv zdax';
+                        $mail->SMTPSecure = 'tls';
+                        $mail->Port       = 587;
 
-                If you did not request a password reset, please ignore this email. Your account will remain secure.
+                        $mail->setFrom('MusicMarket2026@gmail.com', 'MusicMarket');
+                        $mail->addAddress($email);
 
-                For security reasons, this link will expire shortly.
+                        $mail->Subject = 'Password Reset';
 
-                Best regards,
-                MusicMarket Support Team
-                EOT;
+                        $mail->Body = <<<EOT
+                        Dear {$user['username']},
 
-                $mail->send();
+                        We received a request to reset the password for your account.
 
-            } catch (Exception $e) {
-                echo "Mailer Error: {$mail->ErrorInfo}";
+                        To reset your password, please click the link below:
+                        $reset_link
+
+                        If you did not request a password reset, please ignore this email. Your account will remain secure.
+
+                        For security reasons, this link will expire shortly.
+
+                        Best regards,
+                        MusicMarket Support Team
+                        EOT;
+
+                        $mail->send();
+
+                    } 
+                    
+                    catch (Exception $e) 
+                    {
+                        echo "Mailer Error: {$mail->ErrorInfo}";
+                    }
+                }
             }
         }
         
@@ -131,6 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endif; ?>
 
                         <form method="POST" action="">
+                            <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRFToken(); ?>">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email address:</label>
                                 <div class="input-wrap">

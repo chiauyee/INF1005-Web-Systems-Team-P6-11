@@ -10,3 +10,7 @@ try {
 } catch (PDOException $e) {
     die("DB connection failed: " . $e->getMessage());
 }
+
+// Initialize Security class
+require_once __DIR__ . '/includes/security.php';
+Security::init($pdo);

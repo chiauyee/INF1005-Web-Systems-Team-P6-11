@@ -43,6 +43,26 @@ CREATE TABLE IF NOT EXISTS password_resets (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS password_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_created (user_id, created_at)
+);
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    identifier VARCHAR(255) NOT NULL, 
+    action VARCHAR(50) NOT NULL,
+    attempts INT DEFAULT 1,
+    first_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_identifier_action (identifier, action),
+    INDEX idx_last_attempt (last_attempt)
+);
+
 CREATE TABLE IF NOT EXISTS artist_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
     artist_mbid VARCHAR(200) NOT NULL,

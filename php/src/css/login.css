@@ -5,6 +5,8 @@
     --text: #1a1a1a;
     --text-muted: #666;
     --input-focus: rgba(26, 26, 26, 0.08);
+    --error: #dc3545;
+    --warning: #ffc107;
 }
 
 * { box-sizing: border-box; }
@@ -211,6 +213,43 @@ body {
     font-size: 0.875rem;
     padding: 0.65rem 0.9rem;
     margin-bottom: 1.25rem;
+}
+
+.lockout-error,
+.rate-limit-error {
+    background: #fef3c7 !important;
+    border: 1.5px solid #fcd34d !important;
+    color: #92400e !important;
+    animation: slideIn 0.3s ease-out;
+}
+
+.lockout-message,
+.rate-limit-message {
+    padding: 0.5rem 0;
+    text-align: center;
+}
+
+.countdown-text {
+    font-size: 0.875rem;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.countdown-number {
+    font-weight: 700;
+    color: #dc3545;
+    font-size: 1.1rem;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .register-prompt {

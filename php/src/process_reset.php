@@ -13,6 +13,14 @@ if (!$token) {
     exit;
 }
 
+// Validate CSRF token
+$csrfToken = $_POST['csrf_token'] ?? '';
+if (!Security::validateCSRFToken($csrfToken)) {
+    $_SESSION['reset_error'] = "Invalid request.";
+    header("Location: reset_password.php?token=$token");
+    exit;
+}
+
 // Hash the token
 $token_hash = hash('sha256', $token);
 
@@ -41,6 +49,42 @@ if ($newPassword !== $confirmPassword) {
     exit;
 }
 
+// Validate password strength
+$passwordErrors = [];
+
+if (strlen($newPassword) < 8) {
+    $passwordErrors[] = "at least 8 characters";
+}
+
+if (!preg_match('/[A-Z]/', $newPassword)) {
+    $passwordErrors[] = "one uppercase letter";
+}
+
+if (!preg_match('/[a-z]/', $newPassword)) {
+    $passwordErrors[] = "one lowercase letter";
+}
+
+if (!preg_match('/[0-9]/', $newPassword)) {
+    $passwordErrors[] = "one number";
+}
+
+if (!preg_match('/[@$!%*?&]/', $newPassword)) {
+    $passwordErrors[] = "one special character";
+}
+
+if (!empty($passwordErrors)) {
+    $_SESSION['reset_error'] = "Password does not meet requirements: " . implode(', ', $passwordErrors) . ".";
+    header("Location: reset_password.php?token=$token");
+    exit;
+}
+
+// Check password history (prevent reusing last 5 passwords)
+if (Security::checkPasswordHistory($reset['user_id'], $newPassword, 5)) {
+    $_SESSION['reset_error'] = "You cannot reuse a previously used password. Please choose a different one.";
+    header("Location: reset_password.php?token=$token");
+    exit;
+}
+
 // Check if new password is the same as the old password
 if (password_verify($newPassword, $reset['password'])) {
     $_SESSION['reset_error'] = "You cannot reuse your previous password. Please choose a different one.";
@@ -54,6 +98,9 @@ $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
 // Update the user's password
 $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
 $stmt->execute([$newHash, $reset['user_id']]);
+
+// Add password to history
+Security::addPasswordToHistory($reset['user_id'], $newHash);
 
 // Mark token as used
 $stmt = $pdo->prepare("UPDATE password_resets SET used = 1 WHERE id = ?");
