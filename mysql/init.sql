@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
     phone VARCHAR(20),
     address VARCHAR(255),
     country VARCHAR(5) DEFAULT 'SG',
+    latitude FLOAT DEFAULT NULL,
+    longitude FLOAT DEFAULT NULL,
     role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     status ENUM('active', 'banned') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -124,10 +126,10 @@ CREATE TABLE IF NOT EXISTS messages (
 
 
 /* password for testuser & testuser1 = !TestPW123 */
-INSERT IGNORE INTO `users` (id, username, email, password, phone, address, country, role, status, created_at) VALUES
-(1,'admin','admin@musicmarket.com','$2y$12$9aPVvCPwYYIaMEF/RSSZe.cAz3JfXEvhoB.hB9RHeH0DYqi3uTH6m',NULL,NULL,'SG','admin','active','2026-03-09 12:12:39'),
-(2,'testuser','testuser@gmail.com','$2y$10$gl4/BDzYmdQ1XbcdLLs4/.YjWkCot3/UYEvemfxjkfzHQOR95kdqW',NULL,NULL,'SG','user','active','2026-03-09 12:17:44'),
-(3,'testuser1','testuser1@gmail.com','$2y$10$u5Bb6UdXqQJNiY1us7G3N.b6JKAuRC8Y6zdBo9hF/da3u4NBBoj9i',NULL,NULL,'SG','user','active','2026-03-09 12:26:03');
+INSERT IGNORE INTO `users` (id, username, email, password, phone, address, country, latitude, longitude, role, status, created_at) VALUES
+(1,'admin','admin@musicmarket.com','$2y$12$9aPVvCPwYYIaMEF/RSSZe.cAz3JfXEvhoB.hB9RHeH0DYqi3uTH6m',NULL,NULL,'SG', NULL, NULL, 'admin','active','2026-03-09 12:12:39'),
+(2,'testuser','testuser@gmail.com','$2y$10$gl4/BDzYmdQ1XbcdLLs4/.YjWkCot3/UYEvemfxjkfzHQOR95kdqW',NULL,NULL,'SG', NULL, NULL, 'user','active','2026-03-09 12:17:44'),
+(3,'testuser1','testuser1@gmail.com','$2y$10$u5Bb6UdXqQJNiY1us7G3N.b6JKAuRC8Y6zdBo9hF/da3u4NBBoj9i',NULL,NULL,'SG', NULL, NULL, 'user','active','2026-03-09 12:26:03');
 
 /* 
 some data below displayed in 

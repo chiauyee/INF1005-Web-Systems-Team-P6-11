@@ -94,10 +94,13 @@ session_start();
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
+
     <script>
+        const CURRENT_USER = <?php echo json_encode($_SESSION['username'] ?? null); ?>;
+
         function escHtml(str) {
             return DOMPurify.sanitize(String(str));
         }
@@ -152,9 +155,10 @@ session_start();
                     <td class="text-muted-cell">${escHtml(date)}</td>
                     <td class="price-cell">SGD ${escHtml(row.price)}</td>
                     <td>
-                        <button class="btn-buy" onclick="buyListing(${row.listing_id})">
-                            <i class="bi bi-bag"></i> Buy
-                        </button>
+                        ${CURRENT_USER && CURRENT_USER === row.seller
+                            ? '<span class="text-muted small">Your listing</span>'
+                            : `<button class="btn-buy" onclick="buyListing(${row.listing_id})"><i class="bi bi-bag"></i> Buy</button>`
+                        }
                     </td>
                 </tr>
                 `;
