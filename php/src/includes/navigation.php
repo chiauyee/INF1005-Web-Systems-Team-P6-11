@@ -42,6 +42,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="profile.php">View Profile</a></li>
+                            <li><a class="dropdown-item" href="my_wishlist.php">My Wishlist</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                         </ul>

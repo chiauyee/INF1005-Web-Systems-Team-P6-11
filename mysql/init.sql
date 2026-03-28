@@ -113,6 +113,16 @@ CREATE TABLE IF NOT EXISTS chats (
   FOREIGN KEY (seller_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS wishlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    album_mbid VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_user_album (user_id, album_mbid),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (album_mbid) REFERENCES albums(album_mbid) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS messages (
   id INT AUTO_INCREMENT PRIMARY KEY,
   chat_id INT,
