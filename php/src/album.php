@@ -171,7 +171,7 @@ function renderListings(listings) {
                         <th class="ps-4">Seller</th>
                         <th>Listed Date</th>
                         <th class="text-end">Price</th>
-                        <th class="text-center pe-4" style="width: 120px;">Action</th>
+                        <th class="text-center pe-4" style="width: 160px;">Action</th>
                     </tr>
                 </thead>
                 <tbody class="border-top-0">
@@ -184,9 +184,14 @@ function renderListings(listings) {
             <td class="text-muted small">${formatDate(l.created_at)}</td>
             <td class="text-end fw-bold text-dark fs-6">$${parseFloat(l.price).toFixed(2)}</td>
             <td class="text-center pe-4">
-                <button class="btn btn-sm btn-add-cart w-100" onclick="addToCart(${l.listing_id})">
-                    <i class="bi bi-cart-plus me-1"></i> Add
-                </button>
+                <div class="d-flex gap-1 justify-content-center">
+                    <button class="btn btn-sm btn-add-cart flex-grow-1" onclick="addToCart(${l.listing_id})">
+                        <i class="bi bi-cart-plus me-1"></i> Add
+                    </button>
+                    <button class="btn btn-sm btn-wishlist" id="wishlist-btn-${escHtml(l.listing_id)}" onclick="toggleWishlist('${escHtml(l.album_mbid || MBID)}', this)" title="Add to wishlist">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                </div>
             </td>
         </tr>`;
     });
@@ -249,12 +254,97 @@ fetch(`/api/get_album.php?mbid=${encodeURIComponent(MBID)}`)
         renderImages(data.images);
         renderListings(data.listings);
         renderComments(data.comments);
+
+        // check wishlist state for this album after listings are rendered
+        if (LOGGED_IN) {
+            checkWishlistState(MBID);
+        }
     })
     .catch(() => {
         const errBanner = document.getElementById('error-banner');
         errBanner.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i> Failed to load album.`;
         errBanner.style.display = 'block';
     });
+
+// wishlist toast
+const _wishlistToastEl = (() => {
+    const t = document.createElement('div');
+    t.id = 'wishlist-toast';
+    t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(1rem);' +
+        'background:#212529;color:#fff;padding:0.6rem 1.4rem;border-radius:999px;font-size:0.875rem;' +
+        'font-family:\'DM Sans\',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;z-index:9998;white-space:nowrap;';
+    document.body.appendChild(t);
+    return t;
+})();
+let _wishlistToastTimer = null;
+function showWishlistToast(msg) {
+    _wishlistToastEl.textContent = msg;
+    _wishlistToastEl.style.opacity = '1';
+    _wishlistToastEl.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(_wishlistToastTimer);
+    _wishlistToastTimer = setTimeout(() => {
+        _wishlistToastEl.style.opacity = '0';
+        _wishlistToastEl.style.transform = 'translateX(-50%) translateY(1rem)';
+    }, 2500);
+}
+
+function setWishlistBtnState(btn, wishlisted) {
+    if (!btn) return;
+    const icon = btn.querySelector('i');
+    if (wishlisted) {
+        icon.className = 'bi bi-heart-fill';
+        btn.classList.add('active');
+        btn.title = 'Remove from wishlist';
+    } else {
+        icon.className = 'bi bi-heart';
+        btn.classList.remove('active');
+        btn.title = 'Add to wishlist';
+    }
+}
+
+function checkWishlistState(albumMbid) {
+    fetch(`/api/wishlist.php?action=check&album_mbid=${encodeURIComponent(albumMbid)}`)
+        .then(r => r.json())
+        .then(data => {
+            // Apply state to all wishlist buttons on the page (one per listing row)
+            document.querySelectorAll('[id^="wishlist-btn-"]').forEach(btn => {
+                setWishlistBtnState(btn, data.wishlisted);
+            });
+        })
+        .catch(() => {});
+}
+
+function toggleWishlist(albumMbid, btn) {
+    if (!LOGGED_IN) {
+        showWishlistToast('Please log in to save to wishlist'); // If not logged in
+        return;
+    }
+
+    const currentlyWishlisted = btn.classList.contains('active'); // visual feedback
+    setWishlistBtnState(btn, !currentlyWishlisted);
+
+    fetch('/api/wishlist.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'toggle', album_mbid: albumMbid })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) {
+            setWishlistBtnState(btn, currentlyWishlisted); // if fail revert to unhearted
+            showWishlistToast(data.error);
+            return;
+        }
+        // Sync all buttons for this album
+        document.querySelectorAll('[id^="wishlist-btn-"]').forEach(b => setWishlistBtnState(b, data.wishlisted));
+        showWishlistToast(data.wishlisted ? ' Added to wishlist' : 'Removed from wishlist');
+    })
+    .catch(() => {
+        // Revert on network error
+        setWishlistBtnState(btn, currentlyWishlisted);
+        showWishlistToast('Network error. Please try again.');
+    });
+}
 
 // Upload photo
 if (LOGGED_IN) {
@@ -298,8 +388,6 @@ if (LOGGED_IN) {
                             </div>
                         </div>
                     `;
-                    // Actually the previous render was using a map and didn't have row inside the map item...
-                    // Let's just prepend the raw HTML
                     list.insertAdjacentHTML('afterbegin', fig.innerHTML);
                     
                     setTimeout(() => { status.innerHTML = ''; }, 3000);
@@ -312,7 +400,7 @@ if (LOGGED_IN) {
             });
     });
 
-    // Post comment
+    // post comment
     document.getElementById('btn-comment').addEventListener('click', function () {
         const comment = document.getElementById('comment-input').value.trim();
         const status  = document.getElementById('comment-status');

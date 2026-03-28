@@ -374,7 +374,7 @@ session_start();
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 
   <script>
-    // Category switching 
+    // category switching 
     const catBtns    = document.querySelectorAll('.cat-btn');
     const catPanels  = document.querySelectorAll('.faq-section');
 
@@ -389,7 +389,7 @@ session_start();
         btn.setAttribute('aria-pressed', 'true');
         document.getElementById('cat-' + target).classList.add('active');
 
-        // Clear search when switching categories
+        // clear search when switching categories
         document.getElementById('faq-search').value = '';
         document.getElementById('no-results').style.display = 'none';
         document.querySelectorAll('.faq-item').forEach(item => item.style.display = '');
@@ -417,17 +417,17 @@ session_start();
       });
     });
 
-    // Live search across all questions
+    // live search across all questions
     const searchInput = document.getElementById('faq-search');
     const noResults   = document.getElementById('no-results');
 
     searchInput.addEventListener('input', () => {
-      // DOMPurify to prevent XSS during search execution
+      // DOMPurify to prevent XSS during searches
       let rawQuery = searchInput.value.trim().toLowerCase();
       const query = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawQuery) : rawQuery;
 
       if (!query) {
-        // Restore category view
+        // restore category view
         noResults.style.display = 'none';
         catPanels.forEach(p => {
           const isActive = p.id === 'cat-' + document.querySelector('.cat-btn.active').dataset.cat;
@@ -437,7 +437,7 @@ session_start();
         return;
       }
 
-      // Show all sections during search
+      // show all sections during search
       catPanels.forEach(p => p.classList.add('active'));
 
       let anyVisible = false;
@@ -449,7 +449,7 @@ session_start();
         item.style.display = matches ? '' : 'none';
         if (matches) anyVisible = true;
 
-        // Auto-open matching items
+        // auto-open matching stuff
         if (matches) {
           const btn    = item.querySelector('.faq-question');
           const answer = document.getElementById(btn.getAttribute('aria-controls'));
@@ -460,7 +460,7 @@ session_start();
 
       noResults.style.display = anyVisible ? 'none' : 'block';
 
-      // Hide empty section headings
+      // hide empty section headings
       catPanels.forEach(panel => {
         const visibleItems = [...panel.querySelectorAll('.faq-item')].filter(i => i.style.display !== 'none');
         panel.classList.toggle('active', visibleItems.length > 0);
@@ -477,7 +477,7 @@ session_start();
 
       const scene = new THREE.Scene();
 
-      // Slightly pushed back and FOV=35
+      // FOV is first value
       const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 1000);
       camera.position.set(0, 0, 21);
       camera.lookAt(0, 0, 0);

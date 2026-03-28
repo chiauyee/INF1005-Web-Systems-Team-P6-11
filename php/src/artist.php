@@ -200,7 +200,7 @@ function prependComment(comment) {
     el.prepend(div.firstElementChild);
 }
 
-// Load artist data
+// load artist data
 fetch(`/api/get_artist.php?mbid=${encodeURIComponent(MBID)}`)
     .then(r => r.json())
     .then(data => {
@@ -285,7 +285,7 @@ if (LOGGED_IN) {
             });
     });
 
-    // Post comment
+    // post comment
     document.getElementById('btn-comment').addEventListener('click', function () {
         const comment = document.getElementById('comment-input').value.trim();
         const status  = document.getElementById('comment-status');
@@ -307,7 +307,7 @@ if (LOGGED_IN) {
                 status.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Posted!</span>';
                 document.getElementById('comment-input').value = '';
                 prependComment(data.comment);
-                setTimeout(() => { status.innerHTML = ''; }, 3000); // Validation
+                setTimeout(() => { status.innerHTML = ''; }, 3000); // validation
             } else {
                 status.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>${escHtml(data.error || 'Failed to post comment.')}</span>`;
             }

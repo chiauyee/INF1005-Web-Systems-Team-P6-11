@@ -25,15 +25,35 @@ if (!in_array($type, ['artist', 'album']) || !$mbid) {
     exit;
 }
 
-if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+if (!isset($_FILES['image'])) {
     http_response_code(400);
-    echo json_encode(['error' => 'No valid image uploaded']);
+    echo json_encode(['error' => 'No file field named "image" was uploaded']);
+    exit;
+}
+
+if ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+    http_response_code(400);
+    $error_msg = 'Image upload error code: ' . $_FILES['image']['error'];
+    if ($_FILES['image']['error'] === UPLOAD_ERR_INI_SIZE) {
+        $error_msg = 'The uploaded file exceeds the maximum file size.';
+    } elseif ($_FILES['image']['error'] === UPLOAD_ERR_PARTIAL) {
+        $error_msg = 'The uploaded file was only partially uploaded.';
+    } elseif ($_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+        $error_msg = 'No file was uploaded.';
+    } elseif ($_FILES['image']['error'] === UPLOAD_ERR_NO_TMP_DIR) {
+        $error_msg = 'Missing a temporary folder.';
+    } elseif ($_FILES['image']['error'] === UPLOAD_ERR_CANT_WRITE) {
+        $error_msg = 'Failed to write file to disk.';
+    } elseif ($_FILES['image']['error'] === UPLOAD_ERR_EXTENSION) {
+        $error_msg = 'A PHP extension stopped the file upload.';
+    }
+    echo json_encode(['error' => $error_msg]);
     exit;
 }
 
 $allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 $finfo = new finfo(FILEINFO_MIME_TYPE);
-$mime  = $finfo->file($_FILES['image']['tmp_name']);
+$mime = $finfo->file($_FILES['image']['tmp_name']);
 
 if (!in_array($mime, $allowed_types)) {
     http_response_code(400);
@@ -47,10 +67,10 @@ if ($_FILES['image']['size'] > 5 * 1024 * 1024) {
     exit;
 }
 
-$ext      = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+$ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
 $filename = bin2hex(random_bytes(16)) . '.' . strtolower($ext);
-$dir      = __DIR__ . "/../uploads/{$type}s/";
-$dest     = $dir . $filename;
+$dir = __DIR__ . "/../uploads/{$type}s/";
+$dest = $dir . $filename;
 
 if (!move_uploaded_file($_FILES['image']['tmp_name'], $dest)) {
     http_response_code(500);

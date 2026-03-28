@@ -12,10 +12,11 @@
     aspect-ratio: 1;
     width: 100%;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s;
     background: #e8e8e8;
 }
+
 .album-photo:hover {
     transform: scale(1.02);
 }
@@ -28,6 +29,7 @@
     padding: 1.5rem;
     margin-bottom: 1rem;
 }
+
 .comment-time {
     font-size: 0.85rem;
     color: var(--text-muted);
@@ -40,7 +42,11 @@
     overflow: hidden;
     border: 1.5px solid var(--border);
 }
-.table-custom table { margin: 0; }
+
+.table-custom table {
+    margin: 0;
+}
+
 .table-custom th {
     background: #f1f1ef;
     color: var(--text);
@@ -48,11 +54,13 @@
     border-bottom: 1.5px solid var(--border);
     padding: 1rem;
 }
+
 .table-custom td {
     padding: 1rem;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
 }
+
 .table-custom tbody tr:last-child td {
     border-bottom: none;
 }
@@ -65,47 +73,56 @@
     padding: 80px 0 60px;
     color: #fff;
 }
+
 .hero-album::before {
     content: '';
     position: absolute;
-    width: 480px; height: 480px;
+    width: 480px;
+    height: 480px;
     border-radius: 50%;
-    right: -100px; top: -150px;
-    border: 40px solid rgba(255,255,255,0.03);
+    right: -100px;
+    top: -150px;
+    border: 40px solid rgba(255, 255, 255, 0.03);
     pointer-events: none;
 }
+
 .hero-album-title {
     font-family: 'Playfair Display', serif;
     font-size: 3rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
+
 .hero-album-artist a {
     color: #fff;
     text-decoration: underline;
-    text-decoration-color: rgba(255,255,255,0.4);
+    text-decoration-color: rgba(255, 255, 255, 0.4);
     text-underline-offset: 4px;
     transition: color 0.2s, text-decoration-color 0.2s;
 }
+
 .hero-album-artist a:hover {
     text-decoration-color: #fff;
 }
+
 .mbid-link {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     font-size: 0.85rem;
-    color: rgba(255,255,255,0.6);
-    background: rgba(255,255,255,0.1);
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.1);
     padding: 0.4rem 0.8rem;
     border-radius: 20px;
     text-decoration: none;
     transition: background 0.2s, color 0.2s;
 }
+
 .mbid-link:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     color: #fff;
 }
+
 .btn-add-cart {
     font-family: 'DM Sans', sans-serif;
     font-weight: 500;
@@ -115,8 +132,72 @@
     background: transparent;
     transition: all 0.2s;
 }
+
 .btn-add-cart:hover {
     background: var(--dark-panel);
     color: #fff;
     border-color: var(--dark-panel);
+}
+
+/* Wishlist heart button */
+.btn-wishlist {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    background: transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    width: 34px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-wishlist i {
+    transition: color 0.2s, transform 0.15s;
+    font-size: 0.95rem;
+}
+
+.btn-wishlist:hover {
+    border-color: #e8546a;
+    color: #e8546a;
+    background: rgba(232, 84, 106, 0.07);
+}
+
+.btn-wishlist:hover i {
+    transform: scale(1.15);
+}
+
+.btn-wishlist.active {
+    border-color: #e8546a;
+    color: #e8546a;
+    background: rgba(232, 84, 106, 0.08);
+}
+
+.btn-wishlist.active i {
+    animation: heartPop 0.25s ease;
+    position: relative;
+    top: 2px;
+}
+
+@keyframes heartPop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.35);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.btn-wishlist:not(.active) i {
+    position: relative;
+    top: 2px;
 }

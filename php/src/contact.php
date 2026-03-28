@@ -24,11 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $message = htmlspecialchars(trim($_POST['message'] ?? ''), ENT_QUOTES, 'UTF-8');
   $feedback_rating = intval($_POST['feedback_rating'] ?? 0);
 
-  // If honeypot is filled, pretend submission was successful to deter bots
+  // if honeypot is filled pretend submission was successful to deter bots
   if ($honeypot !== '') {
     $success = 'Thank you, ' . $name . '! We\'ll get back to you within 2 business days.';
   } else {
-    // Validation
+    // validation
     if (!$name || !$email || !$subject || !$message || !$topic) {
       $error = 'Please fill in all required fields.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $error = 'Please select a rating before submitting.';
     } else {
       try {
-        $mail = new PHPMailer(true);
+        $mail = new PHPMailer(true); // configz
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->SMTPSecure = 'tls';
         $mail->Port       = 587;
 
-        // Send from the system email, to the system email, but allow replying to the user
+        // send from the system email to the system email
         $mail->setFrom('MusicMarket2026@gmail.com', 'MusicMarket System');
         $mail->addAddress('MusicMarket2026@gmail.com', 'Admin'); 
         $mail->addReplyTo($email, $name);
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->send();
         $success = 'Thank you, ' . $name . '! We\'ll get back to you within 2 business days.';
 
-        // Clear the form fields after successful submission
+        // clear form fields after successful submission
         $name = '';
         $email = '';
         $topic = '';
@@ -293,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     crossorigin="anonymous"></script>
 
   <script>
-    // Star rating hint labels
+    // star rating hint labels
     const hints = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
     const hintEl = document.getElementById('star-hint');
     const stars = document.querySelectorAll('.star-group input[type="radio"]');
@@ -304,11 +304,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       });
     });
 
-    // Restore hint text on page load if rating was previously selected (e.g. after failed submission)
+    // restore hint text on page load if rating was previously selected (e.g. after failed submission)
     const checked = document.querySelector('.star-group input:checked');
     if (checked) hintEl.textContent = hints[parseInt(checked.value)] || '';
 
-    // Scroll-reveal
+    // scroll-reveal
     (function () {
       const style = document.createElement('style');
       style.textContent = `

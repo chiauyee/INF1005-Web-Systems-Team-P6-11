@@ -327,3 +327,26 @@ body {
     .profile-actions { flex-direction: column; }
     .order-row-profile { align-items: flex-start; }
 }
+
+/* Wishlist remove button */
+.wishlist-remove-btn {
+    border: 1.5px solid var(--text);
+    color: var(--text);
+    border-radius: 6px;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+    white-space: nowrap;
+}
+.wishlist-remove-btn:hover {
+    background: var(--text);
+    color: var(--white);
+    transform: translateY(-1px);
+}
+.wishlist-remove-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
