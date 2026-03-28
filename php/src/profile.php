@@ -2,6 +2,10 @@
 session_start();
 require 'db.php';
 
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 $countryArray = array(
 	'AD'=>array('name'=>'ANDORRA','code'=>'376'),
 	'AE'=>array('name'=>'UNITED ARAB EMIRATES','code'=>'971'),
@@ -260,20 +264,19 @@ $success = '';
 $error   = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid request. Please try again.';
+    } else {
     $phone   = trim($_POST['phone'] ?? '');
     $address = trim($_POST['address'] ?? '');
     $country = $_POST['country'] ?? 'SG';
     $latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
     $longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
 
+    if (empty($address)) {
+        $error = 'Delivery address is required.';
+    } else {
     try {
-        // Check if latitude/longitude columns exist
-        $checkColumns = $pdo->query("SHOW COLUMNS FROM users LIKE 'latitude'");
-        if ($checkColumns->rowCount() == 0) {
-            $pdo->exec("ALTER TABLE users ADD COLUMN latitude DECIMAL(10,8) NULL");
-            $pdo->exec("ALTER TABLE users ADD COLUMN longitude DECIMAL(11,8) NULL");
-        }
-        
         // Update with or without coordinates
         if ($latitude !== null && $longitude !== null) {
             $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ?, latitude = ?, longitude = ? WHERE id = ?");
@@ -292,16 +295,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Database error. Please try again.';
         error_log("Profile update error: " . $e->getMessage());
     }
-}
+    } // end address check
+    } // end CSRF check
+} // end POST
 
 // Fetch user data (refresh after update)
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$per_page        = 10;
+$purchases_page  = max(1, (int)($_GET['purchases_page'] ?? 1));
+$listings_page   = max(1, (int)($_GET['listings_page'] ?? 1));
+
+// Count total purchases for pagination
+$count_stmt = $pdo->prepare("SELECT COUNT(*) FROM listings WHERE buyer_id = ? AND status = 'complete'");
+$count_stmt->execute([$_SESSION['user_id']]);
+$purchases_total = (int)$count_stmt->fetchColumn();
+$purchases_pages = max(1, (int)ceil($purchases_total / $per_page));
+$purchases_page  = min($purchases_page, $purchases_pages);
+
 // Purchases: listings bought by this user
 $stmt = $pdo->prepare("
-    SELECT l.listing_id, l.price, l.created_at,
+    SELECT l.listing_id, l.album_mbid, l.price, l.created_at, l.purchased_at,
            al.album_name, ar.artist_name,
            s.username AS seller_username
     FROM listings l
@@ -309,14 +325,25 @@ $stmt = $pdo->prepare("
     JOIN artists ar ON al.artist_mbid = ar.artist_mbid
     JOIN users s ON l.seller_id = s.id
     WHERE l.buyer_id = ? AND l.status = 'complete'
-    ORDER BY l.created_at DESC
+    ORDER BY l.purchased_at DESC
+    LIMIT ? OFFSET ?
 ");
-$stmt->execute([$_SESSION['user_id']]);
+$stmt->bindValue(1, (int)$_SESSION['user_id'], PDO::PARAM_INT);
+$stmt->bindValue(2, $per_page, PDO::PARAM_INT);
+$stmt->bindValue(3, ($purchases_page - 1) * $per_page, PDO::PARAM_INT);
+$stmt->execute();
 $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Count total listings for pagination
+$count_stmt = $pdo->prepare("SELECT COUNT(*) FROM listings WHERE seller_id = ?");
+$count_stmt->execute([$_SESSION['user_id']]);
+$listings_total = (int)$count_stmt->fetchColumn();
+$listings_pages = max(1, (int)ceil($listings_total / $per_page));
+$listings_page  = min($listings_page, $listings_pages);
 
 // Sales: listings created by this user
 $stmt = $pdo->prepare("
-    SELECT l.listing_id, l.price, l.status, l.rejection_reason, l.created_at,
+    SELECT l.listing_id, l.album_mbid, l.price, l.status, l.rejection_reason, l.created_at, l.purchased_at,
            al.album_name, ar.artist_name,
            b.username AS buyer_username
     FROM listings l
@@ -324,9 +351,13 @@ $stmt = $pdo->prepare("
     JOIN artists ar ON al.artist_mbid = ar.artist_mbid
     LEFT JOIN users b ON l.buyer_id = b.id
     WHERE l.seller_id = ?
-    ORDER BY FIELD(l.status, 'complete', 'available', 'pending', 'rejected'), l.created_at DESC
+    ORDER BY FIELD(l.status, 'pending', 'available', 'rejected', 'complete'), l.created_at DESC
+    LIMIT ? OFFSET ?
 ");
-$stmt->execute([$_SESSION['user_id']]);
+$stmt->bindValue(1, (int)$_SESSION['user_id'], PDO::PARAM_INT);
+$stmt->bindValue(2, $per_page, PDO::PARAM_INT);
+$stmt->bindValue(3, ($listings_page - 1) * $per_page, PDO::PARAM_INT);
+$stmt->execute();
 $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -334,6 +365,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="en">
 <head>
     <title>Profile</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
@@ -376,6 +408,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
 
             <form method="POST" action="">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <div class="field-row">
                     <div class="field-group">
                         <label class="field-label" for="email">Email</label>
@@ -438,17 +471,33 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php foreach ($purchases as $p): ?>
                     <div class="order-row-profile">
                         <div class="order-info">
-                            <div class="order-album-name"><?= htmlspecialchars($p['album_name']) ?></div>
+                            <div class="order-album-name">
+                                <a href="album.php?mbid=<?= urlencode($p['album_mbid']) ?>" style="color:inherit;text-decoration:none;">
+                                    <?= htmlspecialchars($p['album_name']) ?>
+                                </a>
+                            </div>
                             <div class="order-meta-text"><?= htmlspecialchars($p['artist_name']) ?> &middot; Seller: <?= htmlspecialchars($p['seller_username']) ?></div>
-                            <div class="order-date"><?= date('d M Y', strtotime($p['created_at'])) ?></div>
+                            <div class="order-date"><?= $p['purchased_at'] ? date('d M Y', strtotime($p['purchased_at'])) : 'N/A' ?></div>
                         </div>
                         <div class="order-right">
-                            <div class="order-price-val">$<?= number_format((float)$p['price'], 2) ?></div>
+                            <div class="order-price-val">SGD <?= number_format((float)$p['price'], 2) ?></div>
                             <span class="status-badge status-complete">Purchased</span>
+                            <a href="listing.php?id=<?= (int)$p['listing_id'] ?>" style="font-size:0.78rem;color:#1a1a1a;text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;"><i class="bi bi-eye"></i> View Detail</a>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
+                <?php if ($purchases_pages > 1): ?>
+                <nav class="mt-3">
+                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                        <?php for ($i = 1; $i <= $purchases_pages; $i++): ?>
+                        <li class="page-item <?= $i === $purchases_page ? 'active' : '' ?>">
+                            <a class="page-link" href="?purchases_page=<?= $i ?>&listings_page=<?= $listings_page ?>"><?= $i ?></a>
+                        </li>
+                        <?php endfor; ?>
+                    </ul>
+                </nav>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
@@ -464,7 +513,9 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 					<div class="order-row-profile">
 						<div class="order-info">
 							<div class="order-album-name">
-								<?= htmlspecialchars($l['album_name']) ?>
+								<a href="album.php?mbid=<?= urlencode($l['album_mbid']) ?>" style="color:inherit;text-decoration:none;">
+									<?= htmlspecialchars($l['album_name']) ?>
+								</a>
 							</div>
 							<div class="order-meta-text"><?= htmlspecialchars($l['artist_name']) ?>
 								<?php if ($l['status'] === 'complete' && $l['buyer_username']): ?>
@@ -475,16 +526,28 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 								<?php endif; ?>
 							</div>
 							<div class="order-date">
-								<?= date('d M Y', strtotime($l['created_at'])) ?>
+								<?= $l['status'] === 'complete'
+									? ($l['purchased_at'] ? date('d M Y', strtotime($l['purchased_at'])) : 'N/A')
+									: date('d M Y', strtotime($l['created_at'])) ?>
 							</div>
-							<?php if ($l['status'] === 'rejected' && !empty($l['rejection_reason'])): ?>
+							<?php if ($l['status'] === 'rejected'): ?>
+								<?php if (!empty($l['rejection_reason'])): ?>
 								<div class="order-meta-text text-danger">
 									Reason: <?= htmlspecialchars($l['rejection_reason']) ?>
 								</div>
+								<?php endif; ?>
+								<form method="POST" action="/api/delete_listing.php" class="mt-1"
+									  onsubmit="return confirm('Delete this rejected listing?')">
+									<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+									<input type="hidden" name="listing_id" value="<?= (int)$l['listing_id'] ?>">
+									<button type="submit" class="btn btn-sm btn-outline-danger">
+										<i class="bi bi-trash"></i> Delete
+									</button>
+								</form>
 							<?php endif; ?>
 						</div>
 						<div class="order-right">
-							<div class="order-price-val">$<?= number_format((float)$l['price'], 2) ?></div>
+							<div class="order-price-val">SGD <?= number_format((float)$l['price'], 2) ?></div>
 							<?php
 								$badgeClass = match($l['status']) {
 									'available' => 'status-available',
@@ -502,10 +565,22 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 								};
 							?>
 							<span class="status-badge <?= $badgeClass ?>"><?= $badgeLabel ?></span>
+							<a href="listing.php?id=<?= (int)$l['listing_id'] ?>" style="font-size:0.78rem;color:#1a1a1a;text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;"><i class="bi bi-eye"></i> View Detail</a>
 						</div>
 					</div>
 					<?php endforeach; ?>
 				</div>
+				<?php if ($listings_pages > 1): ?>
+				<nav class="mt-3">
+					<ul class="pagination pagination-sm justify-content-center mb-0">
+						<?php for ($i = 1; $i <= $listings_pages; $i++): ?>
+						<li class="page-item <?= $i === $listings_page ? 'active' : '' ?>">
+							<a class="page-link" href="?purchases_page=<?= $purchases_page ?>&listings_page=<?= $i ?>"><?= $i ?></a>
+						</li>
+						<?php endfor; ?>
+					</ul>
+				</nav>
+				<?php endif; ?>
 			<?php endif; ?>
 		</div>
 
@@ -596,6 +671,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			
 			// Prepare form data
 			const formData = new FormData();
+			formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
 			formData.append('phone', phone);
 			formData.append('address', address);
 			formData.append('country', country);

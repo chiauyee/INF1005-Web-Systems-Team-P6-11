@@ -157,7 +157,7 @@ session_start();
                     <td>
                         ${CURRENT_USER && CURRENT_USER === row.seller
                             ? '<span class="text-muted small">Your listing</span>'
-                            : `<button class="btn-buy" onclick="buyListing(${row.listing_id})"><i class="bi bi-bag"></i> Buy</button>`
+                            : `<button class="btn-buy" onclick="addToCart(${row.listing_id})"><i class="bi bi-cart-plus"></i>Cart</button>`
                         }
                     </td>
                 </tr>
@@ -167,19 +167,6 @@ session_start();
             html += '</tbody></table></div>';
             container.innerHTML = html;
         }
-
-        function buyListing(listing_id) {
-        fetch('/api/buy_listing.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({listing_id: listing_id})
-        })
-            .then(r => r.json())
-            .then(json => {
-            console.log(json);
-            })
-        }
-
 
         function fetchListings(params) {
             const qs = new URLSearchParams(params).toString();

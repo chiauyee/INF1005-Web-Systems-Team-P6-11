@@ -53,10 +53,10 @@ if ($session_id) {
                 } else {
                     // all rows are locked and confirmed available — update unconditionally
                     $update_stmt = $pdo->prepare(
-                        "UPDATE listings SET status = 'complete', buyer_id = ? WHERE listing_id = ?"
+                        "UPDATE listings SET status = 'complete', buyer_id = ?, purchased_at = NOW(), stripe_session_id = ? WHERE listing_id = ?"
                     );
                     foreach ($listing_ids as $lid) {
-                        $update_stmt->execute([$buyer_id, $lid]);
+                        $update_stmt->execute([$buyer_id, $session_id, $lid]);
                     }
                     $pdo->commit();
                     $_SESSION['cart'] = [];
