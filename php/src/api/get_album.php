@@ -38,7 +38,7 @@ try {
         SELECT l.listing_id, l.price, l.created_at, u.username AS seller
         FROM listings l
         JOIN users u ON l.seller_id = u.id
-        WHERE l.album_mbid = ?
+        WHERE l.album_mbid = ? AND l.status = 'available'
         ORDER BY l.price ASC
     ");
     $stmt->execute([$mbid]);
