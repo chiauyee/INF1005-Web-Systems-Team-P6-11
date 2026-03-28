@@ -261,7 +261,10 @@ session_start();
       style.textContent = `
           .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
           .reveal.visible { opacity: 1; transform: translateY(0); }
-        `;
+          @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; transition: none; }
+          }
+        `; // WCAG 2.2.2 and 2.3.3 for motion sickness or something
       document.head.appendChild(style);
 
       const targets = document.querySelectorAll(
@@ -400,7 +403,14 @@ session_start();
 
         renderer.render(scene, camera);
       }
-      animate();
+
+      // respect user's motion preferences for accessibility (WCAG 2.2.2 Check)
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (!prefersReducedMotion.matches) {
+        animate();
+      } else {
+        renderer.render(scene, camera); // render the initial static frame only
+      }
 
       window.addEventListener('resize', () => {
         if (!container) return;

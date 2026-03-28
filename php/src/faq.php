@@ -598,7 +598,14 @@ session_start();
 
         renderer.render(scene, camera);
       }
-      animate();
+      
+      // WCAG respect user's motion preferences
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (!prefersReducedMotion.matches) {
+        animate();
+      } else {
+        renderer.render(scene, camera); // render the initial static frame only
+      }
 
       window.addEventListener('resize', () => {
         if (!container) return;

@@ -314,7 +314,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       style.textContent = `
         .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
-      `;
+        @media (prefers-reduced-motion: reduce) {
+          .reveal { opacity: 1; transform: none; transition: none; }
+        }
+      `; // WCAG 2.2.2 and 2.3.3
       document.head.appendChild(style);
 
       const targets = document.querySelectorAll('.form-card, .info-card, .response-note');
@@ -448,7 +451,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         renderer.render(scene, camera);
       }
-      animate();
+      
+      // WCAG respect user's motion preferences
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (!prefersReducedMotion.matches) {
+        animate();
+      } else {
+        renderer.render(scene, camera); // render the initial static frame only
+      }
 
       window.addEventListener('resize', () => {
         if (!container) return;

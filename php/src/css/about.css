@@ -448,3 +448,22 @@ footer a:hover {
         height: 280px;
     }
 }
+
+/* WCAG respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .value-card:hover,
+    .btn:hover,
+    .btn-white:hover,
+    .btn-outline-light-custom:hover,
+    .btn-primary:hover {
+        transform: none !important;
+    }
+}
