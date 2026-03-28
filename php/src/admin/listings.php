@@ -17,15 +17,16 @@ if (isset($_GET['approve'])) {
     exit;
 }
 
-if (isset($_GET['reject'])) {
+if (isset($_GET['reject'], $_GET['reason'])) {
     $id = (int)$_GET['reject'];
+    $reason = trim($_GET['reason']);
 
     $stmt = $pdo->prepare("
         UPDATE listings
-        SET status = 'rejected'
+        SET status = 'rejected', rejection_reason = ?
         WHERE listing_id = ?
     ");
-    $stmt->execute([$id]);
+    $stmt->execute([$reason, $id]);
 
     header("Location: listings.php");
     exit;
@@ -172,11 +173,14 @@ $oldestPending = $totalPending > 0
                                                     <i class="bi bi-check-lg"></i> Approve
                                                 </a>
 
-                                                <a
-                                                    href="?reject=<?= $listing['listing_id'] ?>"
-                                                    class="btn btn-sm btn-outline-warning">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-outline-warning"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#rejectModal"
+                                                    data-id="<?= $listing['listing_id'] ?>">
                                                     <i class="bi bi-x-lg"></i> Reject
-                                                </a>
+                                                </button>
 
                                                 <a
                                                     href="?delete=<?= $listing['listing_id'] ?>"
@@ -196,8 +200,51 @@ $oldestPending = $totalPending > 0
         </div>
     </main>
 
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="get">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectModalLabel">Reject Listing</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="reject" id="rejectListingId">
+
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for rejection</label>
+                            <select class="form-select" id="reason" name="reason" required>
+                                <option value="">Select a reason</option>
+                                <option value="Duplicate listing">Duplicate listing</option>
+                                <option value="Incomplete information">Incomplete information</option>
+                                <option value="Invalid price">Invalid price</option>
+                                <option value="Incorrect metadata">Incorrect metadata</option>
+                                <option value="Inappropriate content">Inappropriate content</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning">Reject Listing</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <?php include __DIR__ . '/../includes/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+        const rejectModal = document.getElementById('rejectModal');
+
+        rejectModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const listingId = button.getAttribute('data-id');
+            document.getElementById('rejectListingId').value = listingId;
+            document.getElementById('reason').value = '';
+        });
+    </script>
 
 </body>
 

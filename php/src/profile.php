@@ -316,7 +316,7 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Sales: listings created by this user
 $stmt = $pdo->prepare("
-    SELECT l.listing_id, l.price, l.status, l.created_at,
+    SELECT l.listing_id, l.price, l.status, l.rejection_reason, l.created_at,
            al.album_name, ar.artist_name,
            b.username AS buyer_username
     FROM listings l
@@ -476,8 +476,12 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 							</div>
 							<div class="order-date">
 								<?= date('d M Y', strtotime($l['created_at'])) ?>
-
 							</div>
+							<?php if ($l['status'] === 'rejected' && !empty($l['rejection_reason'])): ?>
+								<div class="order-meta-text text-danger">
+									Reason: <?= htmlspecialchars($l['rejection_reason']) ?>
+								</div>
+							<?php endif; ?>
 						</div>
 						<div class="order-right">
 							<div class="order-price-val">$<?= number_format((float)$l['price'], 2) ?></div>
