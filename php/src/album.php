@@ -127,6 +127,7 @@ $logged_in = isset($_SESSION['user_id']);
 const MBID = <?= json_encode($mbid) ?>;
 const LOGGED_IN = <?= json_encode($logged_in) ?>;
 const IS_LOGGED_IN = <?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
+const CURRENT_USER = <?= json_encode($_SESSION['username'] ?? null) ?>; // for checking if you are the listing seller
 
 
 function escHtml(str) {
@@ -189,9 +190,12 @@ function renderListings(listings) {
             <td class="text-end fw-bold text-dark fs-6">$${parseFloat(l.price).toFixed(2)}</td>
             <td class="text-center pe-4">
                 <div class="d-flex gap-1 justify-content-center">
-                    <button class="btn btn-sm btn-add-cart flex-grow-1" onclick="addToCart(${l.listing_id})">
-                        <i class="bi bi-cart-plus me-1"></i> Add
-                    </button>
+                    ${CURRENT_USER && CURRENT_USER === l.seller // if you seller show your listing instead of add to cart
+                        ? '<span class="text-muted small align-self-center px-2">Your listing</span>'
+                        : `<button class="btn btn-sm btn-add-cart flex-grow-1" onclick="addToCart(${l.listing_id})">
+                                <i class="bi bi-cart-plus me-1"></i> Add
+                           </button>`
+                    }
                     <button class="btn btn-sm btn-wishlist" id="wishlist-btn-${escHtml(l.listing_id)}" onclick="toggleWishlist('${escHtml(l.album_mbid || MBID)}', this)" title="Add to wishlist">
                         <i class="bi bi-heart"></i>
                     </button>
