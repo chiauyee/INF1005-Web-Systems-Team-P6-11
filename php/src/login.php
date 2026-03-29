@@ -1,7 +1,6 @@
 <?php
 session_start();
 require 'db.php';
-
 ?>
 
 <!DOCTYPE html>
@@ -558,7 +557,29 @@ require 'db.php';
                         showError('Failed to resend. Please try again.');
                         link.textContent = 'Resend';
                     });
+              });
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const loginForm = document.getElementById('login-form');
+        const otpForm = document.getElementById('otp-form');
+
+        if (loginForm && loginForm.style.display !== 'none') {
+            if (document.activeElement.tagName === 'INPUT') {
+                e.preventDefault();
+                document.getElementById('btn-login').click();
+            }
+        } 
+        
+        else if (otpForm && otpForm.style.display === 'block') {
+            if (document.activeElement.id === 'otp') {
+                e.preventDefault();
+                document.getElementById('btn-verify-otp').click();
+            }
+        }
+    }
             });
+
         </script>
     </body>
 </html>

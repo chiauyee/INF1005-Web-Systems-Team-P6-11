@@ -681,7 +681,7 @@
           t.id = 'wishlist-toast';
           t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(1rem);' +
               'background:#212529;color:#fff;padding:0.6rem 1.4rem;border-radius:999px;font-size:0.875rem;' +
-              'font-family:\\'DM Sans\\',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;z-index:9998;white-space:nowrap;';
+              'font-family:\'DM Sans\',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;z-index:9998;white-space:nowrap;';
           document.body.appendChild(t);
           return t;
       })();

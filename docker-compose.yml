@@ -26,7 +26,7 @@ services:
     container_name: discogs-php
     restart: always
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       db:
         condition: service_healthy
