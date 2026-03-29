@@ -130,7 +130,7 @@ const IS_LOGGED_IN = <?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; 
 
 
 function escHtml(str) {
-    return DOMPurify.sanitize(String(str));
+  return DOMPurify.sanitize(String(str), { ALLOWED_TAGS: [] });
 }
 
 function formatDate(dateStr) {
@@ -406,7 +406,8 @@ if (LOGGED_IN) {
 
     // post comment
     document.getElementById('btn-comment').addEventListener('click', function () {
-        const comment = document.getElementById('comment-input').value.trim();
+        const comment = escHtml(document.getElementById('comment-input').value.trim());
+        console.log(comment);
         const status  = document.getElementById('comment-status');
         if (!comment) { 
             status.innerHTML = '<span class="text-danger">Comment cannot be empty.</span>'; 

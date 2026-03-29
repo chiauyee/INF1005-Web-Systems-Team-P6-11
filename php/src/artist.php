@@ -129,7 +129,7 @@ const MBID = <?= json_encode($mbid) ?>;
 const LOGGED_IN = <?= json_encode($logged_in) ?>;
 
 function escHtml(str) {
-    return DOMPurify.sanitize(String(str));
+    return DOMPurify.sanitize(String(str), { ALLOWED_TAGS: [] });
 }
 
 function formatDate(dateStr) {
@@ -290,7 +290,7 @@ if (LOGGED_IN) {
 
     // post comment
     document.getElementById('btn-comment').addEventListener('click', function () {
-        const comment = document.getElementById('comment-input').value.trim();
+        const comment = escHtml(document.getElementById('comment-input').value.trim());
         const status  = document.getElementById('comment-status');
         if (!comment) { 
             status.innerHTML = '<span class="text-danger">Comment cannot be empty.</span>'; 
