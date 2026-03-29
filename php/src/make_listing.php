@@ -227,7 +227,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
             artist_name: d["artist-credit"][0].name.toUpperCase(),
             artist_mbid: d["artist-credit"][0].artist.id,
             album_name:  d.title.toUpperCase(),
-            album_mbid:  d.id.toUpperCase(),
+            album_mbid:  d.id,
             cached:      false
           };
 

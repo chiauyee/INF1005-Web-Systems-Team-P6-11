@@ -175,7 +175,7 @@ $oldestPending = $totalPending > 0
 
                                                 <button
                                                     type="button"
-                                                    class="btn btn-sm btn-outline-warning"
+                                                    class="btn btn-sm btn-outline-danger"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#rejectModal"
                                                     data-id="<?= $listing['listing_id'] ?>">

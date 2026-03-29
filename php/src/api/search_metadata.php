@@ -37,11 +37,12 @@ if ($row) {
 
 // musicbrainz bullshit
 $query = urlencode("artist:$artist AND release:$album");
-$url = "https://musicbrainz.org/ws/2/release/?query=$query&fmt=json";
+$url = "https://musicbrainz.org/ws/2/release-group/?query=$query&fmt=json";
+error_log($url);
 
 $options = [
     "http" => [
-        "header" => "User-Agent: university-project/1.0 (qqqdyz@gmail.com.com)"
+        "header" => "User-Agent: university-project/1.0 (qqqdyz@gmail.com)"
     ]
 ];
 
@@ -51,10 +52,10 @@ $response = file_get_contents($url, false, $context);
 if ($response) {
     $mbData = json_decode($response, true);
 
-    if (!empty($mbData['releases'])) {
+    if (!empty($mbData['release-groups'])) {
         echo json_encode([
             "status" => "found_musicbrainz",
-            "data" => $mbData['releases'][0]
+            "data" => $mbData['release-groups'][0]
         ]);
         exit;
     }
