@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="col-lg-8">
-            <div class="form-card">
+            <div class="form-card" id="contact-form">
 
               <?php if ($success): ?>
                 <div class="alert-success-custom" role="alert">
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
               <?php endif; ?>
 
-              <form method="POST" action="" novalidate>
+              <form method="POST" action="#contact-form" novalidate>
 
                 <h3 class="form-section-title">Your details</h3>
                 <div class="row g-3 mb-4">
