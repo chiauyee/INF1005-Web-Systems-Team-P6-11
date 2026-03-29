@@ -71,7 +71,7 @@ body {
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 1.25rem;
 }
 
@@ -85,12 +85,12 @@ body {
 
 .hero-heading em {
     font-style: italic;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .hero-desc {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
     line-height: 1.9;
     max-width: 460px;
 }
@@ -195,7 +195,7 @@ body {
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.06em;
-    color: #555;
+    color: #000;
     text-transform: uppercase;
     margin-bottom: 0.35rem;
     display: block;
@@ -272,7 +272,7 @@ textarea.form-control {
 
 .star-group label {
     font-size: 1.6rem;
-    color: #d4d0ca;
+    color: #717171;
     cursor: pointer;
     transition: color 0.15s, transform 0.12s;
     line-height: 1;
@@ -291,7 +291,7 @@ textarea.form-control {
 
 .star-hint {
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: rgba(0, 0, 0, 0.7);
     margin-top: 0.4rem;
     min-height: 1.2em;
 }
@@ -355,7 +355,7 @@ footer {
 }
 
 footer a {
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
 }
 

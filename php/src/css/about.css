@@ -73,7 +73,7 @@ body {
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 1.5rem;
 }
 
@@ -87,12 +87,12 @@ body {
 
 .hero-heading em {
     font-style: italic;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .hero-desc {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
     line-height: 1.9;
     max-width: 460px;
 }
@@ -332,7 +332,7 @@ body {
 
 .cta-sub {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 2rem;
     position: relative;
     z-index: 1;
@@ -397,7 +397,7 @@ footer {
 }
 
 footer a {
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
 }
 

@@ -71,7 +71,7 @@ body {
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 1.25rem;
 }
 
@@ -85,12 +85,12 @@ body {
 
 .hero-heading em {
     font-style: italic;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .hero-desc {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
     line-height: 1.9;
     max-width: 460px;
 }
@@ -129,7 +129,7 @@ body {
 
 #faq-search:focus {
     outline: none;
-    border-color: rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.7);
     background: rgba(255, 255, 255, 0.11);
 }
 
@@ -359,7 +359,7 @@ body {
 
 .help-banner-sub {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .btn-white {
@@ -396,7 +396,7 @@ footer {
 }
 
 footer a {
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
 }
 
