@@ -24,6 +24,16 @@ if (empty($cart)) {
     exit;
 }
 
+// Block checkout if delivery address is not set
+$addr_stmt = $pdo->prepare("SELECT address FROM users WHERE id = ?");
+$addr_stmt->execute([(int)$_SESSION['user_id']]);
+$addr_row = $addr_stmt->fetch(PDO::FETCH_ASSOC);
+if (empty($addr_row['address'])) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Please add a delivery address to your profile before placing an order.', 'missing_address' => true]);
+    exit;
+}
+
 \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
 
 // Re-checks all cart items are still available before charging the user

@@ -338,12 +338,17 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM listings WHERE seller_id = ?");
 $count_stmt->execute([$_SESSION['user_id']]);
 $listings_total = (int)$count_stmt->fetchColumn();
+
+// Count active (approved) listings for display
+$active_stmt = $pdo->prepare("SELECT COUNT(*) FROM listings WHERE seller_id = ? AND status = 'available'");
+$active_stmt->execute([$_SESSION['user_id']]);
+$active_listings_count = (int)$active_stmt->fetchColumn();
 $listings_pages = max(1, (int)ceil($listings_total / $per_page));
 $listings_page  = min($listings_page, $listings_pages);
 
 // Sales: listings created by this user
 $stmt = $pdo->prepare("
-    SELECT l.listing_id, l.album_mbid, l.price, l.status, l.rejection_reason, l.created_at, l.purchased_at,
+    SELECT l.listing_id, l.album_mbid, l.price, l.status, l.rejection_reason, l.created_at, l.purchased_at, l.approved_at,
            al.album_name, ar.artist_name,
            b.username AS buyer_username
     FROM listings l
@@ -502,7 +507,12 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="section-card">
-			<h2 class="section-title">My Listings</h2>
+			<h2 class="section-title" style="display:flex;align-items:baseline;gap:0.5rem;">
+				My Listings
+				<?php if ($active_listings_count > 0): ?>
+				<span style="font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:400;color:#888;letter-spacing:0;text-transform:none;"><?= $active_listings_count ?> Active</span>
+				<?php endif; ?>
+			</h2>
 			<?php if (empty($my_listings)): ?>
 				<div class="empty-state">
 					<i class="bi bi-vinyl"></i>No listings yet. <a href="make_listing.php">Sell a record</a>
@@ -523,6 +533,9 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 								<?php endif; ?>
 								<?php if ($l['status'] === 'available'): ?>
 									&middot; Publicly listed
+									<?php if (!empty($l['approved_at'])): ?>
+										&middot; Listed for <?= (int)(new DateTime())->diff(new DateTime($l['approved_at']))->days ?> day(s)
+									<?php endif; ?>
 								<?php endif; ?>
 							</div>
 							<div class="order-date">
