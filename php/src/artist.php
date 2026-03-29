@@ -69,8 +69,8 @@ $logged_in = isset($_SESSION['user_id']);
                     <?php if ($logged_in): ?>
                     <div class="card mb-4 border-0" style="border: 1.5px solid var(--border) !important; border-radius: 8px;">
                         <div class="card-body p-4">
-                  <h5 class="card-title fw-semibold mb-3 fs-6">Leave a comment</h5>
-                                                <label for="comment-input" class="visually-hidden">Discuss the artist</label>
+                        <h5 class="card-title fw-semibold mb-3 fs-6">Leave a comment</h5>
+                            <label for="comment-input" class="visually-hidden">Discuss the artist</label>
 
                             <textarea id="comment-input" class="form-control mb-3 bg-light border-0" rows="3" maxlength="2000" placeholder="Discuss the artist..." style="resize: none;"></textarea>
                             <div class="d-flex justify-content-between align-items-center">

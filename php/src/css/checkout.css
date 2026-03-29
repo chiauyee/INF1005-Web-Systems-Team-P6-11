@@ -14,7 +14,7 @@ main { flex: 1; }
     font-size: 0.72rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #999;
+    color: black;
     margin-bottom: 0.35rem;
 }
 
@@ -59,7 +59,7 @@ main { flex: 1; }
 
 .order-meta {
     font-size: 0.8rem;
-    color: #999;
+    color: black;
     margin-top: 0.15rem;
 }
 
@@ -150,6 +150,6 @@ main { flex: 1; }
 
 .secure-note {
     font-size: 0.78rem;
-    color: #999;
+    color: black;
     text-align: center;
 }

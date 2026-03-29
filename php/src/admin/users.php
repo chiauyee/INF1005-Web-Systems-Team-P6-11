@@ -191,7 +191,7 @@ $totalBanned = count(array_filter($users, fn($u) => $u['status'] === 'banned'));
 
                                                     <?php if ($user['status'] === 'active'): ?>
                                                         <a href="?ban=<?= $user['id'] ?>"
-                                                            class="btn btn-sm btn-outline-warning"
+                                                            class="btn btn-sm btn-outline-danger"
                                                             onclick="return confirm('Ban this user?')">
                                                             Ban
                                                         </a>
