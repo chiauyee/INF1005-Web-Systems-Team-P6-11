@@ -397,27 +397,6 @@
     <script>
 
     const ALBUM_COVER_FALLBACK = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=tinysrgb&fit=max&w=1950&q=80';
-    const albumArtCache = {};
-
-    async function getAlbumArt(mbid) {
-      if (!mbid) return ALBUM_COVER_FALLBACK;
-      if (albumArtCache[mbid] !== undefined) return albumArtCache[mbid];
-
-      try {
-        const res = await fetch(`https://coverartarchive.org/release-group/${encodeURIComponent(mbid)}`, {
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!res.ok) throw new Error('no cover');
-        const data = await res.json();
-        const front = data.images?.find(img => img.front) ?? data.images?.[0];
-        const url = front?.thumbnails?.['250'] ?? front?.thumbnails?.small ?? front?.image ?? ALBUM_COVER_FALLBACK;
-        albumArtCache[mbid] = url;
-        return url;
-      } catch {
-        albumArtCache[mbid] = ALBUM_COVER_FALLBACK;
-        return ALBUM_COVER_FALLBACK;
-        }
-      }
 
       const CURRENT_USER = <?php echo json_encode($_SESSION['username'] ?? null); ?>;
       const IS_LOGGED_IN = <?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
@@ -439,56 +418,47 @@
         return div.innerHTML;
       }
 
-        async function renderFeaturedAlbums(listings) {
-          const container = document.getElementById('featured-albums');
+      function renderFeaturedAlbums(listings) {
+        const container = document.getElementById('featured-albums');
 
-          if (!listings.length) {
-            container.innerHTML = '<p class="text-center text-muted">No listings available yet.</p>';
-            return;
-      }
-
-          console.log(listings);
-
-          container.innerHTML = listings.map(listing => `
-            <div class="col-md-3">
-              <div class="card shadow-sm h-100">
-                <a href="album.php?mbid=${encodeURIComponent(listing.album_mbid)}" class="text-decoration-none text-dark">
-                <img src="${ALBUM_COVER_FALLBACK}"
-                    class="card-img-top"
-                    alt="${escHtml(listing.album_name)}"
-                    data-mbid="${escHtml(listing.album_mbid)}"
-                    style="object-fit:cover; aspect-ratio:1/1;">
-                  <div class="card-body">
-                    <h3 class="card-title fs-5">${escHtml(listing.album_name)}</h3>
-                    <p class="card-text mb-1">${escHtml(listing.artist_name)}</p>
-                    <p class="card-text mb-1 text-muted small">
-                      Listed by: <b>${escHtml(listing.seller)}</b>
-                      ${listing.distance_km ? `<br><i class="bi bi-geo-alt"></i> ${listing.distance_km} km away` : ''}
-                    </p>
-                    <p class="card-text mb-1 fw-bold">$${parseFloat(listing.price).toFixed(2)}</p>
-                    <p class="card-text text-muted small">${formatDate(listing.created_at)}</p>
-                  </div>
-                </a>
-                <div class="card-body d-flex gap-2">
-                  ${CURRENT_USER && CURRENT_USER === listing.seller
-                  ? '<span class="btn btn-outline-dark disabled flex-grow-1" style="pointer-events:none; opacity:1; border:none; width: auto;">Your listing</span>'
-                  : `<button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>
-                    <button class="btn btn-outline-dark btn-wishlist ${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'active' : ''}" style="width: 42px; padding: 0; flex-shrink: 0;" id="wishlist-btn-${escHtml(listing.listing_id)}" onclick="toggleWishlist('${escHtml(listing.album_mbid)}', this)" title="${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'Remove from wishlist' : 'Add to wishlist'}">
-                        <i class="bi bi-heart${listing.is_wishlisted && listing.is_wishlisted != '0' ? '-fill' : ''}"></i>
-                    </button>`
-                  }
-                </div>
-              </div>
-            </div>
-          `).join('');
-
-          const imgs = container.querySelectorAll('img[data-mbid]');
-          await Promise.all([...imgs].map(async img => {
-            const url = await getAlbumArt(img.dataset.mbid);
-            if (url !== img.src) img.src = url;
-          }));
+        if (!listings.length) {
+          container.innerHTML = '<p class="text-center text-muted">No listings available yet.</p>';
+          return;
         }
 
+        container.innerHTML = listings.map(listing => `
+          <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+              <a href="album.php?mbid=${encodeURIComponent(listing.album_mbid)}" class="text-decoration-none text-dark">
+              <img src="${listing.cover_url || ALBUM_COVER_FALLBACK}"
+                   class="card-img-top"
+                   alt="${escHtml(listing.album_name)}"
+                   style="object-fit:cover; aspect-ratio:1/1;"
+                   onerror="this.src='${ALBUM_COVER_FALLBACK}'">
+                <div class="card-body">
+                  <h3 class="card-title fs-5">${escHtml(listing.album_name)}</h3>
+                  <p class="card-text mb-1">${escHtml(listing.artist_name)}</p>
+                  <p class="card-text mb-1 text-muted small">
+                    Listed by: <b>${escHtml(listing.seller)}</b>
+                    ${listing.distance_km ? `<br><i class="bi bi-geo-alt"></i> ${listing.distance_km} km away` : ''}
+                  </p>
+                  <p class="card-text mb-1 fw-bold">$${parseFloat(listing.price).toFixed(2)}</p>
+                  <p class="card-text text-muted small">${formatDate(listing.created_at)}</p>
+                </div>
+              </a>
+              <div class="card-body d-flex gap-2">
+                ${CURRENT_USER && CURRENT_USER === listing.seller
+                ? '<span class="btn btn-outline-dark disabled flex-grow-1" style="pointer-events:none; opacity:1; border:none; width: auto;">Your listing</span>'
+                : `<button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>
+                   <button class="btn btn-outline-dark btn-wishlist ${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'active' : ''}" style="width: 42px; padding: 0; flex-shrink: 0;" id="wishlist-btn-${escHtml(listing.listing_id)}" onclick="toggleWishlist('${escHtml(listing.album_mbid)}', this)" title="${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'Remove from wishlist' : 'Add to wishlist'}">
+                       <i class="bi bi-heart${listing.is_wishlisted && listing.is_wishlisted != '0' ? '-fill' : ''}"></i>
+                   </button>`
+                }
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
 
       function loadListings() {
         let url = '/api/get_listings.php?';

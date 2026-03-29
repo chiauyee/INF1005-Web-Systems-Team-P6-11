@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS albums (
     album_mbid VARCHAR(200) PRIMARY KEY,
     artist_mbid VARCHAR(200) NOT NULL,
     album_name VARCHAR(100) NOT NULL,
+    cover_url VARCHAR(500) DEFAULT NULL,
     FOREIGN KEY (artist_mbid) REFERENCES artists(artist_mbid)
 );
 

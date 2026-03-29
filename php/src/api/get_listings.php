@@ -56,6 +56,7 @@ try {
         l.price,
         al.album_name,
         al.album_mbid,
+        al.cover_url,
         ar.artist_name,
         ar.artist_mbid,
         u.username AS seller,
