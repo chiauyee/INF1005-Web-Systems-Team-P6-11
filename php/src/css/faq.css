@@ -146,7 +146,7 @@ body {
     font-size: 0.68rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: black;
     margin-bottom: 0.75rem;
 }
 
@@ -162,7 +162,7 @@ body {
     font-family: 'DM Sans', sans-serif;
     font-size: 0.88rem;
     font-weight: 300;
-    color: var(--text-muted);
+    color: black;
     text-align: left;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
@@ -210,7 +210,7 @@ body {
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: black;
     margin-bottom: 0.4rem;
 }
 
@@ -224,7 +224,7 @@ body {
 
 .section-heading em {
     font-style: italic;
-    color: var(--text-muted);
+    color: black;
 }
 
 /* Accordion */
@@ -270,7 +270,7 @@ body {
 .faq-chevron {
     flex-shrink: 0;
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: black;
     transition: transform 0.25s ease;
 }
 
@@ -291,7 +291,7 @@ body {
 .faq-answer-inner {
     padding: 0 1.4rem 1.2rem;
     font-size: 0.88rem;
-    color: var(--text-muted);
+    color: black;
     line-height: 1.85;
     border-top: 1.5px solid var(--border);
     padding-top: 1rem;
@@ -307,7 +307,7 @@ body {
     display: none;
     text-align: center;
     padding: 3rem 1rem;
-    color: var(--text-muted);
+    color: black;
     font-size: 0.92rem;
 }
 

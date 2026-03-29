@@ -183,7 +183,7 @@ body {
 .empty-state {
     text-align: center;
     padding: 2rem 1rem;
-    color: var(--text-muted);
+    color: black;
     font-size: 0.875rem;
 }
 

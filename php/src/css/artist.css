@@ -79,7 +79,7 @@
 }
 .album-card i {
     font-size: 1.5rem;
-    color: var(--text-muted);
+    color: black;
     margin-right: 1rem;
 }
 
@@ -93,7 +93,7 @@
 }
 .comment-time {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: black;
 }
 
 /* WCAG respect user's motion preferences */

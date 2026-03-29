@@ -50,7 +50,9 @@ session_start();
                 <label for="search-label">Search by artist or album name:</label>
                 <div class="search-input-row">
                     <div class="field-input-wrap" style="flex:1;">
-                        <i class="bi bi-music-note-beamed"></i>
+              <i class="bi bi-music-note-beamed"></i>
+                              <label for="search-text" class="visually-hidden">Search text</label>
+
                         <input type="text" id="search-text" class="form-control" placeholder="e.g. Pink Floyd, Dark Side...">
                     </div>
 
@@ -68,12 +70,16 @@ session_start();
                 <label for="search-label">Verified metadata search:</label>
                 <div class="search-input-row">
                     <div class="field-input-wrap" style="flex:1;">
-                        <i class="bi bi-person"></i>
+                <i class="bi bi-person"></i>
+                                    <label for="search-artist" class="visually-hidden">Search artist</label>
+
                         <input type="text" id="search-artist" class="form-control" placeholder="Artist name">
                     </div>
 
                     <div class="field-input-wrap" style="flex:1;">
-                        <i class="bi bi-vinyl"></i>
+                <i class="bi bi-vinyl"></i>
+                        <label for="search-album" class="visually-hidden">Search album</label>
+
                         <input type="text" id="search-album" class="form-control" placeholder="Album title">
                     </div>
 
@@ -100,6 +106,8 @@ session_start();
 
     <script>
         const CURRENT_USER = <?php echo json_encode($_SESSION['username'] ?? null); ?>;
+        const IS_LOGGED_IN = <?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
+
 
         function escHtml(str) {
             return DOMPurify.sanitize(String(str));
@@ -128,7 +136,7 @@ session_start();
                             <th>Seller</th>
                             <th>Listed</th>
                             <th>Price</th>
-                            <th></th>
+                            <th>Cart</th>
                         </tr>
                     </thead>
                     <tbody>

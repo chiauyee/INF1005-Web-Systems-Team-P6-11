@@ -122,7 +122,7 @@
                     <div class="hero-divider"></div>
                     <div class="hero-input-group">
                   <i class="bi bi-geo-alt"></i>
-                  <label for="locationInput" class="visually-hidden">Search albums and artists</label>
+                  <label for="locationInput" class="visually-hidden">Search location</label>
                         <input type="text" id="locationInput"
                               class="hero-input" placeholder="Country or city...">
                     </div>

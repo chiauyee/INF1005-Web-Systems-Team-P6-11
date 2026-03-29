@@ -127,7 +127,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
     </form>
 
     <div class="mt-2">
-      <a href="index.php" style="font-size:0.82rem; color:var(--text-muted); text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem;">
+      <a href="index.php" style="font-size:0.82rem; color:black; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem;">
         <i class="bi bi-arrow-left"></i> Back to listings
       </a>
     </div>

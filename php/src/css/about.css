@@ -113,7 +113,7 @@ body {
 
 .stat-label {
     font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.7);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     margin-top: 0.3rem;
@@ -124,7 +124,7 @@ body {
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: black;
     margin-bottom: 0.6rem;
 }
 
@@ -138,7 +138,7 @@ body {
 
 .section-heading em {
     font-style: italic;
-    color: var(--text-muted);
+    color: black;
 }
 
 /* Story section */
@@ -149,7 +149,7 @@ body {
 
 .story-body {
     font-size: 0.95rem;
-    color: var(--text-muted);
+    color: black;
     line-height: 1.9;
 }
 
@@ -233,7 +233,7 @@ body {
 
 .value-desc {
     font-size: 0.875rem;
-    color: var(--text-muted);
+    color: black;
     line-height: 1.8;
     margin: 0;
 }
@@ -286,13 +286,13 @@ body {
     font-size: 0.72rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: black;
     margin-bottom: 0.75rem;
 }
 
 .team-bio {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: black;
     line-height: 1.75;
 }
 

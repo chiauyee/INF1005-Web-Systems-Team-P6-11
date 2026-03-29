@@ -85,13 +85,13 @@ $totalContent = $totalImages + $totalComments;
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h6 class="text-warning mb-1">Pending Listings</h6>
+                                <h6 class="mb-1">Pending Listings</h6>
                                 <h2 class="display-6 fw-bold mb-2"><?= $pendingListings ?></h2>
                                 <a href="listings.php" class="btn btn-sm btn-warning">
                                     Review Listings
                                 </a>
                             </div>
-                            <i class="bi bi-clock-history fs-3 text-warning"></i>
+                            <i class="bi bi-clock-history fs-3"></i>
                         </div>
                     </div>
                 </div>
