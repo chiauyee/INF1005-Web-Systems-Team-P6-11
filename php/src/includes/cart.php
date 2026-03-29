@@ -21,20 +21,20 @@
 </div>
 
 <!-- Already in cart toast -->
-<div id="cart-toast" style="
+<div id="cart-toast" role="status" style="
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(1rem);
   background: #212529; color: #fff; padding: 0.6rem 1.4rem;
-  border-radius: 999px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+  display: none; border-radius: 999px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
   opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
   z-index: 9999; white-space: nowrap;">
   Already added to cart
 </div>
 
 <!-- Login required toast -->
-<div id="login-toast" style="
+<div id="login-toast" role="status" style="
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(1rem);
   background: #212529; color: #fff; padding: 0.6rem 1.4rem;
-  border-radius: 999px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+  display: none; border-radius: 999px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
   opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
   z-index: 9999; white-space: nowrap;">
   Please log in to proceed to checkout
@@ -108,12 +108,14 @@ function removeFromCart(listingId) {
 let _cartToastTimer = null;
 function showCartToast() {
     const toast = document.getElementById('cart-toast');
+    toast.style.display = 'block';
     toast.style.opacity = '1';
     toast.style.transform = 'translateX(-50%) translateY(0)';
     clearTimeout(_cartToastTimer);
     _cartToastTimer = setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateX(-50%) translateY(1rem)';
+        toast.style.display = 'none'
     }, 2500);
 }
 
@@ -121,11 +123,13 @@ let _loginToastTimer = null;
 function showLoginToast() {
     const toast = document.getElementById('login-toast');
     toast.style.opacity = '1';
+    toast.style.display = 'block';
     toast.style.transform = 'translateX(-50%) translateY(0)';
     clearTimeout(_loginToastTimer);
     _loginToastTimer = setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateX(-50%) translateY(1rem)';
+        toast.style.display = 'none';
     }, 2500);
 }
 
@@ -138,6 +142,12 @@ function handleCheckout() {
 }
 
 function addToCart(listingId) {
+
+    if (!IS_LOGGED_IN) {
+        window.location.href = 'login.php';
+        return;
+    }
+
     fetch('/api/cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

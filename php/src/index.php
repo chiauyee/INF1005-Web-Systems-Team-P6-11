@@ -114,13 +114,15 @@
             <div class="hero-search-wrap">
                 <div class="hero-search-bar">
                     <div class="hero-input-group">
-                        <i class="bi bi-search"></i>
+                    <i class="bi bi-search"></i>
+                    <label for="searchInput" class="visually-hidden">Search albums and artists</label>
                         <input type="search" id="searchInput"
                               class="hero-input" placeholder="Search albums, artists...">
                     </div>
                     <div class="hero-divider"></div>
                     <div class="hero-input-group">
-                        <i class="bi bi-geo-alt"></i>
+                  <i class="bi bi-geo-alt"></i>
+                  <label for="locationInput" class="visually-hidden">Search albums and artists</label>
                         <input type="text" id="locationInput"
                               class="hero-input" placeholder="Country or city...">
                     </div>
