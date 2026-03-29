@@ -3,6 +3,11 @@ session_start();
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
 
 $session_id = $_GET['session_id'] ?? '';
@@ -17,6 +22,11 @@ if ($session_id) {
             $metadata    = $stripeSession->metadata->toArray();
             $listing_ids = array_filter(explode(',', $metadata['listing_ids'] ?? ''));
             $buyer_id    = (int) ($metadata['buyer_id'] ?? 0);
+
+            if ($buyer_id !== (int)$_SESSION['user_id']) {
+                $error = 'Unauthorized: this order does not belong to your account.';
+                $session_id = '';
+            } else {
 
             // To prevent repeating of session_id, it skips the transaction and shows success
             // else users can mess up the db updates 
@@ -67,6 +77,7 @@ if ($session_id) {
                 $error = 'An error occurred while confirming your order. Please contact support. Reference: ' . htmlspecialchars($session_id);
             }
             } // end else (not already fulfilled)
+            } // end else (ownership check)
         } else {
             $error = 'Payment is not complete yet.';
         }

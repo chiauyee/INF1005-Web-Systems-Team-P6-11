@@ -275,6 +275,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($address)) {
         $error = 'Delivery address is required.';
+    } elseif (strlen($address) > 255) {
+        $error = 'Delivery address must not exceed 255 characters.';
+    } elseif (!empty($phone) && !preg_match('/^\+?[\d\s\-()\]{6,20}$/', $phone)) {
+        $error = 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (6–20 characters).';
     } else {
     try {
         // Update with or without coordinates
@@ -369,7 +373,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Profile</title>
+    <title>Profile — MusicMarket</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -454,7 +458,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label class="field-label" for="address">Delivery Address</label>
                         <div class="field-input-wrap">
                             <i class="bi bi-geo-alt"></i>
-                            <input type="text" name="address" id="address" class="field-input" placeholder="e.g. 123 Orchard Road, Singapore" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
+                            <input type="text" name="address" id="address" class="field-input" placeholder="e.g. 123 Orchard Road, Singapore" maxlength="255" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
                         </div>
                     </div>
                 </div>
@@ -485,7 +489,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="order-date"><?= $p['purchased_at'] ? date('d M Y', strtotime($p['purchased_at'])) : 'N/A' ?></div>
                         </div>
                         <div class="order-right">
-                            <div class="order-price-val">SGD <?= number_format((float)$p['price'], 2) ?></div>
+                            <div class="order-price-val">USD $<?= number_format((float)$p['price'], 2) ?></div>
                             <span class="status-badge status-complete">Purchased</span>
                             <a href="listing.php?id=<?= (int)$p['listing_id'] ?>" style="font-size:0.78rem;color:#1a1a1a;text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;"><i class="bi bi-eye"></i> View Detail</a>
                         </div>
@@ -493,7 +497,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php endforeach; ?>
                 </div>
                 <?php if ($purchases_pages > 1): ?>
-                <nav class="mt-3">
+                <nav class="mt-3" aria-label="Orders pagination">
                     <ul class="pagination pagination-sm justify-content-center mb-0">
                         <?php for ($i = 1; $i <= $purchases_pages; $i++): ?>
                         <li class="page-item <?= $i === $purchases_page ? 'active' : '' ?>">
@@ -560,7 +564,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 							<?php endif; ?>
 						</div>
 						<div class="order-right">
-							<div class="order-price-val">SGD <?= number_format((float)$l['price'], 2) ?></div>
+							<div class="order-price-val">USD $<?= number_format((float)$l['price'], 2) ?></div>
 							<?php
 								$badgeClass = match($l['status']) {
 									'available' => 'status-available',
@@ -584,7 +588,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 					<?php endforeach; ?>
 				</div>
 				<?php if ($listings_pages > 1): ?>
-				<nav class="mt-3">
+				<nav class="mt-3" aria-label="Listings pagination">
 					<ul class="pagination pagination-sm justify-content-center mb-0">
 						<?php for ($i = 1; $i <= $listings_pages; $i++): ?>
 						<li class="page-item <?= $i === $listings_page ? 'active' : '' ?>">
@@ -656,6 +660,17 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			// Validate required fields
 			if (!address) {
 				showAlert('error', 'Delivery address is required.');
+				return;
+			}
+
+			if (address.length > 255) {
+				showAlert('error', 'Delivery address must not exceed 255 characters.');
+				return;
+			}
+
+			const phoneRegex = /^\+?[\d\s\-()\]{6,20}$/;
+			if (phone && !phoneRegex.test(phone)) {
+				showAlert('error', 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (6–20 characters).');
 				return;
 			}
 			
