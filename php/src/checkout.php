@@ -52,13 +52,13 @@ $has_address = !empty($addr_row['address']);
                     <div class="order-meta"><?= htmlspecialchars($item['artist_name']) ?></div>
                     <div class="order-meta">Seller: <?= htmlspecialchars($item['seller']) ?></div>
                 </div>
-                <div class="order-price">$<?= number_format((float)$item['price'], 2) ?></div>
+                <div class="order-price">USD $<?= number_format((float)$item['price'], 2) ?></div>
             </div>
             <?php endforeach; ?>
 
             <div class="order-total-row">
                 <span class="order-total-label">Total</span>
-                <span class="order-total-value">$<?= number_format($total, 2) ?> USD</span>
+                <span class="order-total-value">USD $<?= number_format($total, 2) ?></span>
             </div>
         </div>
 
@@ -69,7 +69,7 @@ $has_address = !empty($addr_row['address']);
         </div>
         <?php endif; ?>
 
-        <div id="error-msg" class="alert alert-danger d-none mb-3"></div>
+        <div id="error-msg" class="alert alert-danger d-none mb-3" role="alert" aria-live="assertive"></div>
 
         <div class="d-flex flex-column gap-2">
             <button id="pay-btn" class="btn-primary-dark" <?= !$has_address ? 'disabled' : '' ?>>

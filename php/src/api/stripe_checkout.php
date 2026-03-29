@@ -92,6 +92,7 @@ try {
 
     echo json_encode(['url' => $session->url]);
 } catch (\Stripe\Exception\ApiErrorException $e) {
+    error_log('Stripe API error: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Payment could not be initiated. Please try again.']);
 }
