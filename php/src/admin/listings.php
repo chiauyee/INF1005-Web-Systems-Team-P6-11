@@ -8,7 +8,7 @@ if (isset($_GET['approve'])) {
 
     $stmt = $pdo->prepare("
         UPDATE listings
-        SET status = 'available'
+        SET status = 'available', approved_at = NOW()
         WHERE listing_id = ?
     ");
     $stmt->execute([$id]);

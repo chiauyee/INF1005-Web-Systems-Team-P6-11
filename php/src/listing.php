@@ -23,6 +23,8 @@ $stmt = $pdo->prepare("
            al.album_name, ar.artist_name, ar.artist_mbid,
            s.username AS seller_username,
            b.username AS buyer_username,
+           b.address AS buyer_address,
+           b.phone AS buyer_phone,
            ai.filename AS album_image
     FROM listings l
     JOIN albums al  ON l.album_mbid  = al.album_mbid
@@ -247,6 +249,20 @@ $badgeLabel = match($listing['status']) {
                 <div class="detail-item-label">Buyer</div>
                 <div class="detail-item-value"><?= htmlspecialchars($listing['buyer_username']) ?></div>
             </div>
+            <?php if (!empty($listing['buyer_address'])): ?>
+            <div class="detail-item" style="grid-column: 1 / -1;">
+                <div class="detail-item-label">Buyer Delivery Address</div>
+                <div class="detail-item-value"><?= htmlspecialchars($listing['buyer_address']) ?></div>
+                <?php if (!empty($listing['buyer_phone'])): ?>
+                <div class="detail-item-value muted" style="margin-top:0.2rem;font-size:0.85rem;"><?= htmlspecialchars($listing['buyer_phone']) ?></div>
+                <?php endif; ?>
+            </div>
+            <?php else: ?>
+            <div class="detail-item" style="grid-column: 1 / -1;">
+                <div class="detail-item-label">Buyer Delivery Address</div>
+                <div class="detail-item-value muted">Not provided</div>
+            </div>
+            <?php endif; ?>
             <?php endif; ?>
             <div class="detail-item">
                 <div class="detail-item-label">Listing Reference</div>

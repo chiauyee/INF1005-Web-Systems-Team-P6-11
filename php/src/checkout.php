@@ -1,5 +1,6 @@
 <?php
 session_start();
+require 'db.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -13,6 +14,11 @@ if (empty($cart)) {
 }
 
 $total = array_sum(array_column($cart, 'price'));
+
+$addr_stmt = $pdo->prepare("SELECT address FROM users WHERE id = ?");
+$addr_stmt->execute([(int)$_SESSION['user_id']]);
+$addr_row = $addr_stmt->fetch(PDO::FETCH_ASSOC);
+$has_address = !empty($addr_row['address']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,10 +62,17 @@ $total = array_sum(array_column($cart, 'price'));
             </div>
         </div>
 
+        <?php if (!$has_address): ?>
+        <div class="alert alert-warning d-flex align-items-center gap-2 mb-3" style="border-radius:6px;font-size:0.875rem;">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+            <span>You need a delivery address before placing an order. <a href="profile.php" class="alert-link fw-semibold">Add one in your profile</a>.</span>
+        </div>
+        <?php endif; ?>
+
         <div id="error-msg" class="alert alert-danger d-none mb-3"></div>
 
         <div class="d-flex flex-column gap-2">
-            <button id="pay-btn" class="btn-primary-dark">
+            <button id="pay-btn" class="btn-primary-dark" <?= !$has_address ? 'disabled' : '' ?>>
                 <i class="bi bi-lock-fill"></i>Pay with Stripe
             </button>
             <a href="listings.php" class="btn-outline-dark-custom">Bring me back</a>
@@ -87,8 +100,13 @@ document.getElementById('pay-btn').addEventListener('click', function () {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                document.getElementById('error-msg').textContent = data.error || 'Something went wrong.';
-                document.getElementById('error-msg').classList.remove('d-none');
+                const errEl = document.getElementById('error-msg');
+                if (data.missing_address) {
+                    errEl.innerHTML = data.error + ' <a href="profile.php" class="alert-link fw-semibold">Go to profile</a>.';
+                } else {
+                    errEl.textContent = data.error || 'Something went wrong.';
+                }
+                errEl.classList.remove('d-none');
                 btn.disabled = false;
                 btn.innerHTML = '<i class="bi bi-lock-fill"></i>Pay with Stripe';
             }
