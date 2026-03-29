@@ -4,6 +4,15 @@ require '../db.php';
 
 header('Content-Type: application/json');
 
+$username = strip_tags(trim($_POST['username'] ?? ''));
+$email    = trim($_POST['email'] ?? '');
+$phone    = strip_tags(trim($_POST['phone'] ?? ''));$address  = strip_tags(trim($_POST['address'] ?? ''));
+$country = trim($_POST['country'] ?? 'SG');
+$password = $_POST['password'] ?? '';
+
+$latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
+$longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
@@ -18,15 +27,40 @@ if (!Security::validateCSRFToken($csrfToken)) {
     exit;
 }
 
-$username = trim($_POST['username'] ?? '');
-$email    = trim($_POST['email'] ?? '');
-$phone = trim($_POST['phone'] ?? '');
-$address = trim($_POST['address'] ?? '');
-$country = trim($_POST['country'] ?? 'SG');
-$password = $_POST['password'] ?? '';
+// Validate country
+$allowedCountries = ['AD','AE','AF','AG','AI','AL','AM','AO','AR','AS','AT','AU','AW','AZ',
+    'BA','BB','BD','BE','BF','BG','BH','BI','BJ','BM','BN','BO','BR','BS','BT','BW','BY','BZ',
+    'CA','CD','CF','CG','CH','CI','CK','CL','CM','CN','CO','CR','CU','CV','CY','CZ','DE','DJ',
+    'DK','DM','DO','DZ','EC','EE','EG','ER','ES','ET','FI','FJ','FK','FM','FO','FR','GA','GB',
+    'GD','GE','GH','GI','GL','GM','GN','GQ','GR','GT','GU','GW','GY','HK','HN','HR','HT','HU',
+    'ID','IE','IL','IN','IQ','IR','IS','IT','JM','JO','JP','KE','KG','KH','KI','KM','KN','KP',
+    'KR','KW','KY','KZ','LA','LB','LC','LI','LK','LR','LS','LT','LU','LV','LY','MA','MC','MD',
+    'ME','MG','MH','MK','ML','MM','MN','MO','MP','MR','MS','MT','MU','MV','MW','MX','MY','MZ',
+    'NA','NC','NE','NG','NI','NL','NO','NP','NR','NU','NZ','OM','PA','PE','PF','PG','PH','PK',
+    'PL','PT','PW','PY','QA','RO','RS','RU','RW','SA','SB','SC','SD','SE','SG','SH','SI','SK',
+    'SL','SM','SN','SO','SR','ST','SV','SY','SZ','TC','TD','TG','TH','TJ','TK','TL','TM','TN',
+    'TO','TR','TT','TV','TW','TZ','UA','UG','US','UY','UZ','VA','VC','VE','VG','VI','VN','VU',
+    'WF','WS','XK','YE','YT','ZA','ZM','ZW'];
 
-$latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
-$longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
+if (!in_array($country, $allowedCountries)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid country selected.']);
+    exit;
+}
+
+// Validate username
+if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Username must be 3-50 characters and can only contain letters, numbers and underscores.']);
+    exit;
+}
+
+// Validate phone number
+if (!preg_match('/^[0-9+\-\s()]{7,20}$/', $phone)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Please enter a valid phone number.']);
+    exit;
+}
 
 error_log("Registration - Latitude: " . ($latitude ?? 'null') . ", Longitude: " . ($longitude ?? 'null'));
 
@@ -71,6 +105,25 @@ if (!preg_match('/[@$!%*?&]/', $password)) {
     echo json_encode(['error' => 'Password must contain at least one special character (@$!%*?&).']);
     exit;
 }
+
+// Check for duplicate username
+$stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+$stmt->execute([$username]);
+if ($stmt->rowCount() > 0) {
+    http_response_code(409);
+    echo json_encode(['error' => 'Username is already taken.']);
+    exit;
+}
+
+// Check for duplicate email
+$stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+$stmt->execute([$email]);
+if ($stmt->rowCount() > 0) {
+    http_response_code(409);
+    echo json_encode(['error' => 'Email is already registered.']);
+    exit;
+}
+
 
 $hash = password_hash($password, PASSWORD_DEFAULT);
 

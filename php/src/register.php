@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="username" class="form-label">Username:</label>
                     <div class="input-wrap">
                         <i class="bi bi-person"></i>
-                        <input type="text" id="username" class="form-control" required>
+                        <input type="text" id="username" class="form-control" maxlength="50" required>
                     </div>
                 </div>
 
