@@ -149,4 +149,20 @@ INSERT IGNORE INTO `users` (id, username, email, password, phone, address, count
 (2,'testuser','testuser@gmail.com','$2y$10$gl4/BDzYmdQ1XbcdLLs4/.YjWkCot3/UYEvemfxjkfzHQOR95kdqW','91234567','123 Orchard Road, #05-01, Singapore 238858','SG', 1.30420, 103.83200, 'user','active','2026-03-09 12:17:44'),
 (3,'testuser1','testuser1@gmail.com','$2y$10$u5Bb6UdXqQJNiY1us7G3N.b6JKAuRC8Y6zdBo9hF/da3u4NBBoj9i','98765432','456 Jurong West Ave 1, #12-88, Singapore 640456','SG', 1.34040, 103.70500, 'user','active','2026-03-09 12:26:03');
 
-/* i fucked up some stuff */
+-- Insert artists
+INSERT INTO artists (artist_mbid, artist_name) VALUES
+('1a19b0cd-fa9d-4363-b130-b3eb394cf373', 'MASS OF THE FERMENTING DREGS'),
+('cd689e77-dfdd-4f81-b50c-5e5a3f5e38a4', 'BLADEE'),
+('fa58cf24-0e44-421d-8519-8bf461dcfaa5', 'MITSKI');
+
+-- Insert albums
+INSERT INTO albums (album_mbid, artist_mbid, album_name, cover_url) VALUES
+('a802c9ce-5017-421f-9a16-b18740f677e4', 'cd689e77-dfdd-4f81-b50c-5e5a3f5e38a4', 'ICEDANCER', 'https://coverartarchive.org/release/d98d0f2e-8fc2-421d-951d-7bd0d1565f74/41906829537-250.jpg'),
+('aeeba3c1-b0bd-3376-9787-04b1e80b6f85', '1a19b0cd-fa9d-4363-b130-b3eb394cf373', 'MASS OF THE FERMENTING DREGS', 'http://coverartarchive.org/release/6b2f20b8-7600-4950-b390-19fa0da56349/11123417375-250.jpg'),
+('de3537cf-8dac-475a-b456-42227e314d7e', 'fa58cf24-0e44-421d-8519-8bf461dcfaa5', 'PUBERTY 2', 'http://coverartarchive.org/release/db82edc7-8166-46da-b471-242c9efaa9e7/15377591762-250.jpg');
+
+-- Insert listings
+INSERT INTO listings (listing_id, album_mbid, seller_id, buyer_id, price, status, rejection_reason, stripe_session_id, created_at, purchased_at, approved_at) VALUES
+(1, 'de3537cf-8dac-475a-b456-42227e314d7e', 1, NULL, 10.00, 'available', NULL, NULL, '2026-03-29 17:56:24', NULL, '2026-03-29 17:56:32'),
+(2, 'a802c9ce-5017-421f-9a16-b18740f677e4', 1, NULL, 10.00, 'available', NULL, NULL, '2026-03-29 17:57:43', NULL, '2026-03-29 17:58:19'),
+(3, 'aeeba3c1-b0bd-3376-9787-04b1e80b6f85', 1, NULL, 10.00, 'available', NULL, NULL, '2026-03-29 17:58:12', NULL, '2026-03-29 17:58:19');
