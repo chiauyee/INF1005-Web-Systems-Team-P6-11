@@ -8,7 +8,9 @@
     --input-focus: rgba(26, 26, 26, 0.08);
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 body {
     background-color: var(--bg);
@@ -44,10 +46,10 @@ body {
     border-radius: 50%;
     right: -80px;
     top: -80px;
-    border: 50px solid rgba(255,255,255,0.03);
+    border: 50px solid rgba(255, 255, 255, 0.03);
     box-shadow:
-        0 0 0 50px rgba(255,255,255,0.025),
-        0 0 0 100px rgba(255,255,255,0.015);
+        0 0 0 50px rgba(255, 255, 255, 0.025),
+        0 0 0 100px rgba(255, 255, 255, 0.015);
     pointer-events: none;
 }
 
@@ -55,8 +57,8 @@ body {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.15);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,7 +68,9 @@ body {
     flex-shrink: 0;
 }
 
-.profile-header-info { flex: 1; }
+.profile-header-info {
+    flex: 1;
+}
 
 .profile-eyebrow {
     font-size: 0.7rem;
@@ -154,11 +158,13 @@ body {
 .field-input:focus {
     background: #fff;
     border-color: var(--text);
-    box-shadow: 0 0 0 3px rgba(26,26,26,0.08);
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.08);
     outline: none;
 }
 
-.field-input::placeholder { color: #bbb; }
+.field-input::placeholder {
+    color: #bbb;
+}
 
 .alert-success {
     background: #f0fdf4;
@@ -316,16 +322,47 @@ body {
     border-radius: 4px;
 }
 
-.status-complete  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-.status-available { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-.status-pending   { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
-.status-rejected  { background: #fff5f5; color: #b91c1c; border: 1px solid #fecaca; }
+.status-complete {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.status-available {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.status-pending {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.status-rejected {
+    background: #fff5f5;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
 
 @media (max-width: 768px) {
-    .profile-header { flex-direction: column; text-align: center; }
-    .field-row { grid-template-columns: 1fr; }
-    .profile-actions { flex-direction: column; }
-    .order-row-profile { align-items: flex-start; }
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .field-row {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .order-row-profile {
+        align-items: flex-start;
+    }
 }
 
 /* Wishlist remove button */
@@ -341,11 +378,13 @@ body {
     transition: background 0.2s, color 0.2s, transform 0.15s;
     white-space: nowrap;
 }
+
 .wishlist-remove-btn:hover {
     background: var(--text);
     color: var(--white);
     transform: translateY(-1px);
 }
+
 .wishlist-remove-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;

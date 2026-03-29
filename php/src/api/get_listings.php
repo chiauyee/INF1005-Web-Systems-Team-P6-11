@@ -65,6 +65,13 @@ try {
         u.longitude AS seller_longitude
     ";
 
+    if (isset($_SESSION['user_id'])) {
+        $user_id = (int) $_SESSION['user_id'];
+        $selectFields .= ", (SELECT COUNT(*) FROM wishlist w WHERE w.user_id = $user_id AND w.album_mbid = al.album_mbid) > 0 AS is_wishlisted";
+    } else {
+        $selectFields .= ", 0 AS is_wishlisted";
+    }
+
     if ($hasUserLocation) {
         // Haversine formula - all 3 parameters are the user's location
         $selectFields .= ",

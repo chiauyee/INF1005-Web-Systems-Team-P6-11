@@ -430,3 +430,48 @@ footer a:hover {
     white-space: nowrap !important;
     border: 0 !important;
 }
+
+/* Wishlist heart button (global) */
+.btn-wishlist {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-wishlist i {
+    transition: color 0.2s, transform 0.15s;
+    font-size: 0.95rem;
+}
+
+.btn-wishlist:hover {
+    border-color: #e8546a !important;
+    color: #e8546a !important;
+    background: rgba(232, 84, 106, 0.07) !important;
+}
+
+.btn-wishlist:hover i {
+    transform: scale(1.15);
+}
+
+.btn-wishlist.active {
+    border-color: #e8546a !important;
+    color: #e8546a !important;
+    background: rgba(232, 84, 106, 0.08) !important;
+}
+
+.btn-wishlist.active i {
+    animation: heartPop 0.25s ease;
+}
+
+@keyframes heartPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-wishlist:hover i, .btn-wishlist.active i {
+        transform: none !important;
+        animation: none !important;
+    }
+}

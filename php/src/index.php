@@ -442,10 +442,13 @@
               </a>
               <div class="card-body d-flex gap-2">
                 ${CURRENT_USER && CURRENT_USER === listing.seller
-                ? '<span class="btn btn-outline-dark disabled" style="pointer-events:none; opacity:1; border:none;">Your listing</span>'
-                : `<button class="btn btn-outline-dark" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>`
+                ? '<span class="btn btn-outline-dark disabled flex-grow-1" style="pointer-events:none; opacity:1; border:none; width: auto;">Your listing</span>'
+                : `<button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>
+                   <button class="btn btn-outline-dark btn-wishlist ${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'active' : ''}" style="width: 42px; padding: 0; flex-shrink: 0;" id="wishlist-btn-${escHtml(listing.listing_id)}" onclick="toggleWishlist('${escHtml(listing.album_mbid)}', this)" title="${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'Remove from wishlist' : 'Add to wishlist'}">
+                       <i class="bi bi-heart${listing.is_wishlisted && listing.is_wishlisted != '0' ? '-fill' : ''}"></i>
+                   </button>`
                 }
-                </div>
+              </div>
             </div>
           </div>
         `).join('');
@@ -670,6 +673,84 @@
       // Only try to get location if logged in
       if (IS_LOGGED_IN) {
         getUserLocation();
+      }
+
+      // wishlist toast
+      const _wishlistToastEl = (() => {
+          const t = document.createElement('div');
+          t.id = 'wishlist-toast';
+          t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(1rem);' +
+              'background:#212529;color:#fff;padding:0.6rem 1.4rem;border-radius:999px;font-size:0.875rem;' +
+              'font-family:\\'DM Sans\\',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;z-index:9998;white-space:nowrap;';
+          document.body.appendChild(t);
+          return t;
+      })();
+      let _wishlistToastTimer = null;
+      function showWishlistToast(msg) {
+          _wishlistToastEl.textContent = msg;
+          _wishlistToastEl.style.opacity = '1';
+          _wishlistToastEl.style.transform = 'translateX(-50%) translateY(0)';
+          clearTimeout(_wishlistToastTimer);
+          _wishlistToastTimer = setTimeout(() => {
+              _wishlistToastEl.style.opacity = '0';
+              _wishlistToastEl.style.transform = 'translateX(-50%) translateY(1rem)';
+          }, 2500);
+      }
+
+      function setWishlistBtnState(btn, wishlisted) {
+          if (!btn) return;
+          const icon = btn.querySelector('i');
+          if (wishlisted) {
+              icon.className = 'bi bi-heart-fill';
+              btn.classList.add('active');
+              btn.title = 'Remove from wishlist';
+          } else {
+              icon.className = 'bi bi-heart';
+              btn.classList.remove('active');
+              btn.title = 'Add to wishlist';
+          }
+      }
+
+      function toggleWishlist(albumMbid, btn) {
+          // prevent navigating to the album page when clicking the heart inside the card link
+          if (event) {
+             event.preventDefault();
+             event.stopPropagation();
+          }
+
+          if (!IS_LOGGED_IN) {
+              showWishlistToast('Please log in to save to wishlist');
+              return;
+          }
+
+          const currentlyWishlisted = btn.classList.contains('active');
+          setWishlistBtnState(btn, !currentlyWishlisted);
+
+          fetch('/api/wishlist.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'toggle', album_mbid: albumMbid })
+          })
+          .then(r => r.json())
+          .then(data => {
+              if (data.error) {
+                  setWishlistBtnState(btn, currentlyWishlisted);
+                  showWishlistToast(data.error);
+                  return;
+              }
+              // sync all buttons for this album
+              document.querySelectorAll('[id^="wishlist-btn-"]').forEach(b => {
+                 // only sync those that point to same mbid (relying on the html onclick attribute)
+                 if(b.onclick.toString().includes(albumMbid)) {
+                   setWishlistBtnState(b, data.wishlisted)
+                 }
+              });
+              showWishlistToast(data.wishlisted ? ' Added to wishlist' : 'Removed from wishlist');
+          })
+          .catch(() => {
+              setWishlistBtnState(btn, currentlyWishlisted);
+              showWishlistToast('Network error. Please try again.');
+          });
       }
     </script>
   </body>
