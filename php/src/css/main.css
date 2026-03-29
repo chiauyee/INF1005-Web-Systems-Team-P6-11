@@ -118,7 +118,7 @@ body {
     font-size: 0.68rem;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.7);
     margin-bottom: 0.6rem;
 }
 
@@ -138,7 +138,7 @@ body {
 
 .hero-sub {
     font-size: 0.95rem;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.7);
     margin-bottom: 2.5rem;
 }
 

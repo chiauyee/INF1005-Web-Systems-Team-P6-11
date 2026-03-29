@@ -46,7 +46,7 @@
       #vinyldisk-hint {
         position: absolute; top: 3rem; left: 50%; transform: translateX(-50%);
         font-family: 'DM Sans', sans-serif; font-size: 0.8rem; letter-spacing: 0.15em;
-        text-transform: uppercase; color: rgba(255,255,255,0.4);
+        text-transform: uppercase; color: rgba(255,255,255,0.7);
         pointer-events: none; transition: opacity 1s; white-space: nowrap; z-index: 10;
       }
       
