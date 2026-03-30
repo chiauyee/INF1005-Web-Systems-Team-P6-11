@@ -205,7 +205,7 @@ $oldestPending = $totalPending > 0
             <div class="modal-content">
                 <form method="get">
                     <div class="modal-header">
-                        <p class="modal-title" id="rejectModalLabel">Reject Listing</p>
+                        <h2 class="modal-title" id="rejectModalLabel">Reject Listing</h2>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -215,9 +215,9 @@ $oldestPending = $totalPending > 0
                             <label for="reason" class="form-label">Reason for rejection</label>
                             <select class="form-select" id="reason" name="reason" required>
                                 <option value="">Select a reason</option>
+                                <option value="Invalid price">Invalid price</option>
                                 <option value="Duplicate listing">Duplicate listing</option>
                                 <option value="Incomplete information">Incomplete information</option>
-                                <option value="Invalid price">Invalid price</option>
                                 <option value="Incorrect metadata">Incorrect metadata</option>
                                 <option value="Inappropriate content">Inappropriate content</option>
                             </select>
