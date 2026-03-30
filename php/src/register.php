@@ -799,7 +799,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 
 		// Phone number format validation (basic)
-		const phonePattern = /^\+?[\d\s\-()\]{8,20}$/;
+		const phonePattern = /^\+?[\d\s\-()]{8,20}$/;
 		if (!phonePattern.test(phone)) {
 			errorDiv.textContent = 'Please enter a valid phone number.';
 			errorDiv.style.display = 'block';

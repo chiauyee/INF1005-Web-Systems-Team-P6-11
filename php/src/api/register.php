@@ -56,7 +56,7 @@ if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
 }
 
 // Validate phone number
-if (!preg_match('/^\+?[\d\s\-()\]{8,20}$/', $phone)) {
+if (!preg_match('/^\+?[\d\s\-()]{8,20}$/', $phone)) {
     http_response_code(400);
     echo json_encode(['error' => 'Please enter a valid phone number.']);
     exit;
