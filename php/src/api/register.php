@@ -64,7 +64,7 @@ if (!preg_match('/^[0-9+\-\s()]{7,20}$/', $phone)) {
 
 error_log("Registration - Latitude: " . ($latitude ?? 'null') . ", Longitude: " . ($longitude ?? 'null'));
 
-if (!$username || !$email || !$password) {
+if (!$username || !$email || !$country || !$phone || !$address || !$password) {
     http_response_code(400);
     echo json_encode(['error' => 'All fields are required.']);
     exit;

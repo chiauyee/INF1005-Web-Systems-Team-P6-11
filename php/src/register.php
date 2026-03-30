@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="username" class="form-label">Username:</label>
                     <div class="input-wrap">
                         <i class="bi bi-person"></i>
-                        <input type="text" id="username" class="form-control" maxlength="50" required>
+                        <input type="text" id="username" class="form-control" minlength="3" maxlength="50" required>
                     </div>
                 </div>
 
@@ -380,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="address">Delivery Address</label>
+                    <label class="form-label" for="address">Address</label>
                     <div class="input-wrap">
                         <i class="bi bi-geo-alt"></i>
                         <input type="text" name="address" id="address" class="form-control" placeholder="e.g. 123 Orchard Road, Singapore" value="<?= htmlspecialchars($user['address'] ?? '') ?>" required>
