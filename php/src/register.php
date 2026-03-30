@@ -375,7 +375,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label" for="phone">Phone Number</label>
                     <div class="input-wrap">
                         <i class="bi bi-telephone"></i>
-                        <input type="tel" name="phone" id="phone" class="form-control" placeholder="8123 4567" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required>
+                        <input type="tel" name="phone" id="phone" class="form-control" placeholder="8123 4567" minlength="8" maxlength="20" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required>
                     </div>
                 </div>
 
@@ -383,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label" for="address">Address</label>
                     <div class="input-wrap">
                         <i class="bi bi-geo-alt"></i>
-                        <input type="text" name="address" id="address" class="form-control" placeholder="e.g. 123 Orchard Road, Singapore" value="<?= htmlspecialchars($user['address'] ?? '') ?>" required>
+                        <input type="text" name="address" id="address" class="form-control" placeholder="e.g. 123 Orchard Road, Singapore" maxlength="255" value="<?= htmlspecialchars($user['address'] ?? '') ?>" required>
                     </div>
                 </div>
                             
@@ -767,7 +767,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 		
 		if (!address) {
-			errorDiv.textContent = 'Delivery address is required.';
+			errorDiv.textContent = 'Address is required.';
+			errorDiv.style.display = 'block';
+			return;
+		}
+
+		if (address.length > 255) {
+			errorDiv.textContent = 'Address must not exceed 255 characters.';
 			errorDiv.style.display = 'block';
 			return;
 		}
@@ -793,7 +799,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 
 		// Phone number format validation (basic)
-		const phonePattern = /^[0-9+\-\s()]+$/;
+		const phonePattern = /^\+?[\d\s\-()\]{8,20}$/;
 		if (!phonePattern.test(phone)) {
 			errorDiv.textContent = 'Please enter a valid phone number.';
 			errorDiv.style.display = 'block';

@@ -52,7 +52,7 @@ if (isset($_SESSION['locked']))
 }
 
 // Handles login validation
-$email = trim($_POST['email'] ?? '');
+$email = strip_tags(trim($_POST['email'] ?? ''));
 $password = $_POST['password'] ?? '';
 
 if (!$email || !$password) 

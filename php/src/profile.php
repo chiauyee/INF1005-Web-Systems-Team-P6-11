@@ -263,43 +263,59 @@ if (!isset($_SESSION['user_id'])) {
 $success = '';
 $error   = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') 
+{
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) 
+	{
         $error = 'Invalid request. Please try again.';
-    } else {
-    $phone   = trim($_POST['phone'] ?? '');
-    $address = trim($_POST['address'] ?? '');
-    $country = $_POST['country'] ?? 'SG';
-    $latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
-    $longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
-
-    if (empty($address)) {
-        $error = 'Delivery address is required.';
-    } elseif (strlen($address) > 255) {
-        $error = 'Delivery address must not exceed 255 characters.';
-    } elseif (!empty($phone) && !preg_match('/^\+?[\d\s\-()\]{6,20}$/', $phone)) {
-        $error = 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (6–20 characters).';
-    } else {
-    try {
-        // Update with or without coordinates
-        if ($latitude !== null && $longitude !== null) {
-            $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ?, latitude = ?, longitude = ? WHERE id = ?");
-            $stmt->execute([$phone, $address, $country, $latitude, $longitude, $_SESSION['user_id']]);
-        } 
-		
-		else {
-            $stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ? WHERE id = ?");
-            $stmt->execute([$phone, $address, $country, $_SESSION['user_id']]);
-        }
-        
-        $success = 'Profile updated successfully.';
     } 
-	
-	catch (PDOException $e) {
-        $error = 'Database error. Please try again.';
-        error_log("Profile update error: " . $e->getMessage());
-    }
-    } // end address check
+	else 
+	{
+		$address = strip_tags(trim($_POST['address'] ?? ''));
+		$phone   = strip_tags(trim($_POST['phone'] ?? ''));
+    	$country = $_POST['country'] ?? 'SG';
+    	$latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
+    	$longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
+
+		if (empty($address)) 
+		{
+			$error = 'Address is required.';
+		} 
+		
+		elseif (strlen($address) > 255) 
+		{
+			$error = 'Address must not exceed 255 characters.';
+		} 
+		
+		elseif (!empty($phone) && !preg_match('/^\+?[\d\s\-()\]{8,20}$/', $phone)) 
+		{
+			$error = 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (8–20 characters).';
+		} 
+		
+		else 
+		{
+			try 
+			{
+				// Update with or without coordinates
+				if ($latitude !== null && $longitude !== null) {
+					$stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ?, latitude = ?, longitude = ? WHERE id = ?");
+					$stmt->execute([$phone, $address, $country, $latitude, $longitude, $_SESSION['user_id']]);
+				} 
+				
+				else {
+					$stmt = $pdo->prepare("UPDATE users SET phone = ?, address = ?, country = ? WHERE id = ?");
+					$stmt->execute([$phone, $address, $country, $_SESSION['user_id']]);
+				}
+				
+				$success = 'Profile updated successfully.';
+			} 
+			
+			catch (PDOException $e) 
+			{
+				$error = 'Database error. Please try again.';
+				error_log("Profile update error: " . $e->getMessage());
+			}
+		} // end address check
     } // end CSRF check
 } // end POST
 
@@ -450,12 +466,14 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <input type="tel" name="phone" id="phone"
                                 class="field-input"
                                 placeholder="8123 4567"
+								minlength="8"
+								maxlength="20"
                                 value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
                         </div>
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label" for="address">Delivery Address</label>
+                        <label class="field-label" for="address">Address</label>
                         <div class="field-input-wrap">
                             <i class="bi bi-geo-alt"></i>
                             <input type="text" name="address" id="address" class="field-input" placeholder="e.g. 123 Orchard Road, Singapore" maxlength="255" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
@@ -659,18 +677,18 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			
 			// Validate required fields
 			if (!address) {
-				showAlert('error', 'Delivery address is required.');
+				showAlert('error', 'Address is required.');
 				return;
 			}
 
 			if (address.length > 255) {
-				showAlert('error', 'Delivery address must not exceed 255 characters.');
+				showAlert('error', 'Address must not exceed 255 characters.');
 				return;
 			}
 
-			const phoneRegex = /^\+?[\d\s\-()\]{6,20}$/;
+			const phoneRegex = /^\+?[\d\s\-()\]{8,20}$/;
 			if (phone && !phoneRegex.test(phone)) {
-				showAlert('error', 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (6–20 characters).');
+				showAlert('error', 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (8–20 characters).');
 				return;
 			}
 			
