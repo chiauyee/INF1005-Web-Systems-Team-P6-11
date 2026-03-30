@@ -104,8 +104,8 @@ $totalBanned = count(array_filter($users, fn($u) => $u['status'] === 'banned'));
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Total Users</h6>
-                        <h4 class="mb-0"><?= $totalUsers ?></h4>
+                        <p class="text-muted mb-1">Total Users</p>
+                        <h2 class="mb-0"><?= $totalUsers ?></h2>
                     </div>
                 </div>
             </div>
@@ -113,8 +113,8 @@ $totalBanned = count(array_filter($users, fn($u) => $u['status'] === 'banned'));
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Admin Accounts</h6>
-                        <h4 class="mb-0"><?= $totalAdmins ?></h4>
+                        <p class="text-muted mb-1">Admin Accounts</p>
+                        <h2 class="mb-0"><?= $totalAdmins ?></h2>
                     </div>
                 </div>
             </div>
@@ -122,8 +122,8 @@ $totalBanned = count(array_filter($users, fn($u) => $u['status'] === 'banned'));
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Banned Users</h6>
-                        <h4 class="mb-0"><?= $totalBanned ?></h4>
+                        <p class="text-muted mb-1">Banned Users</p>
+                        <h2 class="mb-0"><?= $totalBanned ?></h2>
                     </div>
                 </div>
             </div>

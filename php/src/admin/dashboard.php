@@ -57,7 +57,7 @@ $totalContent = $totalImages + $totalComments;
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h6 class="text-muted mb-1">Total Users</h6>
+                                <p class="text-muted mb-1">Total Users</p>
                                 <h2 class="display-6 fw-bold mb-0"><?= $totalUsers ?></h2>
                             </div>
                             <i class="bi bi-people fs-3 text-muted"></i>
@@ -71,7 +71,7 @@ $totalContent = $totalImages + $totalComments;
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h6 class="text-muted mb-1">Total Listings</h6>
+                                <p class="text-muted mb-1">Total Listings</p>
                                 <h2 class="display-6 fw-bold mb-0"><?= $totalListings ?></h2>
                             </div>
                             <i class="bi bi-music-note-list fs-3 text-muted"></i>
@@ -85,7 +85,7 @@ $totalContent = $totalImages + $totalComments;
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h6 class="mb-1">Pending Listings</h6>
+                                <p class="mb-1">Pending Listings</p>
                                 <h2 class="display-6 fw-bold mb-2"><?= $pendingListings ?></h2>
                                 <a href="listings.php" class="btn btn-sm btn-warning">
                                     Review Listings
@@ -102,7 +102,7 @@ $totalContent = $totalImages + $totalComments;
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h6 class="text-muted mb-1">Content Items</h6>
+                                <p class="text-muted mb-1">Content Items</p>
                                 <h2 class="display-6 fw-bold mb-0"><?= $totalContent ?></h2>
                             </div>
                             <i class="bi bi-collection fs-3 text-muted"></i>

@@ -94,8 +94,8 @@ $totalImages = count($artistImages) + count($albumImages);
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Total Images</h6>
-                        <h4 class="mb-0"><?= $totalImages ?></h4>
+                        <p class="text-muted mb-1">Total Images</p>
+                        <h2 class="mb-0"><?= $totalImages ?></h2>
                     </div>
                 </div>
             </div>
@@ -103,8 +103,8 @@ $totalImages = count($artistImages) + count($albumImages);
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Artist Images</h6>
-                        <h4 class="mb-0"><?= count($artistImages) ?></h4>
+                        <p class="text-muted mb-1">Artist Images</p>
+                        <h2 class="mb-0"><?= count($artistImages) ?></h2>
                     </div>
                 </div>
             </div>
@@ -112,8 +112,8 @@ $totalImages = count($artistImages) + count($albumImages);
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Album Images</h6>
-                        <h4 class="mb-0"><?= count($albumImages) ?></h4>
+                        <p class="text-muted mb-1">Album Images</p>
+                        <h2 class="mb-0"><?= count($albumImages) ?></h2>
                     </div>
                 </div>
             </div>

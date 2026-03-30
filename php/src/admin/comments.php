@@ -81,8 +81,8 @@ $totalComments = count($artistComments) + count($albumComments);
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Total Comments</h6>
-                        <h4 class="mb-0"><?= $totalComments ?></h4>
+                        <p class="text-muted mb-1">Total Comments</p>
+                        <h2 class="mb-0"><?= $totalComments ?></h2>
                     </div>
                 </div>
             </div>
@@ -90,8 +90,8 @@ $totalComments = count($artistComments) + count($albumComments);
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Artist Comments</h6>
-                        <h4 class="mb-0"><?= count($artistComments) ?></h4>
+                        <p class="text-muted mb-1">Artist Comments</p>
+                        <h2 class="mb-0"><?= count($artistComments) ?></h2>
                     </div>
                 </div>
             </div>
@@ -99,8 +99,8 @@ $totalComments = count($artistComments) + count($albumComments);
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Album Comments</h6>
-                        <h4 class="mb-0"><?= count($albumComments) ?></h4>
+                        <p class="text-muted mb-1">Album Comments</p>
+                        <h2 class="mb-0"><?= count($albumComments) ?></h2>
                     </div>
                 </div>
             </div>

@@ -104,8 +104,8 @@ $oldestPending = $totalPending > 0
             <div class="col-md-6">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Pending Listings</h6>
-                        <h4 class="mb-0"><?= $totalPending ?></h4>
+                        <p class="text-muted mb-1">Pending Listings</p>
+                        <h2 class="mb-0"><?= $totalPending ?></h2>
                     </div>
                 </div>
             </div>
@@ -113,8 +113,8 @@ $oldestPending = $totalPending > 0
             <div class="col-md-6">
                 <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Oldest Pending Submission</h6>
-                        <h4 class="mb-0 fs-5"><?= htmlspecialchars($oldestPending) ?></h4>
+                        <p class="text-muted mb-1">Oldest Pending Submission</p>
+                        <h2 class="mb-0 fs-5"><?= htmlspecialchars($oldestPending) ?></h2>
                     </div>
                 </div>
             </div>
@@ -205,7 +205,7 @@ $oldestPending = $totalPending > 0
             <div class="modal-content">
                 <form method="get">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="rejectModalLabel">Reject Listing</h5>
+                        <p class="modal-title" id="rejectModalLabel">Reject Listing</p>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
