@@ -3,16 +3,16 @@ require __DIR__ . '/../db.php';
 require __DIR__ . '/inc/admin_auth.php';
 
 /* ========= DELETE ========= */
-if (isset($_GET['delete_artist'])) {
-    $id = (int)$_GET['delete_artist'];
+if (isset($_POST['delete_artist'])) {
+    $id = (int)$_POST['delete_artist'];
     $stmt = $pdo->prepare("DELETE FROM artist_images WHERE id = ?");
     $stmt->execute([$id]);
     header("Location: images.php");
     exit;
 }
 
-if (isset($_GET['delete_album'])) {
-    $id = (int)$_GET['delete_album'];
+if (isset($_POST['delete_album'])) {
+    $id = (int)$_POST['delete_album'];
     $stmt = $pdo->prepare("DELETE FROM album_images WHERE id = ?");
     $stmt->execute([$id]);
     header("Location: images.php");
@@ -159,12 +159,17 @@ $totalImages = count($artistImages) + count($albumImages);
                                         <td><?= htmlspecialchars($img['username']) ?></td>
                                         <td><?= date('d M Y H:i', strtotime($img['created_at'])) ?></td>
                                         <td class="text-end">
-                                            <a
-                                                href="?delete_artist=<?= $img['id'] ?>"
-                                                class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Delete this artist image?')">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </a>
+                                            <form method="post" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+                                                <button
+                                                    type="submit"
+                                                    name="delete_artist"
+                                                    value="<?= $img['id'] ?>"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Delete this artist image?')">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -222,12 +227,17 @@ $totalImages = count($artistImages) + count($albumImages);
                                         <td><?= htmlspecialchars($img['username']) ?></td>
                                         <td><?= date('d M Y H:i', strtotime($img['created_at'])) ?></td>
                                         <td class="text-end">
-                                            <a
-                                                href="?delete_album=<?= $img['id'] ?>"
-                                                class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Delete this album image?')">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </a>
+                                            <form method="post" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+                                                <button
+                                                    type="submit"
+                                                    name="delete_album"
+                                                    value="<?= $img['id'] ?>"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Delete this album image?')">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

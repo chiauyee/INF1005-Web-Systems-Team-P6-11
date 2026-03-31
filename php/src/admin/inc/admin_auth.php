@@ -14,4 +14,14 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     header("Location: /index.php");
     exit();
 }
+
+// CSRF protection for admin POST actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrfToken = $_POST['csrf_token'] ?? '';
+
+    if (!Security::validateCSRFToken($csrfToken)) {
+        http_response_code(403);
+        exit('Invalid CSRF token.');
+    }
+}
 ?>

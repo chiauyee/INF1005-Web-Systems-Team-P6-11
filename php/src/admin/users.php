@@ -3,8 +3,8 @@ require __DIR__ . '/../db.php';
 require __DIR__ . '/inc/admin_auth.php';
 
 /* ========= HANDLE ACTIONS ========= */
-if (isset($_GET['ban'])) {
-    $id = (int)$_GET['ban'];
+if (isset($_POST['ban'])) {
+    $id = (int)$_POST['ban'];
 
     if ($id !== (int)$_SESSION['user_id']) {
         $stmt = $pdo->prepare("
@@ -19,8 +19,8 @@ if (isset($_GET['ban'])) {
     exit;
 }
 
-if (isset($_GET['unban'])) {
-    $id = (int)$_GET['unban'];
+if (isset($_POST['unban'])) {
+    $id = (int)$_POST['unban'];
 
     $stmt = $pdo->prepare("
         UPDATE users
@@ -33,8 +33,8 @@ if (isset($_GET['unban'])) {
     exit;
 }
 
-if (isset($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
+if (isset($_POST['delete'])) {
+    $id = (int)$_POST['delete'];
 
     if ($id !== (int)$_SESSION['user_id']) {
         $stmt = $pdo->prepare("
@@ -190,24 +190,39 @@ $totalBanned = count(array_filter($users, fn($u) => $u['status'] === 'banned'));
                                                 <div class="btn-group">
 
                                                     <?php if ($user['status'] === 'active'): ?>
-                                                        <a href="?ban=<?= $user['id'] ?>"
-                                                            class="btn btn-sm btn-outline-danger"
-                                                            onclick="return confirm('Ban this user?')">
-                                                            Ban
-                                                        </a>
+                                                        <form method="post" class="d-inline">
+                                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+                                                            <button type="submit"
+                                                                name="ban"
+                                                                value="<?= $user['id'] ?>"
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('Ban this user?')">
+                                                                Ban
+                                                            </button>
+                                                        </form>
                                                     <?php else: ?>
-                                                        <a href="?unban=<?= $user['id'] ?>"
-                                                            class="btn btn-sm btn-outline-success"
-                                                            onclick="return confirm('Unban this user?')">
-                                                            Unban
-                                                        </a>
+                                                        <form method="post" class="d-inline">
+                                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+                                                            <button type="submit"
+                                                                name="unban"
+                                                                value="<?= $user['id'] ?>"
+                                                                class="btn btn-sm btn-outline-success"
+                                                                onclick="return confirm('Unban this user?')">
+                                                                Unban
+                                                            </button>
+                                                        </form>
                                                     <?php endif; ?>
 
-                                                    <a href="?delete=<?= $user['id'] ?>"
-                                                        class="btn btn-sm btn-outline-danger"
-                                                        onclick="return confirm('Delete this user?')">
-                                                        Delete
-                                                    </a>
+                                                    <form method="post" class="d-inline">
+                                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+                                                        <button type="submit"
+                                                            name="delete"
+                                                            value="<?= $user['id'] ?>"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            onclick="return confirm('Delete this user?')">
+                                                            Delete
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             <?php else: ?>

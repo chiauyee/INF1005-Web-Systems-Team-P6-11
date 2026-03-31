@@ -3,8 +3,8 @@ require __DIR__ . '/../db.php';
 require __DIR__ . '/inc/admin_auth.php';
 
 /* ========= HANDLE ACTIONS ========= */
-if (isset($_GET['approve'])) {
-    $id = (int)$_GET['approve'];
+if (isset($_POST['approve'])) {
+    $id = (int)$_POST['approve'];
 
     $stmt = $pdo->prepare("
         UPDATE listings
@@ -17,9 +17,9 @@ if (isset($_GET['approve'])) {
     exit;
 }
 
-if (isset($_GET['reject'], $_GET['reason'])) {
-    $id = (int)$_GET['reject'];
-    $reason = trim($_GET['reason']);
+if (isset($_POST['reject'], $_POST['reason'])) {
+    $id = (int)$_POST['reject'];
+    $reason = trim($_POST['reason']);
 
     $stmt = $pdo->prepare("
         UPDATE listings
@@ -32,8 +32,8 @@ if (isset($_GET['reject'], $_GET['reason'])) {
     exit;
 }
 
-if (isset($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
+if (isset($_POST['delete'])) {
+    $id = (int)$_POST['delete'];
 
     $stmt = $pdo->prepare("
         DELETE FROM listings
@@ -167,11 +167,16 @@ $oldestPending = $totalPending > 0
                                         <td><?= date('d M Y H:i', strtotime($listing['created_at'])) ?></td>
                                         <td class="text-end">
                                             <div class="btn-group">
-                                                <a
-                                                    href="?approve=<?= $listing['listing_id'] ?>"
-                                                    class="btn btn-sm btn-success">
-                                                    <i class="bi bi-check-lg"></i> Approve
-                                                </a>
+                                                <form method="post" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+                                                    <button
+                                                        type="submit"
+                                                        name="approve"
+                                                        value="<?= $listing['listing_id'] ?>"
+                                                        class="btn btn-sm btn-success">
+                                                        <i class="bi bi-check-lg"></i> Approve
+                                                    </button>
+                                                </form>
 
                                                 <button
                                                     type="button"
@@ -182,12 +187,17 @@ $oldestPending = $totalPending > 0
                                                     <i class="bi bi-x-lg"></i> Reject
                                                 </button>
 
-                                                <a
-                                                    href="?delete=<?= $listing['listing_id'] ?>"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Delete this listing?')">
-                                                    <i class="bi bi-trash"></i> Delete
-                                                </a>
+                                                <form method="post" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+                                                    <button
+                                                        type="submit"
+                                                        name="delete"
+                                                        value="<?= $listing['listing_id'] ?>"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Delete this listing?')">
+                                                        <i class="bi bi-trash"></i> Delete
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
@@ -203,7 +213,9 @@ $oldestPending = $totalPending > 0
     <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="get">
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
+
                     <div class="modal-header">
                         <h2 class="modal-title" id="rejectModalLabel">Reject Listing</h2>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -238,7 +250,7 @@ $oldestPending = $totalPending > 0
     <script>
         const rejectModal = document.getElementById('rejectModal');
 
-        rejectModal.addEventListener('show.bs.modal', function (event) {
+        rejectModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
             const listingId = button.getAttribute('data-id');
             document.getElementById('rejectListingId').value = listingId;
