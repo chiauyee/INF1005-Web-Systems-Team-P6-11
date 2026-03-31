@@ -20,7 +20,7 @@ $is_admin = ($_SESSION['role'] ?? '') === 'admin';
 $stmt = $pdo->prepare("
     SELECT l.listing_id, l.album_mbid, l.price, l.status, l.rejection_reason,
            l.created_at, l.purchased_at, l.seller_id, l.buyer_id, l.stripe_session_id,
-           al.album_name, ar.artist_name, ar.artist_mbid,
+           al.album_name, al.cover_url, ar.artist_name, ar.artist_mbid,
            s.username AS seller_username,
            b.username AS buyer_username,
            b.address AS buyer_address,
@@ -97,6 +97,10 @@ $badgeLabel = match($listing['status']) {
         <div class="album-hero">
             <?php if (!empty($listing['album_image'])): ?>
                 <img src="/uploads/albums/<?= htmlspecialchars($listing['album_image']) ?>"
+                     alt="<?= htmlspecialchars($listing['album_name']) ?>"
+                     class="album-art">
+            <?php elseif (!empty($listing['cover_url'])): ?>
+                <img src="<?= htmlspecialchars($listing['cover_url']) ?>"
                      alt="<?= htmlspecialchars($listing['album_name']) ?>"
                      class="album-art">
             <?php else: ?>

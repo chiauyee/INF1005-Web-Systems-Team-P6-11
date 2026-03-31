@@ -21,7 +21,7 @@
 </div>
 
 <!-- Already in cart toast -->
-<div id="cart-toast" role="status" style="
+<div id="cart-toast" role="status" aria-live="polite" aria-atomic="true" style="
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(1rem);
   background: #212529; color: #fff; padding: 0.6rem 1.4rem;
   display: none; border-radius: 999px; font-size: 1.5rem; font-family: 'DM Sans', sans-serif;
@@ -31,7 +31,7 @@
 </div>
 
 <!-- Login required toast -->
-<div id="login-toast" role="status" style="
+<div id="login-toast" role="status" aria-live="polite" aria-atomic="true" style="
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(1rem);
   background: #212529; color: #fff; padding: 0.6rem 1.4rem;
   display: none; border-radius: 999px; font-size: 1.5rem; font-family: 'DM Sans', sans-serif;

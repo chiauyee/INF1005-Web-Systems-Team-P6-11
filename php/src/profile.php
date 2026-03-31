@@ -241,17 +241,17 @@ $countryArray = array(
 
 function countrySelector($defaultCountry = "", $id = "", $name = "", $classes = "") {
     global $countryArray;
-    
-    $output = "<select id='" . $id . "' name='" . $name . "' class='" . $classes . "' style='appearance: auto; -webkit-appearance: menulist; width: 100%;'>";
-    
+
+    $output = "<select id='" . htmlspecialchars($id, ENT_QUOTES, 'UTF-8') . "' name='" . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . "' class='" . htmlspecialchars($classes, ENT_QUOTES, 'UTF-8') . "' style='appearance: auto; -webkit-appearance: menulist; width: 100%;'>";
+
     foreach($countryArray as $code => $country) {
 		$countryName = ucwords(strtolower($country["name"]));
         $selected = ($code == $defaultCountry) ? "selected" : "";
-        $output .= "<option value='" . $code . "' " . $selected . ">" . $code . " - " . $countryName . " (+" . $country["code"] . ")</option>";
+        $output .= "<option value='" . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . "' " . $selected . ">" . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . " - " . htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') . " (+" . htmlspecialchars($country["code"], ENT_QUOTES, 'UTF-8') . ")</option>";
     }
-    
+
     $output .= "</select>";
-    
+
     return $output;
 }
 
@@ -271,9 +271,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     } 
 	else 
 	{
-		$address = strip_tags(trim($_POST['address'] ?? ''));
-		$phone   = strip_tags(trim($_POST['phone'] ?? ''));
-    	$country = $_POST['country'] ?? 'SG';
+		$address = trim($_POST['address'] ?? '');
+		$phone   = trim($_POST['phone'] ?? '');
+    	$country = isset($_POST['country']) && array_key_exists($_POST['country'], $countryArray) ? $_POST['country'] : 'SG';
     	$latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? floatval($_POST['latitude']) : null;
     	$longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? floatval($_POST['longitude']) : null;
 
@@ -287,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 			$error = 'Address must not exceed 255 characters.';
 		} 
 		
-		elseif (!empty($phone) && !preg_match('/^\+?[\d\s\-()\]{8,20}$/', $phone)) 
+		elseif (!empty($phone) && !preg_match('/^\+?[\d\s\-()]{8,20}$/', $phone))
 		{
 			$error = 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (8–20 characters).';
 		} 
@@ -496,7 +496,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php else: ?>
                 <div class="order-list">
                     <?php foreach ($purchases as $p): ?>
-                    <div class="order-row-profile">
+                    <div class="order-row-profile" role="article" aria-label="Order: <?= htmlspecialchars($p['album_name']) ?>">
                         <div class="order-info">
                             <div class="order-album-name">
                                 <a href="album.php?mbid=<?= urlencode($p['album_mbid']) ?>" style="color:inherit;text-decoration:none;">
@@ -509,7 +509,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="order-right">
                             <div class="order-price-val">USD $<?= number_format((float)$p['price'], 2) ?></div>
                             <span class="status-badge status-complete">Purchased</span>
-                            <a href="listing.php?id=<?= (int)$p['listing_id'] ?>" style="font-size:0.78rem;color:#1a1a1a;text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;"><i class="bi bi-eye"></i> View Detail</a>
+                            <a href="listing.php?id=<?= (int)$p['listing_id'] ?>" aria-label="View detail for <?= htmlspecialchars($p['album_name']) ?>" style="font-size:0.78rem;color:#1a1a1a;text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;"><i class="bi bi-eye" aria-hidden="true"></i> View Detail</a>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -519,7 +519,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <ul class="pagination pagination-sm justify-content-center mb-0">
                         <?php for ($i = 1; $i <= $purchases_pages; $i++): ?>
                         <li class="page-item <?= $i === $purchases_page ? 'active' : '' ?>">
-                            <a class="page-link" href="?purchases_page=<?= $i ?>&listings_page=<?= $listings_page ?>"><?= $i ?></a>
+                            <a class="page-link" href="?purchases_page=<?= htmlspecialchars((string)$i, ENT_QUOTES, 'UTF-8') ?>&listings_page=<?= htmlspecialchars((string)$listings_page, ENT_QUOTES, 'UTF-8') ?>"><?= $i ?></a>
                         </li>
                         <?php endfor; ?>
                     </ul>
@@ -542,7 +542,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			<?php else: ?>
 				<div class="order-list">
 					<?php foreach ($my_listings as $l): ?>
-					<div class="order-row-profile">
+					<div class="order-row-profile" role="article" aria-label="Listing: <?= htmlspecialchars($l['album_name']) ?>">
 						<div class="order-info">
 							<div class="order-album-name">
 								<a href="album.php?mbid=<?= urlencode($l['album_mbid']) ?>" style="color:inherit;text-decoration:none;">
@@ -556,7 +556,16 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 								<?php if ($l['status'] === 'available'): ?>
 									&middot; Publicly listed
 									<?php if (!empty($l['approved_at'])): ?>
-										&middot; Listed for <?= (int)(new DateTime())->diff(new DateTime($l['approved_at']))->days ?> day(s)
+										<?php
+											try {
+												$days = (int)(new DateTime())->diff(new DateTime($l['approved_at']))->days;
+											} catch (\Exception $e) {
+												$days = null;
+											}
+										?>
+										<?php if ($days !== null): ?>
+											&middot; Listed for <?= $days ?> day(s)
+										<?php endif; ?>
 									<?php endif; ?>
 								<?php endif; ?>
 							</div>
@@ -600,7 +609,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 								};
 							?>
 							<span class="status-badge <?= $badgeClass ?>"><?= $badgeLabel ?></span>
-							<a href="listing.php?id=<?= (int)$l['listing_id'] ?>" style="font-size:0.78rem;color:#1a1a1a;text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;"><i class="bi bi-eye"></i> View Detail</a>
+							<a href="listing.php?id=<?= (int)$l['listing_id'] ?>" aria-label="View detail for <?= htmlspecialchars($l['album_name']) ?>" style="font-size:0.78rem;color:#1a1a1a;text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;"><i class="bi bi-eye" aria-hidden="true"></i> View Detail</a>
 						</div>
 					</div>
 					<?php endforeach; ?>
@@ -686,7 +695,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 				return;
 			}
 
-			const phoneRegex = /^\+?[\d\s\-()\]{8,20}$/;
+			const phoneRegex = /^\+?[\d\s\-()]{8,20}$/;
 			if (phone && !phoneRegex.test(phone)) {
 				showAlert('error', 'Phone number is invalid. Use digits, spaces, +, -, or parentheses (8–20 characters).');
 				return;
@@ -777,12 +786,18 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 				alertDiv.style.backgroundColor = '#d1e7dd';
 				alertDiv.style.color = '#0f5132';
 				alertDiv.style.border = '1px solid #badbcc';
-				alertDiv.innerHTML = `<i class="bi bi-check-circle me-2"></i>${message}`;
+				const successIcon = document.createElement('i');
+				successIcon.className = 'bi bi-check-circle me-2';
+				alertDiv.appendChild(successIcon);
+				alertDiv.appendChild(document.createTextNode(message));
 			} else {
 				alertDiv.style.backgroundColor = '#f8d7da';
 				alertDiv.style.color = '#721c24';
 				alertDiv.style.border = '1px solid #f5c6cb';
-				alertDiv.innerHTML = `<i class="bi bi-exclamation-circle me-2"></i>${message}`;
+				const errorIcon = document.createElement('i');
+				errorIcon.className = 'bi bi-exclamation-circle me-2';
+				alertDiv.appendChild(errorIcon);
+				alertDiv.appendChild(document.createTextNode(message));
 			}
 			
 			// Insert alert before the form
