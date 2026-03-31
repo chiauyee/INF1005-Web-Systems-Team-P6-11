@@ -29,7 +29,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
                     <?php $cartCount = count($_SESSION['cart'] ?? []); ?>
-                    <button class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer">
+                    <button class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer" aria-label="Open shopping cart">
                         <i class="bi bi-cart fs-5"></i>
                         <span id="cart-badge" class="badge bg-dark ms-1<?= $cartCount === 0 ? ' d-none' : '' ?>"><?= $cartCount ?></span>
                     </button>

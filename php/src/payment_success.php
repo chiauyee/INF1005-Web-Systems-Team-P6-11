@@ -111,8 +111,8 @@ if ($session_id) {
         <?php if ($paid): ?>
 
             <div class="text-center">
-                <div class="status-icon-wrap success">
-                    <i class="bi bi-check-lg"></i>
+                <div class="status-icon-wrap success" role="img" aria-label="Success">
+                    <i class="bi bi-check-lg" aria-hidden="true"></i>
                 </div>
                 <h1 class="page-heading">Payment Successful</h1>
                 <p class="page-sub mb-4">
@@ -126,13 +126,17 @@ if ($session_id) {
                     <div class="col-6">
                         <div class="detail-label">Status</div>
                         <div class="detail-value">
-                            <span class="badge" style="background:#d1fae5; color:#065f46; font-weight:500; font-size:0.8rem;">Confirmed</span>
+                            <span class="badge" style="background:#d1fae5; color:#065f46; font-weight:500; font-size:0.8rem;">
+                                <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Confirmed
+                            </span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="detail-label">Payment</div>
                         <div class="detail-value">
-                            <span class="badge" style="background:#d1fae5; color:#065f46; font-weight:500; font-size:0.8rem;">Paid</span>
+                            <span class="badge" style="background:#d1fae5; color:#065f46; font-weight:500; font-size:0.8rem;">
+                                <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Paid
+                            </span>
                         </div>
                     </div>
                     <div class="col-12">
@@ -154,8 +158,8 @@ if ($session_id) {
         <?php else: ?>
 
             <div class="text-center">
-                <div class="status-icon-wrap error">
-                    <i class="bi bi-x-lg"></i>
+                <div class="status-icon-wrap error" role="img" aria-label="Error">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
                 </div>
                 <h1 class="page-heading">Something Went Wrong</h1>
                 <p class="page-sub mb-4"><?= htmlspecialchars($error) ?></p>

@@ -34,7 +34,14 @@ if (empty($addr_row['address'])) {
     exit;
 }
 
-\Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
+$stripeKey = getenv('STRIPE_SECRET_KEY');
+if (empty($stripeKey)) {
+    error_log('STRIPE_SECRET_KEY is not configured');
+    http_response_code(500);
+    echo json_encode(['error' => 'Payment service is not configured. Please contact support.']);
+    exit;
+}
+\Stripe\Stripe::setApiKey($stripeKey);
 
 // Re-checks all cart items are still available before charging the user
 $listing_ids = array_keys($cart);

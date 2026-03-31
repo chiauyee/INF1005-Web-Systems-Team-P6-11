@@ -13,6 +13,22 @@ if (empty($cart)) {
     exit;
 }
 
+// Re-validate cart items against DB so sold items are shown as unavailable
+$listing_ids = array_keys($cart);
+$placeholders = implode(',', array_fill(0, count($listing_ids), '?'));
+$avail_stmt = $pdo->prepare("SELECT listing_id FROM listings WHERE listing_id IN ($placeholders) AND status = 'available'");
+$avail_stmt->execute($listing_ids);
+$available_ids = array_column($avail_stmt->fetchAll(PDO::FETCH_ASSOC), 'listing_id');
+$sold_ids = array_diff($listing_ids, $available_ids);
+foreach ($sold_ids as $sold_id) {
+    unset($_SESSION['cart'][$sold_id]);
+}
+$cart = $_SESSION['cart'];
+if (empty($cart)) {
+    header('Location: listings.php');
+    exit;
+}
+
 $total = array_sum(array_column($cart, 'price'));
 
 $addr_stmt = $pdo->prepare("SELECT address FROM users WHERE id = ?");
@@ -61,6 +77,13 @@ $has_address = !empty($addr_row['address']);
                 <span class="order-total-value">USD $<?= number_format($total, 2) ?></span>
             </div>
         </div>
+
+        <?php if (!empty($sold_ids)): ?>
+        <div class="alert alert-warning d-flex align-items-center gap-2 mb-3" role="alert" style="border-radius:6px;font-size:0.875rem;">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+            <span><?= count($sold_ids) === 1 ? 'One item' : count($sold_ids) . ' items' ?> in your cart sold out and <?= count($sold_ids) === 1 ? 'has' : 'have' ?> been removed.</span>
+        </div>
+        <?php endif; ?>
 
         <?php if (!$has_address): ?>
         <div class="alert alert-warning d-flex align-items-center gap-2 mb-3" style="border-radius:6px;font-size:0.875rem;">
