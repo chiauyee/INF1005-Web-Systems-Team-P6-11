@@ -3,16 +3,20 @@ session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FAQ – MusicMarket</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="/css/navigation.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/faq.css" >
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/css/faq.css">
 </head>
 
 <body>
@@ -29,18 +33,13 @@ session_start();
           Frequently asked<br><em>questions.</em>
         </h1>
         <p class="hero-desc">
-          Everything you need to know about buying, selling and managing your 
+          Everything you need to know about buying, selling and managing your
           account on MusicMarket.
         </p>
         <div class="faq-search-wrap" role="search">
           <i class="bi bi-search" aria-hidden="true"></i>
-          <input
-            type="search"
-            id="faq-search"
-            placeholder="Search questions…"
-            aria-label="Search frequently asked questions"
-            autocomplete="off"
-          >
+          <input type="search" id="faq-search" placeholder="Search questions…"
+            aria-label="Search frequently asked questions" autocomplete="off">
         </div>
       </div>
     </section>
@@ -93,7 +92,7 @@ session_start();
             <!-- BUYING -->
             <div class="faq-section active" id="cat-buying">
               <p class="section-eyebrow">Buying</p>
-              <h2 class="section-heading">Shopping on <em>MusicMarket.</em></h2>
+              <h2 class="section-heading">Shopping on MusicMarket.</h2>
 
               <?php
               $buying_faqs = [
@@ -120,12 +119,8 @@ session_start();
               ];
               foreach ($buying_faqs as $i => $faq): ?>
                 <div class="faq-item">
-                  <button
-                    class="faq-question"
-                    aria-expanded="false"
-                    aria-controls="buying-ans-<?= $i ?>"
-                    id="buying-q-<?= $i ?>"
-                  >
+                  <button class="faq-question" aria-expanded="false" aria-controls="buying-ans-<?= $i ?>"
+                    id="buying-q-<?= $i ?>">
                     <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
@@ -139,7 +134,7 @@ session_start();
             <!-- SELLING -->
             <div class="faq-section" id="cat-selling">
               <p class="section-eyebrow">Selling</p>
-              <h2 class="section-heading">List &amp; sell your <em>collection.</em></h2>
+              <h2 class="section-heading">List &amp; sell your collection.</h2>
 
               <?php
               $selling_faqs = [
@@ -166,12 +161,8 @@ session_start();
               ];
               foreach ($selling_faqs as $i => $faq): ?>
                 <div class="faq-item">
-                  <button
-                    class="faq-question"
-                    aria-expanded="false"
-                    aria-controls="selling-ans-<?= $i ?>"
-                    id="selling-q-<?= $i ?>"
-                  >
+                  <button class="faq-question" aria-expanded="false" aria-controls="selling-ans-<?= $i ?>"
+                    id="selling-q-<?= $i ?>">
                     <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
@@ -185,7 +176,7 @@ session_start();
             <!-- SHIPPING -->
             <div class="faq-section" id="cat-shipping">
               <p class="section-eyebrow">Shipping</p>
-              <h2 class="section-heading">Getting records <em>to you.</em></h2>
+              <h2 class="section-heading">Getting records to you.</h2>
 
               <?php
               $shipping_faqs = [
@@ -208,16 +199,13 @@ session_start();
               ];
               foreach ($shipping_faqs as $i => $faq): ?>
                 <div class="faq-item">
-                  <button
-                    class="faq-question"
-                    aria-expanded="false"
-                    aria-controls="shipping-ans-<?= $i ?>"
-                    id="shipping-q-<?= $i ?>"
-                  >
+                  <button class="faq-question" aria-expanded="false" aria-controls="shipping-ans-<?= $i ?>"
+                    id="shipping-q-<?= $i ?>">
                     <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
-                  <div class="faq-answer" id="shipping-ans-<?= $i ?>" role="region" aria-labelledby="shipping-q-<?= $i ?>">
+                  <div class="faq-answer" id="shipping-ans-<?= $i ?>" role="region"
+                    aria-labelledby="shipping-q-<?= $i ?>">
                     <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
@@ -227,7 +215,7 @@ session_start();
             <!-- ACCOUNT -->
             <div class="faq-section" id="cat-account">
               <p class="section-eyebrow">Account</p>
-              <h2 class="section-heading">Managing your <em>account.</em></h2>
+              <h2 class="section-heading">Managing your account.</h2>
 
               <?php
               $account_faqs = [
@@ -250,12 +238,8 @@ session_start();
               ];
               foreach ($account_faqs as $i => $faq): ?>
                 <div class="faq-item">
-                  <button
-                    class="faq-question"
-                    aria-expanded="false"
-                    aria-controls="account-ans-<?= $i ?>"
-                    id="account-q-<?= $i ?>"
-                  >
+                  <button class="faq-question" aria-expanded="false" aria-controls="account-ans-<?= $i ?>"
+                    id="account-q-<?= $i ?>">
                     <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
@@ -269,7 +253,7 @@ session_start();
             <!-- PAYMENTS -->
             <div class="faq-section" id="cat-payments">
               <p class="section-eyebrow">Payments</p>
-              <h2 class="section-heading">Payments &amp; <em>billing.</em></h2>
+              <h2 class="section-heading">Payments &amp; billing.</h2>
 
               <?php
               $payments_faqs = [
@@ -292,16 +276,13 @@ session_start();
               ];
               foreach ($payments_faqs as $i => $faq): ?>
                 <div class="faq-item">
-                  <button
-                    class="faq-question"
-                    aria-expanded="false"
-                    aria-controls="payments-ans-<?= $i ?>"
-                    id="payments-q-<?= $i ?>"
-                  >
+                  <button class="faq-question" aria-expanded="false" aria-controls="payments-ans-<?= $i ?>"
+                    id="payments-q-<?= $i ?>">
                     <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
-                  <div class="faq-answer" id="payments-ans-<?= $i ?>" role="region" aria-labelledby="payments-q-<?= $i ?>">
+                  <div class="faq-answer" id="payments-ans-<?= $i ?>" role="region"
+                    aria-labelledby="payments-q-<?= $i ?>">
                     <div class="faq-answer-inner"><?= htmlspecialchars($faq[1], ENT_QUOTES, 'UTF-8') ?></div>
                   </div>
                 </div>
@@ -311,7 +292,7 @@ session_start();
             <!-- GRADING -->
             <div class="faq-section" id="cat-grading">
               <p class="section-eyebrow">Grading &amp; Condition</p>
-              <h2 class="section-heading">Understanding <em>condition grades.</em></h2>
+              <h2 class="section-heading">Understanding condition grades.</h2>
 
               <?php
               $grading_faqs = [
@@ -334,12 +315,8 @@ session_start();
               ];
               foreach ($grading_faqs as $i => $faq): ?>
                 <div class="faq-item">
-                  <button
-                    class="faq-question"
-                    aria-expanded="false"
-                    aria-controls="grading-ans-<?= $i ?>"
-                    id="grading-q-<?= $i ?>"
-                  >
+                  <button class="faq-question" aria-expanded="false" aria-controls="grading-ans-<?= $i ?>"
+                    id="grading-q-<?= $i ?>">
                     <?= htmlspecialchars($faq[0], ENT_QUOTES, 'UTF-8') ?>
                     <i class="bi bi-chevron-down faq-chevron" aria-hidden="true"></i>
                   </button>
@@ -370,13 +347,15 @@ session_start();
 
   <?php include __DIR__ . '/includes/footer.php'; ?>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 
   <script>
     // category switching 
-    const catBtns    = document.querySelectorAll('.cat-btn');
-    const catPanels  = document.querySelectorAll('.faq-section');
+    const catBtns = document.querySelectorAll('.cat-btn');
+    const catPanels = document.querySelectorAll('.faq-section');
 
     catBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -399,7 +378,7 @@ session_start();
     // Accordion
     document.querySelectorAll('.faq-question').forEach(btn => {
       btn.addEventListener('click', () => {
-        const answer   = document.getElementById(btn.getAttribute('aria-controls'));
+        const answer = document.getElementById(btn.getAttribute('aria-controls'));
         const expanded = btn.getAttribute('aria-expanded') === 'true';
 
         // Collapse all in the same section first
@@ -419,7 +398,7 @@ session_start();
 
     // live search across all questions
     const searchInput = document.getElementById('faq-search');
-    const noResults   = document.getElementById('no-results');
+    const noResults = document.getElementById('no-results');
 
     searchInput.addEventListener('input', () => {
       // DOMPurify to prevent XSS during searches
@@ -443,15 +422,15 @@ session_start();
       let anyVisible = false;
       document.querySelectorAll('.faq-item').forEach(item => {
         const questionText = item.querySelector('.faq-question').textContent.toLowerCase();
-        const answerText   = item.querySelector('.faq-answer-inner').textContent.toLowerCase();
-        const matches      = questionText.includes(query) || answerText.includes(query);
+        const answerText = item.querySelector('.faq-answer-inner').textContent.toLowerCase();
+        const matches = questionText.includes(query) || answerText.includes(query);
 
         item.style.display = matches ? '' : 'none';
         if (matches) anyVisible = true;
 
         // auto-open matching stuff
         if (matches) {
-          const btn    = item.querySelector('.faq-question');
+          const btn = item.querySelector('.faq-question');
           const answer = document.getElementById(btn.getAttribute('aria-controls'));
           btn.setAttribute('aria-expanded', 'true');
           answer.classList.add('open');
@@ -471,7 +450,7 @@ session_start();
   <!-- Three.js Cassette -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
-    (function() {
+    (function () {
       const container = document.getElementById('cassette-container');
       if (!container) return;
 
@@ -492,17 +471,17 @@ session_start();
 
       const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 });
       const faintLineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1 });
-      const meshMat = new THREE.MeshBasicMaterial({ 
-        color: 0x1a1a1a, 
-        polygonOffset: true, 
-        polygonOffsetFactor: 1, 
-        polygonOffsetUnits: 1 
+      const meshMat = new THREE.MeshBasicMaterial({
+        color: 0x1a1a1a,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1
       });
 
       function createSolid(geometry, edgeMat, parent, x = 0, y = 0, z = 0) {
         const group = new THREE.Group();
         group.position.set(x, y, z);
-        
+
         const mesh = new THREE.Mesh(geometry, meshMat);
         group.add(mesh);
 
@@ -540,14 +519,14 @@ session_start();
 
       // Internal tape rolls
       // Left roll (fuller)
-      for(let r = 0.5; r <= 1.4; r += 0.15) {
+      for (let r = 0.5; r <= 1.4; r += 0.15) {
         const ringGeo = new THREE.EdgesGeometry(new THREE.CylinderGeometry(r, r, 0.88, 32));
         ringGeo.rotateX(Math.PI / 2);
         spoolGroupL.add(new THREE.LineSegments(ringGeo, faintLineMat));
       }
 
       // Right roll (emptier)
-      for(let r = 0.5; r <= 0.9; r += 0.15) {
+      for (let r = 0.5; r <= 0.9; r += 0.15) {
         const ringGeo = new THREE.EdgesGeometry(new THREE.CylinderGeometry(r, r, 0.88, 32));
         ringGeo.rotateX(Math.PI / 2);
         spoolGroupR.add(new THREE.LineSegments(ringGeo, faintLineMat));
@@ -559,7 +538,7 @@ session_start();
         new THREE.Vector3(1.6, -0.9, 0.4)
       ]);
       cassette.add(new THREE.Line(tapeLineGeo, faintLineMat));
-      
+
       const tapeLineGeoBack = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(-1.6, -1.4, -0.4),
         new THREE.Vector3(1.6, -0.9, -0.4)
@@ -589,7 +568,7 @@ session_start();
 
       function animate() {
         requestAnimationFrame(animate);
-        
+
         spoolGroupL.rotation.z -= 0.04;
         spoolGroupR.rotation.z -= 0.04;
 
@@ -598,7 +577,7 @@ session_start();
 
         renderer.render(scene, camera);
       }
-      
+
       // WCAG respect user's motion preferences
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       if (!prefersReducedMotion.matches) {
@@ -619,4 +598,5 @@ session_start();
   </script>
 
 </body>
+
 </html>
