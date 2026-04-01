@@ -428,14 +428,14 @@
 
         container.innerHTML = listings.map(listing => `
           <div class="col-md-3">
-            <div class="card shadow-sm h-100">
-              <a href="album.php?mbid=${encodeURIComponent(listing.album_mbid)}" class="text-decoration-none text-dark">
+            <div class="card shadow-sm h-100 d-flex flex-column">
+              <a href="album.php?mbid=${encodeURIComponent(listing.album_mbid)}" class="d-flex flex-column flex-grow-1 text-decoration-none text-dark">
               <img src="${listing.cover_url || ALBUM_COVER_FALLBACK}"
                    class="card-img-top"
                    alt="${escHtml(listing.album_name)}"
                    style="object-fit:cover; aspect-ratio:1/1;"
                    onerror="this.src='${ALBUM_COVER_FALLBACK}'">
-                <div class="card-body">
+                <div class="card-body flex-grow-1">
                   <h3 class="card-title fs-5">${escHtml(listing.album_name)}</h3>
                   <p class="card-text mb-1">${escHtml(listing.artist_name)}</p>
                   <p class="card-text mb-1 text-muted small">
@@ -446,10 +446,10 @@
                   <p class="card-text text-muted small">${formatDate(listing.created_at)}</p>
                 </div>
               </a>
-              <div class="card-body d-flex gap-2">
+              <div class="card-body d-flex gap-2 mt-auto flex-grow-0 align-items-center">
                 ${CURRENT_USER && CURRENT_USER === listing.seller
                 ? '<span class="btn btn-outline-dark disabled flex-grow-1" style="pointer-events:none; opacity:1; border:none; width: auto;">Your listing</span>'
-                : `<button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(${listing.listing_id})">Add to cart <i class="bi bi-cart"></i></button>
+                : `<button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(${listing.listing_id})"><span class="d-none d-xl-inline">Add to cart </span> <i class="bi bi-cart"></i></button>
                    <button class="btn btn-outline-dark btn-wishlist ${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'active' : ''}" style="width: 42px; padding: 0; flex-shrink: 0;" id="wishlist-btn-${escHtml(listing.listing_id)}" onclick="toggleWishlist('${escHtml(listing.album_mbid)}', this)" title="${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'Remove from wishlist' : 'Add to wishlist'}">
                        <i class="bi bi-heart${listing.is_wishlisted && listing.is_wishlisted != '0' ? '-fill' : ''}"></i>
                    </button>`
