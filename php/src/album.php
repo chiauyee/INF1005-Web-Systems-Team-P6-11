@@ -20,6 +20,7 @@ $logged_in = isset($_SESSION['user_id']);
 
 <head>
     <title>Album | MusicMarket</title>
+    <meta charset="UTF-8">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -39,7 +40,6 @@ $logged_in = isset($_SESSION['user_id']);
     <main>
         <div id="error-banner" class="alert alert-danger m-3 border-0 shadow-sm" style="display:none;"></div>
 
-        <!-- Album Hero Section -->
         <section class="hero-album text-start">
             <div class="container position-relative z-1">
                 <div id="album-info-content" style="display: none;">
