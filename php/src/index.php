@@ -378,7 +378,18 @@
 
           renderer.render(scene, camera);
         }
-        animate();
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!prefersReducedMotion.matches) {
+          animate();
+        } else {
+          // For users who prefer reduced motion, skip the intro sequence completely
+          enterState = 3;
+          document.body.classList.remove('intro-active');
+          if (intro) intro.style.display = 'none';
+          if (mainSite) mainSite.classList.add('visible');
+          sessionStorage.setItem('vinylIntroPlayed', 'true');
+        }
 
         window.addEventListener('resize', () => {
           if (enterState !== 0) return;
