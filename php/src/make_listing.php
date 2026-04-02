@@ -7,7 +7,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Make Listing</title>
   <meta charset='UTF-8'> 
@@ -24,7 +24,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 <body>
   <?php include __DIR__ . '/includes/navigation.php'; ?>
 
-  <div class="listing-page">
+  <main class="listing-page">
     <p class="page-eyebrow">Marketplace</p>
     <h1 class="page-heading">Create a listing</h1>
     <p class="page-sub">Search for your album to verify its metadata, then set a price and publish.</p>
@@ -131,7 +131,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
         <i class="bi bi-arrow-left"></i> Back to listings
       </a>
     </div>
-  </div>
+  </main>
 
   <?php include __DIR__ . '/includes/footer.php'; ?>
   

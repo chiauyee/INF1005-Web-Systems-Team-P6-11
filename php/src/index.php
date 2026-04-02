@@ -449,10 +449,13 @@
               <div class="card-body d-flex gap-2 mt-auto flex-grow-0 align-items-center">
                 ${CURRENT_USER && CURRENT_USER === listing.seller
                 ? '<span class="btn btn-outline-dark disabled flex-grow-1" style="pointer-events:none; opacity:1; border:none; width: auto;">Your listing</span>'
-                : `<button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(${listing.listing_id})"><span class="d-none d-xl-inline">Add to cart </span> <i class="bi bi-cart"></i></button>
-                   <button class="btn btn-outline-dark btn-wishlist ${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'active' : ''}" style="width: 42px; padding: 0; flex-shrink: 0;" id="wishlist-btn-${escHtml(listing.listing_id)}" onclick="toggleWishlist('${escHtml(listing.album_mbid)}', this)" title="${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'Remove from wishlist' : 'Add to wishlist'}">
-                       <i class="bi bi-heart${listing.is_wishlisted && listing.is_wishlisted != '0' ? '-fill' : ''}"></i>
-                   </button>`
+                : ` <button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(13)"aria-label="Add to cart">
+                      <span class="d-none d-xl-inline">Add to cart </span>
+                      <i class="bi bi-cart"></i>
+                    </button>
+                    <button class="btn btn-outline-dark btn-wishlist ${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'active' : ''}" style="width: 42px; padding: 0; flex-shrink: 0;" id="wishlist-btn-${escHtml(listing.listing_id)}" onclick="toggleWishlist('${escHtml(listing.album_mbid)}', this)" title="${listing.is_wishlisted && listing.is_wishlisted != '0' ? 'Remove from wishlist' : 'Add to wishlist'}">
+                      <i class="bi bi-heart${listing.is_wishlisted && listing.is_wishlisted != '0' ? '-fill' : ''}"></i>
+                    </button>`
                 }
               </div>
             </div>
