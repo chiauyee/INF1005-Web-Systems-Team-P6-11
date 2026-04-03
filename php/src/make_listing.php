@@ -67,7 +67,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
           <label class="form-label" for="price">Price (SGD)</label>
             <div class="field-input-wrap">
               <i class="bi bi-currency-dollar"></i>
-              <input type="number" id="price" name="price" class="form-control" placeholder="0.00" step="0.01" min="0" inputmode="decimal" required>
+              <input type="number" id="price" name="price" class="form-control" placeholder="0.00" step="0.01" min="0" inputmode="decimal" max="10000" required>
             </div>           
         </div>
 
