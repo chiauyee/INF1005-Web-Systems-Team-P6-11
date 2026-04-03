@@ -532,7 +532,7 @@ $my_listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			<h2 class="section-title" style="display:flex;align-items:baseline;gap:0.5rem;">
 				My Listings
 				<?php if ($active_listings_count > 0): ?>
-				<span style="font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:400;color:#888;letter-spacing:0;text-transform:none;"><?= $active_listings_count ?> Active</span>
+				<span style="font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:400;color:black;letter-spacing:0;text-transform:none;"><?= $active_listings_count ?> Active</span>
 				<?php endif; ?>
 			</h2>
 			<?php if (empty($my_listings)): ?>
