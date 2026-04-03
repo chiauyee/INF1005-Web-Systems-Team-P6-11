@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS listings (
     purchased_at TIMESTAMP DEFAULT NULL,
     approved_at DATETIME DEFAULT NULL,
     FOREIGN KEY (album_mbid) REFERENCES albums(album_mbid),
-    FOREIGN KEY (seller_id) REFERENCES users(id),
-    FOREIGN KEY (buyer_id) REFERENCES users(id)
+    FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS password_resets (
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS artist_images (
     filename VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (artist_mbid) REFERENCES artists(artist_mbid),
-    FOREIGN KEY (uploaded_by) REFERENCES users(id)
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS album_images (
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS album_images (
     filename VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (album_mbid) REFERENCES albums(album_mbid),
-    FOREIGN KEY (uploaded_by) REFERENCES users(id)
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS artist_comments (
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS artist_comments (
     comment TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (artist_mbid) REFERENCES artists(artist_mbid),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS album_comments (
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS album_comments (
     comment TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (album_mbid) REFERENCES albums(album_mbid),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS chats (
@@ -119,8 +119,8 @@ CREATE TABLE IF NOT EXISTS chats (
   buyer_id INT,
   seller_id INT,
   FOREIGN KEY (listing_id) REFERENCES listings(listing_id),
-  FOREIGN KEY (buyer_id) REFERENCES users(id),
-  FOREIGN KEY (seller_id) REFERENCES users(id)
+  FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS wishlist (
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS messages (
   sender_id INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   content TEXT NOT NULL,
-  FOREIGN KEY (sender_id) REFERENCES users(id)
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 
