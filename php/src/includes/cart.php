@@ -143,6 +143,7 @@ function handleCheckout() {
 
 function addToCart(listingId) {
 
+    console.log(listingId);
     if (!IS_LOGGED_IN) {
         window.location.href = 'login.php';
         return;

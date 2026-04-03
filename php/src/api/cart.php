@@ -38,7 +38,8 @@ if ($action === 'add') {
     ");
     $stmt->execute([$listing_id]);
     $listing = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    error_log($listing_id);
+  
     if (!$listing) {
         echo json_encode(['error' => 'This listing is no longer available']);
         exit;

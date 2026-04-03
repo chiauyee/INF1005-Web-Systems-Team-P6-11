@@ -460,7 +460,7 @@
               <div class="card-body d-flex gap-2 mt-auto flex-grow-0 align-items-center">
                 ${CURRENT_USER && CURRENT_USER === listing.seller
                 ? '<span class="btn btn-outline-dark disabled flex-grow-1" style="pointer-events:none; opacity:1; border:none; width: auto;">Your listing</span>'
-                : ` <button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(13)"aria-label="Add to cart">
+                : ` <button class="btn btn-outline-dark flex-grow-1" style="width: auto;" onclick="addToCart(${listing.listing_id})"aria-label="Add to cart">
                       <span class="d-none d-xl-inline">Add to cart </span>
                       <i class="bi bi-cart"></i>
                     </button>
