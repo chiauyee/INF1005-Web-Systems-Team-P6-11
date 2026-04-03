@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                     $stmt->execute([$user['id'], $token_hash, $expires]);
 
                     // Create reset link
-                    $reset_link = "http://localhost:8080/reset_password.php?token=" . $token;
+                    $reset_link = "http://136.115.48.172/reset_password.php?token=" . $token;
 
                     
 
