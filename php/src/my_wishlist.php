@@ -70,6 +70,8 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
         crossorigin="anonymous"></script>
 
     <script>
+        const IS_LOGGED_IN = true;
+        
         // wishlist 
         function escHtmlProfile(str) {
             var div = document.createElement('div');
@@ -82,6 +84,10 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         function buildWishlistRow(item) {
+            var cartAction = item.available_listing_id 
+                ? '<button class="btn btn-sm btn-dark" style="font-family: \'DM Sans\', sans-serif; font-size: 0.8rem; font-weight: 500; padding: 0.3rem 0.75rem; border-radius: 6px;" onclick="addToCart(' + item.available_listing_id + ')"><i class="bi bi-cart me-1"></i> Add to cart</button>'
+                : '<button class="btn btn-sm btn-outline-secondary" disabled title="No available listings for this album" style="font-family: \'DM Sans\', sans-serif; font-size: 0.8rem; font-weight: 500; padding: 0.3rem 0.75rem; border-radius: 6px;"><i class="bi bi-cart me-1"></i> Unavailable</button>';
+
             return '<div class="order-row-profile" id="wishlist-item-' + escHtmlProfile(item.id) + '">' +
                 '<div class="order-info">' +
                 '<div class="order-album-name">' +
@@ -93,7 +99,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 '<div class="order-date">' + formatWishlistDate(item.created_at) + '</div>' +
                 '</div>' +
                 '<div class="order-right" style="flex-direction: row; align-items: center; gap: 0.5rem;">' +
-                '<a href="album.php?mbid=' + encodeURIComponent(item.album_mbid) + '" class="btn btn-sm btn-dark" style="font-family: \'DM Sans\', sans-serif; font-size: 0.8rem; font-weight: 500; padding: 0.3rem 0.75rem; border-radius: 6px;"><i class="bi bi-cart me-1"></i> Add to cart</a>' +
+                cartAction +
                 '<button class="btn btn-sm wishlist-remove-btn" onclick="removeWishlistItem(this, \'' + escHtmlProfile(item.album_mbid) + '\', ' + escHtmlProfile(item.id) + ')">' +
                 'Remove' +
                 '</button>' +

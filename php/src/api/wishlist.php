@@ -89,7 +89,8 @@ if ($action === 'check') {
 if ($action === 'get') {
     $stmt = $pdo->prepare("
         SELECT w.id, w.album_mbid, w.created_at,
-               al.album_name, ar.artist_name, al.artist_mbid
+               al.album_name, ar.artist_name, al.artist_mbid,
+               (SELECT listing_id FROM listings l WHERE l.album_mbid = w.album_mbid AND l.status = 'available' AND l.seller_id != w.user_id ORDER BY price ASC LIMIT 1) as available_listing_id
         FROM wishlist w
         JOIN albums al  ON w.album_mbid   = al.album_mbid
         JOIN artists ar ON al.artist_mbid = ar.artist_mbid

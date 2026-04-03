@@ -24,7 +24,7 @@
 <div id="cart-toast" role="status" aria-live="polite" aria-atomic="true" style="
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(1rem);
   background: #212529; color: #fff; padding: 0.6rem 1.4rem;
-  display: none; border-radius: 999px; font-size: 1.5rem; font-family: 'DM Sans', sans-serif;
+  display: none; border-radius: 999px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
   opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
   z-index: 9999; white-space: nowrap;">
   Already added to cart
@@ -34,7 +34,7 @@
 <div id="login-toast" role="status" aria-live="polite" aria-atomic="true" style="
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(1rem);
   background: #212529; color: #fff; padding: 0.6rem 1.4rem;
-  display: none; border-radius: 999px; font-size: 1.5rem; font-family: 'DM Sans', sans-serif;
+  display: none; border-radius: 999px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
   opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
   z-index: 9999; white-space: nowrap;">
   Please log in to proceed to checkout
