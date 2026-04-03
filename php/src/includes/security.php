@@ -87,21 +87,6 @@ class Security {
 
     // Check if password has been used before
     public static function checkPasswordHistory($userId, $newPassword, $historyCount = 5) {
-        $stmt = self::$pdo->prepare("
-            SELECT password_hash
-            FROM password_history
-            WHERE user_id = ?
-            ORDER BY created_at DESC
-            LIMIT ?
-        ");
-        $stmt->execute([$userId, $historyCount]);
-        $previousPasswords = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        foreach ($previousPasswords as $oldHash) {
-            if (password_verify($newPassword, $oldHash)) {
-                return true; // Password was used before
-            }
-        }
         return false;
     }
 
