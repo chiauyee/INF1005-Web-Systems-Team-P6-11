@@ -10,7 +10,7 @@
     margin-bottom: 1.5rem;
 }
 .detail-header a {
-    color: #666;
+    color: #333;
     font-size: 0.85rem;
     text-decoration: none;
     display: inline-flex;
@@ -52,7 +52,7 @@
     font-size: 0.7rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #888;
+    color: black;
     margin-bottom: 0.25rem;
 }
 .album-hero-name {
