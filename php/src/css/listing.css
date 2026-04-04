@@ -85,7 +85,7 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #888;
+    color: black;
     margin-bottom: 0.25rem;
 }
 .detail-item-value {
@@ -96,7 +96,7 @@
 .detail-item-value.muted { color: #999; font-weight: 400; }
 .ref-id {
     font-size: 0.78rem;
-    color: #999;
+    color: black;
     font-family: monospace;
 }
 @media (max-width: 520px) {
