@@ -18,7 +18,7 @@
     gap: 0.3rem;
 }
 .detail-header a:hover { color: #1a1a1a; }
-.detail-header .sep { color: #ccc; font-size: 0.85rem; }
+.detail-header .sep { color: black; font-size: 0.85rem; }
 .detail-header .current { color: #1a1a1a; font-size: 0.85rem; }
 .album-hero {
     display: flex;
