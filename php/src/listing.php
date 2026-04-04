@@ -161,7 +161,7 @@ $badgeLabel = match($listing['status']) {
             </div>
             <?php endif; ?>
             <?php endif; ?>
-            <div class="detail-item" style='color: black'>
+            <div class="detail-item" style='color: black !important'>
                 <div class="detail-item-label">Listing Reference</div>
                 <div class="detail-item-value ref-id">#<?= $listing['listing_id'] ?></div>
             </div>
